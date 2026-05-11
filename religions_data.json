@@ -252,10 +252,6 @@
    {
     "modifier": "mages_loyalty_modifier",
     "value": 0.1
-   },
-   {
-    "modifier": "acolytes_loyalty_modifier",
-    "value": 0.1
    }
   ],
   "allowed_conversions": [],
@@ -579,7 +575,7 @@
   "description": ""
  },
  "old_bulwari_sun_cult": {
-  "name": "Old Sun Cult",
+  "name": "Old Sun Cults",
   "id": "old_bulwari_sun_cult",
   "group": "Bulwari",
   "group_id": "bulwari",
@@ -596,6 +592,10 @@
    {
     "modifier": "tolerance_own",
     "value": 2.0
+   },
+   {
+    "modifier": "church_power_modifier",
+    "value": -0.25
    }
   ],
   "allowed_conversions": [],
@@ -958,29 +958,6 @@
   "allowed_conversions": [],
   "description": ""
  },
- "death_cult_of_cheshosh": {
-  "name": "Death Cult of Cheshosh",
-  "id": "death_cult_of_cheshosh",
-  "group": "Cheshoshi",
-  "group_id": "cheshoshi_religion",
-  "color": [
-   66,
-   66,
-   66
-  ],
-  "modifiers": [
-   {
-    "modifier": "land_morale",
-    "value": 0.1
-   },
-   {
-    "modifier": "shock_damage",
-    "value": 0.1
-   }
-  ],
-  "allowed_conversions": [],
-  "description": ""
- },
  "kalun_masks": {
   "name": "Kalun Masks",
   "id": "kalun_masks",
@@ -1306,12 +1283,12 @@
   ],
   "modifiers": [
    {
-    "modifier": "war_exhaustion",
-    "value": -0.03
+    "modifier": "yearly_corruption",
+    "value": -0.05
    },
    {
-    "modifier": "prestige_from_land",
-    "value": 0.5
+    "modifier": "recover_army_morale_speed",
+    "value": 0.15
    }
   ],
   "allowed_conversions": [
@@ -1331,12 +1308,12 @@
   ],
   "modifiers": [
    {
-    "modifier": "war_exhaustion",
-    "value": -0.03
+    "modifier": "yearly_corruption",
+    "value": -0.05
    },
    {
-    "modifier": "prestige_decay",
-    "value": -0.01
+    "modifier": "spy_action_cost_modifier",
+    "value": -0.2
    }
   ],
   "allowed_conversions": [],
@@ -1377,12 +1354,12 @@
   ],
   "modifiers": [
    {
-    "modifier": "liberty_desire",
-    "value": -10.0
+    "modifier": "reduced_liberty_desire",
+    "value": 10.0
    },
    {
     "modifier": "fort_maintenance_modifier",
-    "value": -0.05
+    "value": -0.15
    }
   ],
   "allowed_conversions": [],
@@ -1398,7 +1375,16 @@
    172,
    250
   ],
-  "modifiers": [],
+  "modifiers": [
+   {
+    "modifier": "reduced_liberty_desire",
+    "value": 10.0
+   },
+   {
+    "modifier": "development_cost",
+    "value": -0.1
+   }
+  ],
   "allowed_conversions": [],
   "description": ""
  },
@@ -1822,8 +1808,8 @@
   ],
   "modifiers": [
    {
-    "modifier": "global_unrest",
-    "value": -2.0
+    "modifier": "centralize_state_cost",
+    "value": -0.2
    },
    {
     "modifier": "tolerance_heretic",
@@ -1910,11 +1896,11 @@
   "modifiers": [
    {
     "modifier": "stability_cost_modifier",
-    "value": -0.2
+    "value": -0.1
    },
    {
-    "modifier": "global_unrest",
-    "value": -1.0
+    "modifier": "infantry_shock",
+    "value": 0.1
    }
   ],
   "allowed_conversions": [],
@@ -1957,12 +1943,12 @@
   ],
   "modifiers": [
    {
-    "modifier": "cavalry_shock",
-    "value": 0.25
-   },
-   {
     "modifier": "available_province_loot",
     "value": 0.5
+   },
+   {
+    "modifier": "global_regiment_cost",
+    "value": -0.2
    }
   ],
   "allowed_conversions": [],
@@ -1980,8 +1966,8 @@
   ],
   "modifiers": [
    {
-    "modifier": "stability_cost_modifier",
-    "value": -0.15
+    "modifier": "global_rebel_suppression_efficiency",
+    "value": 1.0
    },
    {
     "modifier": "defensiveness",
@@ -2335,6 +2321,10 @@
    {
     "modifier": "all_estate_loyalty_equilibrium",
     "value": 0.05
+   },
+   {
+    "modifier": "church_power_modifier",
+    "value": -0.75
    }
   ],
   "allowed_conversions": [],
@@ -2366,8 +2356,8 @@
  "night_coven": {
   "name": "Night Coven",
   "id": "night_coven",
-  "group": "Night Coven",
-  "group_id": "hag_religion",
+  "group": "Shadow Cults",
+  "group_id": "shadow_religion",
   "color": [
    6,
    6,
@@ -2385,8 +2375,8 @@
  "shadow_pact": {
   "name": "Shadow Pact",
   "id": "shadow_pact",
-  "group": "Night Coven",
-  "group_id": "hag_religion",
+  "group": "Shadow Cults",
+  "group_id": "shadow_religion",
   "color": [
    10,
    4,
@@ -2396,6 +2386,29 @@
    {
     "modifier": "leader_land_shock",
     "value": 1.0
+   }
+  ],
+  "allowed_conversions": [],
+  "description": ""
+ },
+ "death_cult_of_cheshosh": {
+  "name": "Death Cult of Cheshosh",
+  "id": "death_cult_of_cheshosh",
+  "group": "Shadow Cults",
+  "group_id": "shadow_religion",
+  "color": [
+   66,
+   66,
+   66
+  ],
+  "modifiers": [
+   {
+    "modifier": "land_morale",
+    "value": 0.1
+   },
+   {
+    "modifier": "shock_damage",
+    "value": 0.1
    }
   ],
   "allowed_conversions": [],
@@ -2607,6 +2620,289 @@
    {
     "modifier": "land_attrition",
     "value": -0.15
+   }
+  ],
+  "allowed_conversions": [],
+  "description": ""
+ },
+ "mumambarra": {
+  "name": "Mumambarra",
+  "id": "mumambarra",
+  "group": "Dangurangan",
+  "group_id": "danguranga_religion",
+  "color": [
+   189,
+   103,
+   17
+  ],
+  "modifiers": [
+   {
+    "modifier": "fire_damage",
+    "value": 0.1
+   },
+   {
+    "modifier": "war_exhaustion",
+    "value": -0.03
+   },
+   {
+    "modifier": "tolerance_heretic",
+    "value": 2.0
+   }
+  ],
+  "allowed_conversions": [],
+  "description": ""
+ },
+ "dunborgula": {
+  "name": "Dunborgula",
+  "id": "dunborgula",
+  "group": "Dangurangan",
+  "group_id": "danguranga_religion",
+  "color": [
+   31,
+   148,
+   250
+  ],
+  "modifiers": [
+   {
+    "modifier": "stability_cost_modifier",
+    "value": -0.15
+   },
+   {
+    "modifier": "same_culture_advisor_cost",
+    "value": -0.1
+   },
+   {
+    "modifier": "tolerance_heretic",
+    "value": 2.0
+   }
+  ],
+  "allowed_conversions": [],
+  "description": ""
+ },
+ "aycha_alpa": {
+  "name": "Aycha Alpa",
+  "id": "aycha_alpa",
+  "group": "Dangurangan",
+  "group_id": "danguranga_religion",
+  "color": [
+   129,
+   126,
+   101
+  ],
+  "modifiers": [
+   {
+    "modifier": "build_cost",
+    "value": -0.1
+   },
+   {
+    "modifier": "defensiveness",
+    "value": 0.25
+   },
+   {
+    "modifier": "tolerance_heretic",
+    "value": 2.0
+   }
+  ],
+  "allowed_conversions": [],
+  "description": ""
+ },
+ "speaking_memory": {
+  "name": "Speaking Memory",
+  "id": "speaking_memory",
+  "group": "Kanolowelean",
+  "group_id": "kanolowele_religion",
+  "color": [
+   56,
+   29,
+   80
+  ],
+  "modifiers": [
+   {
+    "modifier": "idea_cost",
+    "value": -0.1
+   },
+   {
+    "modifier": "prestige_decay",
+    "value": -0.01
+   }
+  ],
+  "allowed_conversions": [
+   "molten_eternity"
+  ],
+  "description": ""
+ },
+ "volcanic_truth": {
+  "name": "Volcanic Truth",
+  "id": "volcanic_truth",
+  "group": "Kanolowelean",
+  "group_id": "kanolowele_religion",
+  "color": [
+   125,
+   16,
+   16
+  ],
+  "modifiers": [
+   {
+    "modifier": "build_time",
+    "value": -0.1
+   },
+   {
+    "modifier": "manpower_in_true_faith_provinces",
+    "value": 0.15
+   }
+  ],
+  "allowed_conversions": [
+   "molten_eternity"
+  ],
+  "description": ""
+ },
+ "endless_ocean": {
+  "name": "Endless Ocean",
+  "id": "endless_ocean",
+  "group": "Kanolowelean",
+  "group_id": "kanolowele_religion",
+  "color": [
+   20,
+   232,
+   255
+  ],
+  "modifiers": [
+   {
+    "modifier": "global_sailors_modifier",
+    "value": 0.2
+   },
+   {
+    "modifier": "naval_morale",
+    "value": 0.1
+   }
+  ],
+  "allowed_conversions": [],
+  "description": ""
+ },
+ "infinite_self": {
+  "name": "Infinite Self",
+  "id": "infinite_self",
+  "group": "Utubodi",
+  "group_id": "utubodi_religion",
+  "color": [
+   198,
+   198,
+   198
+  ],
+  "modifiers": [
+   {
+    "modifier": "global_unrest",
+    "value": -1.0
+   },
+   {
+    "modifier": "global_tax_modifier",
+    "value": 0.1
+   }
+  ],
+  "allowed_conversions": [
+   "molten_eternity"
+  ],
+  "description": ""
+ },
+ "molten_eternity": {
+  "name": "Molten Eternity",
+  "id": "molten_eternity",
+  "group": "Utubodi",
+  "group_id": "utubodi_religion",
+  "color": [
+   255,
+   82,
+   24
+  ],
+  "modifiers": [
+   {
+    "modifier": "improve_relation_modifier",
+    "value": 0.2
+   },
+   {
+    "modifier": "tolerance_own",
+    "value": 1.0
+   }
+  ],
+  "allowed_conversions": [],
+  "description": ""
+ },
+ "manago_poku": {
+  "name": "Manago-Poku",
+  "id": "manago_poku",
+  "group": "Mechanim",
+  "group_id": "mechanim_religion",
+  "color": [
+   66,
+   66,
+   66
+  ],
+  "modifiers": [
+   {
+    "modifier": "idea_cost",
+    "value": -0.1
+   },
+   {
+    "modifier": "land_forcelimit_modifier",
+    "value": 0.15
+   },
+   {
+    "modifier": "church_power_modifier",
+    "value": -1.0
+   }
+  ],
+  "allowed_conversions": [],
+  "description": ""
+ },
+ "foundationism": {
+  "name": "Foundationism",
+  "id": "foundationism",
+  "group": "Mechanim",
+  "group_id": "mechanim_religion",
+  "color": [
+   235,
+   52,
+   189
+  ],
+  "modifiers": [
+   {
+    "modifier": "missionaries",
+    "value": 1.0
+   },
+   {
+    "modifier": "years_of_nationalism",
+    "value": 100.0
+   },
+   {
+    "modifier": "native_assimilation",
+    "value": -2.0
+   },
+   {
+    "modifier": "diplomatic_upkeep",
+    "value": -3.0
+   }
+  ],
+  "allowed_conversions": [],
+  "description": ""
+ },
+ "kuriatema": {
+  "name": "Kuri'atema",
+  "id": "kuriatema",
+  "group": "Mechanim",
+  "group_id": "mechanim_religion",
+  "color": [
+   220,
+   160,
+   40
+  ],
+  "modifiers": [
+   {
+    "modifier": "advisor_cost",
+    "value": -0.1
+   },
+   {
+    "modifier": "tolerance_heathen",
+    "value": 2.0
    }
   ],
   "allowed_conversions": [],
