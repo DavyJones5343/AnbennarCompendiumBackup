@@ -1,0 +1,758 @@
+================================================================================
+MISSION TRIGGERS AUDIT REPORT
+Anbennar Compendium - parseTriggerToReadable() / triggerToText Audit
+================================================================================
+
+Date: 2026-03-17
+Auditor: Automated 20% sample analysis + full-dataset verification
+Source: mission_triggers.json (12,291 missions)
+Parser: parseTriggerToReadable() and triggerToText map in build_html.py
+
+Methodology:
+  - 20% random sample (2,458 missions, seed=42) for issue discovery
+  - Full dataset verification on confirmed patterns
+  - Manual spot-checks on all major findings
+
+================================================================================
+EXECUTIVE SUMMARY
+================================================================================
+
+Missions in dataset:           12,291
+Sample size (20%):              2,458
+Missions with issues (sample):    907 (36.9%)
+Total issues in sample:         1,395
+
+The parser handles the most common trigger types well. However, there are
+five major categories of problems, some affecting hundreds of missions.
+
+================================================================================
+ISSUE #1: null-mapped "num_of_provinces_owned_or_owned_by_*_subjects_with"
+          (439 missions affected - HIGHEST SEVERITY)
+================================================================================
+
+The triggers `num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with`
+and `num_of_provinces_owned_or_owned_by_subjects_with` are explicitly mapped
+to null in triggerToText. This means the ENTIRE condition is suppressed from
+display, even though these triggers contain real player-facing requirements.
+
+These are nearly identical in function to `num_of_owned_provinces_with` (which
+IS handled) -- they just also count provinces owned by subjects.
+
+Full dataset count: 439 missions (84 found in 20% sample)
+
+Examples:
+
+  Mission: Y65_integrate_the_expedition (Integrate The Expedition)
+  Raw: num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+         value = 40
+         region = lupulan_rainforest_region
+         NOT = { religion = accretive_path ... }
+       }
+  Current display: NOTHING (entire condition suppressed)
+  Should display: "You or subjects own at least 40 provinces
+                   (in lupulan rainforest region, not following certain religions)"
+
+  Mission: A31_elven_history (Pieces of Elven History)
+  Raw: num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+         value = 1
+         trade_goods = precursor_relics
+       }
+  Current display: NOTHING
+  Should display: "You or subjects own at least 1 province (produces precursor relics)"
+
+  Mission: eord_2_silence_cacophony (Silence and Cacophony)
+  Raw: num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+         value = 10
+         region = haraf_region
+       }
+  Current display: NOTHING
+  Should display: "You or subjects own at least 10 provinces (in haraf region)"
+
+FIX: Implement a handler similar to num_of_owned_provinces_with but prefixed
+     with "You or subjects own...".
+
+================================================================================
+ISSUE #2: num_of_owned_provinces_with - missing inner conditions
+          (893 missions affected - HIGH SEVERITY)
+================================================================================
+
+The num_of_owned_provinces_with handler extracts SOME inner qualifiers
+(trade_goods, culture, religion, region, area, specific building triggers,
+development, etc.) but misses many others. When the inner condition isn't
+recognized, users see a generic "Own at least N provinces" without the
+qualifying condition that specifies WHICH provinces.
+
+Full dataset count: 893 missions with at least one missed inner condition
+
+Top missed inner conditions (from full dataset):
+  OR blocks:                     458 occurrences  (multi-condition qualifiers)
+  has_province_modifier:         181 occurrences
+  NOT blocks:                    144 occurrences
+  has_terrain:                   142 occurrences
+  province_id (exclusions):      102 occurrences
+  superregion:                    94 occurrences
+  has_manufactory_trigger:        88 occurrences
+  base_manpower:                  60 occurrences
+  is_core:                        54 occurrences
+  has_courthouse_building_trigger: 49 occurrences
+  province_group:                 45 occurrences
+  has_fort_building_trigger:      41 occurrences
+  has_shipyard_building_trigger:  34 occurrences
+  owned_by:                       26 occurrences
+  has_dock_building_trigger:      24 occurrences
+  continent:                      24 occurrences
+  holy_order:                     22 occurrences
+
+Examples:
+
+  Mission: barumand_better_farming_methods (Better Farming Methods)
+  Raw inner: value = 5, has_building = farm_estate, base_manpower = 6
+  Current: "Own at least 5 provinces (has farm estate)" -- base_manpower qualifier lost
+  Should add: "...with base manpower >= 6"
+
+  Mission: emerald_orc_our_deepwoods (Our Deepwoods)
+  Raw inner: value = 50, superregion = deepwoods_superregion
+  Current: "Own at least 50 provinces" -- superregion qualifier completely lost
+  Should display: "Own at least 50 provinces (in deepwoods)"
+
+  Mission: Z54_new_model_smithing (New Ways of Smithing)
+  Raw inner: value = 75, has_manufactory_trigger = yes
+  Current: "Own at least 75 provinces" -- manufactory qualifier lost
+  Should display: "Own at least 75 provinces (has a manufactory)"
+
+  Mission: I89_bulwar_proper (Bulwar Proper)
+  Raw inner: OR = { region = bulwar_proper_region, region = harpy_hills_region }, value = 50
+  Current: "Own at least 50 provinces" -- OR with multiple regions lost
+  Should display: "Own at least 50 provinces (in bulwar proper or harpy hills region)"
+
+  Mission: A73_little_green (Our Little Greentide)
+  Raw inner: value = 6, OR = { has_province_modifier = surface_mine0/1/2/3 }
+  Current: "Own at least 6 provinces" -- province modifier condition lost
+  Should display: "Own at least 6 provinces (has surface mine modifier)"
+
+FIX: Extend the handler in triggerToText for num_of_owned_provinces_with to:
+  - Handle superregion qualifiers
+  - Handle has_manufactory_trigger
+  - Handle has_courthouse_building_trigger, has_shipyard_building_trigger,
+    has_dock_building_trigger, has_fort_building_trigger
+  - Handle has_terrain
+  - Handle base_manpower
+  - Handle continent
+  - Handle is_core
+  - Handle province_group
+  - Handle OR blocks (at least extract region lists from nested OR)
+  - Handle NOT blocks (extract excluded conditions)
+
+================================================================================
+ISSUE #3: Unhandled trigger keys (silently dropped)
+          (843 instances in 20% sample)
+================================================================================
+
+Keys that appear in trigger_raw but have NO mapping in triggerToText, are NOT
+in SKIP_KEYS, and are NOT caught by any fallback pattern (has_*/is_*/num_of_*).
+These conditions are silently dropped from display.
+
+Categorized by type:
+
+--- A. NESTED PARAMETERS (should be added to SKIP_KEYS) ---
+These appear inside block triggers and are parameters, not standalone triggers.
+
+  province_id:     187 missions  (inside num_of_owned_provinces_with blocks etc.)
+  country:         175 missions  (inside trade_share blocks: country = ROOT)
+  tier:            125 missions  (inside has_great_project blocks)
+  node:             45 missions  (inside trading_policy_in_node blocks)
+  policy:           45 missions  (inside trading_policy_in_node blocks)
+  faction:          55 missions  (inside faction_influence blocks)
+  template:         30 missions  (inside any_hired_mercenary_company blocks)
+
+  FIX: Add these to SKIP_KEYS: province_id, country, tier, node, policy, template
+
+--- B. REAL TRIGGERS NEEDING MAP ENTRIES ---
+These are top-level or important conditions that players need to see.
+
+  republican_tradition:     48 missions
+    Context: "republican_tradition = 95" (analogous to 'legitimacy')
+    FIX: Add triggerToText entry similar to legitimacy
+
+  legitimacy_equivalent:    26 missions
+    Context: "legitimacy_equivalent = 100" (government-agnostic legitimacy check)
+    FIX: Add entry: "Legitimacy/equivalent at least N"
+
+  religion_group:           30 missions
+    Context: "religion_group = orcish" (religion group check)
+    FIX: Add entry: "Religion group: <tag>"
+
+  num_free_building_slots:  42 missions
+    Context: "num_free_building_slots = 1" (province-level check)
+    FIX: Add entry: "Has at least N free building slots"
+
+  ruler_has_mage_personality: 35 missions
+    Context: "ruler_has_mage_personality = yes" (Anbennar custom)
+    FIX: Add entry: "Ruler is a mage"
+
+  owned_by_subject_of:      47 missions
+    Context: "owned_by_subject_of = ROOT" (province scope condition)
+    FIX: Add entry: "Owned by a subject"
+
+  overlord_of:              15 missions
+    Context: "overlord_of = F39" (diplomatic check)
+    FIX: Add entry: "Be overlord of <country>"
+
+--- C. SCOPE OPENERS (need scope handling) ---
+
+  all_country:              39 missions  (like all_known_country)
+  all_province:             32 missions  (like all_owned_province)
+  europe (as scope):        70 missions  (continent scope: europe = { type = all ... })
+  asia (as scope):          30 missions  (continent scope)
+
+  FIX: Add scope entries like: 'all_country': 'All countries:'
+       Handle continent scopes (europe, asia) similarly to area/region
+
+--- D. ANBENNAR CUSTOM TRIGGERS ---
+These are mod-specific scripted triggers that are silently dropped.
+
+  high_tolerance_*_race_trigger:  ~300+ missions (various races)
+    Examples: high_tolerance_dwarven_race_trigger (37 missions),
+              high_tolerance_human_race_trigger (30 missions),
+              high_tolerance_elven_race_trigger (25 missions),
+              ... and 12+ more race variants
+    Context: "high_tolerance_dwarven_race_trigger = yes"
+    FIX: Add pattern handler for high_tolerance_*_race_trigger:
+         "Have high tolerance of <race>"
+
+  medium_tolerance_*_race_trigger:  (additional missions)
+    FIX: Similarly handle medium/low tolerance triggers
+
+  mission_faction_trigger:   40 missions
+    Context: "mission_faction_trigger = { faction = mr_aristocrats, type = mil }"
+    FIX: Needs block handler or SKIP
+
+  trading_policy_in_node:    34 missions
+    Context: "trading_policy_in_node = { node = 2595, policy = improve_inland_routes }"
+    FIX: Add block handler: "Have trading policy <policy> in trade node <node>"
+
+  taychend_hero_cult_has_passed_reform: 25 missions
+    FIX: Add entry: "Has passed Taychend hero cult reform"
+
+  have_cast_magnificent_feast: 25 missions
+    FIX: Add entry: "Have cast Magnificent Feast"
+
+  exploration_ideas:         13 missions
+    Context: "exploration_ideas = 1" (check for idea group progress)
+    FIX: Add pattern for *_ideas keys: "Have <N> ideas in <group>"
+
+--- E. INTERNAL/NOISE KEYS (should be added to SKIP_KEYS or map as null) ---
+
+  always:                   184 missions
+    Context: "always = yes" (always-true condition, used as placeholder)
+    FIX: Map to null in triggerToText
+
+================================================================================
+ISSUE #4: development_in_provinces qualifier loss
+          (153 missions affected - MEDIUM SEVERITY)
+================================================================================
+
+The development_in_provinces handler in triggerToText only extracts the
+'value' parameter. All geographic/condition qualifiers are lost.
+
+Full dataset count: 153 missions
+
+Top lost qualifiers:
+  region:          43 occurrences
+  area:            37 occurrences
+  culture:         25 occurrences
+  OR blocks:       25 occurrences
+  trade_goods:     22 occurrences
+  province_group:  15 occurrences
+  has_terrain:     10 occurrences
+  superregion:     10 occurrences
+  culture_group:    9 occurrences
+
+Examples:
+
+  Mission: pashaine_age_of_luna (Age Of Luna)
+  Raw: development_in_provinces = { value = 400, province_group = luna_river_basin }
+  Current: "Development in provinces at least 400"
+  Should: "Development in provinces at least 400 (in luna river basin)"
+
+  Mission: barumand_steady_state (The Resolute State)
+  Raw: development_in_provinces = { region = south_castanor_region, value = 600 }
+  Current: "Development in provinces at least 600"
+  Should: "Development in provinces at least 600 (in south castanor region)"
+
+  Mission: J33_guns_steppe (Guns of the Steppe)
+  Raw: development_in_provinces = { value = 300, has_terrain = steppe }
+  Current: "Development in provinces at least 300"
+  Should: "Development in provinces at least 300 (steppe terrain)"
+
+FIX: Extend the development_in_provinces handler to extract region, area,
+     superregion, culture, culture_group, trade_goods, province_group,
+     has_terrain qualifiers (similar pattern to num_of_owned_provinces_with).
+
+================================================================================
+ISSUE #5: Complex country tag scopes not fully resolved
+          (183 instances in 20% sample, ~915 total - MEDIUM SEVERITY)
+================================================================================
+
+Country tag scopes (e.g. F39 = { ... }) with complex inner conditions
+that don't match the known inline patterns (is_subject_of=ROOT,
+alliance_with=ROOT, exists=yes/no, etc.) are either dropped or
+shown as raw text.
+
+The parser handles the 8 most common inline patterns well. But multi-line
+blocks with conditions like custom if/else logic, has_opinion_modifier,
+nested NOT blocks, or overlord scopes are not fully resolved.
+
+Examples:
+
+  Mission: tluukt_curtail_liberators (Curtail Liberators)
+  Raw: F39 = { NOT = { is_subject_of_type = tributary_state_anb } }
+  Current: probably dropped (complex nested NOT inside country scope)
+  Should: "F39 is not a tributary state"
+
+  Mission: exwes_claiming_the_small_country (Claiming the Small Country)
+  Raw: A12 = { if = { limit = { is_subject_of = PREV }
+               has_opinion = { who = ROOT value = 100 } } }
+  Current: probably dropped (if/limit block inside country scope)
+  Should: "A12 has opinion of us at least 100 (if subject of us)"
+
+FIX: For the most common sub-patterns (is_subject_of_type, is_at_war,
+     religion, government, total_development, etc.), add more inline
+     pattern matchers in the country tag scope handler.
+
+================================================================================
+PRIORITY RANKING FOR FIXES
+================================================================================
+
+Priority 1 (HIGH - largest player impact):
+  1. Implement num_of_provinces_owned_or_owned_by_*_subjects_with
+     (439 missions completely invisible)
+  2. Extend num_of_owned_provinces_with inner condition extraction
+     (893 missions with lost qualifiers)
+  3. Add republican_tradition, legitimacy_equivalent, religion_group,
+     owned_by_subject_of to triggerToText (171+ missions)
+
+Priority 2 (MEDIUM - significant gaps):
+  4. Implement development_in_provinces qualifier extraction
+     (153 missions with lost qualifiers)
+  5. Add high/medium/low_tolerance_*_race_trigger pattern handler
+     (300+ missions, Anbennar-specific but very common)
+  6. Add scope entries for all_country, all_province, continent scopes
+     (130+ missions)
+
+Priority 3 (LOW - cleanup):
+  7. Add nested params to SKIP_KEYS: province_id, country, tier, node,
+     policy, template (prevents false positive processing)
+  8. Map 'always' to null
+  9. Add remaining Anbennar custom triggers (trading_policy_in_node,
+     mission_faction_trigger, etc.)
+  10. Extend country tag scope handler for more inline patterns
+
+================================================================================
+FULL UNHANDLED KEY LIST (all keys appearing in 10+ missions, full dataset)
+================================================================================
+
+  province_id:                         187 missions  [should be SKIP_KEY]
+  always:                              184 missions  [should be null-mapped]
+  country:                             175 missions  [should be SKIP_KEY]
+  tier:                                125 missions  [should be SKIP_KEY]
+  europe:                               70 missions  [scope handler needed]
+  republican_tradition:                  48 missions  [triggerToText entry needed]
+  owned_by_subject_of:                   47 missions  [triggerToText entry needed]
+  node:                                  45 missions  [should be SKIP_KEY]
+  policy:                                45 missions  [should be SKIP_KEY]
+  num_free_building_slots:               42 missions  [triggerToText entry needed]
+  mission_faction_trigger:               40 missions  [block handler needed]
+  all_country:                           39 missions  [scope entry needed]
+  high_tolerance_dwarven_race_trigger:   37 missions  [pattern handler needed]
+  ruler_has_mage_personality:            35 missions  [triggerToText entry needed]
+  trading_policy_in_node:                34 missions  [block handler needed]
+  all_province:                          32 missions  [scope entry needed]
+  asia:                                  30 missions  [scope handler needed]
+  high_tolerance_human_race_trigger:     30 missions  [pattern handler needed]
+  religion_group:                        30 missions  [triggerToText entry needed]
+  template:                              30 missions  [should be SKIP_KEY]
+  legitimacy_equivalent:                 26 missions  [triggerToText entry needed]
+  high_tolerance_elven_race_trigger:     25 missions  [pattern handler needed]
+  taychend_hero_cult_has_passed_reform:  25 missions  [Anbennar custom]
+  have_cast_magnificent_feast:           25 missions  [Anbennar custom]
+  high_tolerance_orcish_race_trigger:    21 missions  [pattern handler needed]
+  high_tolerance_goblin_race_trigger:    21 missions  [pattern handler needed]
+  high_tolerance_gnomish_race_trigger:   19 missions  [pattern handler needed]
+  high_tolerance_harpy_race_trigger:     17 missions  [pattern handler needed]
+  overlord_of:                           15 missions  [triggerToText entry needed]
+  high_tolerance_halfling_race_trigger:  15 missions  [pattern handler needed]
+  exploration_ideas:                     13 missions  [pattern handler needed]
+  high_tolerance_half_orcish_race_trigger:13 missions [pattern handler needed]
+  high_tolerance_ruinborn_race_trigger:  13 missions  [pattern handler needed]
+  high_tolerance_gnollish_race_trigger:  12 missions  [pattern handler needed]
+  high_tolerance_hobgoblin_race_trigger: 12 missions  [pattern handler needed]
+  high_tolerance_troll_race_trigger:     11 missions  [pattern handler needed]
+  high_tolerance_kobold_race_trigger:    11 missions  [pattern handler needed]
+  high_tolerance_harimari_race_trigger:  10 missions  [pattern handler needed]
+
+================================================================================
+END OF AUDIT REPORT
+================================================================================
+
+
+================================================================================
+AUDIT RUN: COMPREHENSIVE — 2026-03-18 16:51
+================================================================================
+
+Auditor: Automated comprehensive 5-category audit (Claude Opus 4.6)
+Source files: build_html.py (4,274 lines), mission_triggers.json (12,291 missions),
+  anbennar_data.json (1,271 countries), modifiers_data.json (18,237 modifiers),
+  great_projects.json (170 entries), event_names.json (17,030 entries),
+  regions_data.json (1,217 entries), province_names.json (6,687 entries),
+  province_owners.json (804 entries)
+
+NOTE: This audit checks the CURRENT state of code after fixes from the original
+audit report (lines 1-396 above). Issues marked [PREV FIXED] were in the
+original report and have been confirmed resolved.
+
+================================================================================
+CATEGORY 1: MISSION TREE ACCURACY
+Sample: 25 random missions (seed=42)
+Issues: 4
+================================================================================
+
+[PREV FIXED] Issue #1 (num_of_provinces_owned_or_owned_by_*_subjects_with):
+  Now has proper handlers. Confirmed working for subject-province conditions.
+
+[PREV FIXED] Issue #2 (extractProvConditions missing qualifiers):
+  superregion, has_manufactory_trigger, base_manpower, has_terrain,
+  has_shipyard/dock/fort/courthouse_building_trigger, province_group,
+  continent, holy_order — ALL now handled in extractProvConditions().
+
+[PREV FIXED] Issue #4 (development_in_provinces qualifier loss):
+  Now calls extractProvConditions(val) to show geographic qualifiers.
+
+[PREV FIXED] Unhandled trigger keys (republican_tradition, legitimacy_equivalent,
+  religion_group, num_free_building_slots, ruler_has_mage_personality,
+  owned_by_subject_of, overlord_of, always, mission_faction_trigger,
+  trading_policy_in_node, taychend_hero_cult_has_passed_reform,
+  have_cast_magnificent_feast, high/medium/low_tolerance_*_race_trigger,
+  _ideas pattern) — ALL now handled.
+
+--- NEW ISSUE 1.1: calc_true_if uses global regex — wrong amount for 2nd+ blocks
+  Severity: MEDIUM (103 missions with multiple calc_true_if blocks)
+  File: build_html.py line 1953
+  Code: const amountMatch = processed.match(/calc_true_if\s*=\s*\{[\s\S]*?amount\s*=\s*(\d+)/);
+  Problem: This searches the ENTIRE `processed` text, not just the current
+    block. When a mission has 2+ calc_true_if blocks with different amounts,
+    the 2nd+ block will incorrectly display the FIRST block's amount.
+  Example: A mission with calc_true_if{amount=2} followed by calc_true_if{amount=5}
+    would show "At least 2 of the following:" for BOTH blocks.
+  Fix: Track position in processed text, or extract amount from the current
+    line's val instead of re-searching the whole document.
+
+--- NEW ISSUE 1.2: Unhandled trigger keys still present (>20 occurrences each)
+  Severity: LOW-MEDIUM (these fall through to generic formatting or are dropped)
+  Remaining unhandled keys in trigger_raw (not caught by any handler):
+    vassal_of:                    30 missions  [needs triggerToText entry]
+    hre_reform_passed:            29 missions  [needs triggerToText entry]
+    trade_goods_produced_amount:  40 missions  [needs triggerToText entry]
+    investment:                   34 missions  [Anbennar custom; needs entry or null]
+    area_for_scope_province:      34 missions  [internal scope; add to SKIP_KEYS]
+    cavalry_in_province:          52 missions  [province scope; internal]
+    attacker_leader/defender_leader: ~79 missions [battle scope; null or skip]
+    lowercase 'or':               27 missions  [parser checks 'OR' but not 'or']
+
+--- NEW ISSUE 1.3: has_great_project tier display incomplete
+  Severity: LOW (153 missions use has_great_project with tier)
+  The has_great_project handler in triggerToText extracts type and tier when
+  inside a province scope (line 2802-2806). However, when has_great_project
+  appears at top level (not inside a province scope), it is handled by the
+  collapseBlock + map entry at line 2571:
+    'has_great_project': (() => { const tm = val.match(/type\s*=\s*(\w+)/);
+      const gm = val.match(/tier\s*=\s*(\d+)/);
+      if (tm) { const gpn = GREAT_PROJECTS[tm[1]] || tm[1].replace(/_/g,' ');
+      return 'Has great project: <span class="tag">' + esc(gpn) + '</span>' +
+      (gm ? ' (tier ' + gm[1] + '+)' : ''); } return null; })(),
+  This looks correct. Confirmed: tier IS displayed. No issue here after review.
+
+--- NEW ISSUE 1.4: Mission 19 (beikdugang) has always=no placeholder
+  Severity: INFO (1 mission)
+  trigger_raw: "custom_trigger_tooltip = { tooltip = beikdugang_TBD1 always = no }"
+  This mission is intentionally uncompletable (TBD placeholder from modders).
+  The parser correctly returns empty/tooltip-only. No action needed.
+
+SAMPLE DETAILS (25 missions):
+  Mission  1 (spy network F39):   OR/AND parsed, province claims correct
+  Mission  2 (kharunyana area):   Area scope + type=all + subject_holds correct
+  Mission  3 (G27 iosahar):       Country tag scope patterns correct
+  Mission  4 (calc_true_if=200):  Amount parsed correctly (single block)
+  Mission  5 (4093 insult):       Province scope + DLC conditional; complex but OK
+  Mission  6 (exwes halfling):    Tooltip-based; tooltips correctly prioritized
+  Mission  7 (elikhand envoys):   calc_true_if amount=5 correct; prestige/dip_power OK
+  Mission  8 (602 tax building):  Province ownership + building check correct
+  Mission  9 (spy network):       OR with religion/province correct
+  Mission 10 (new_world_i):       Complex conditional; mostly suppressed (deep nesting)
+  Mission 11 (estate influence):  NOT > OR > estate_influence handled correctly
+  Mission 12 (phoenix borders):   num_of_owned_provinces_with region qualifier correct
+  Mission 13 (roilsard ally):     any_ally scope correct
+  Mission 14 (farm estate):       num_of_owned_provinces_with building+manpower correct
+  Mission 15 (silverforge mines): Tooltip + num_of_owned_provinces_with modifiers OK
+  Mission 16 (miremaw warning):   calc_true_if amount=2 correct (single block)
+  Mission 17 (andic reach):       Area type=all owned_by correct
+  Mission 18 (ameion ships):      Area scope + num_of_owned_provinces_with building OK
+  Mission 19 (beikdugang TBD):    Placeholder mission; tooltip only (expected)
+  Mission 20 (ekha chase):        Province scope suppressed (infantry_in_province=ROOT)
+  Mission 21 (glass/tropical):    Advisor type key "glass" not handled (falls to generic)
+  Mission 22 (2854 development):  Province + has_adm_advisor_3 handled correctly
+  Mission 23 (treasury/manpower): Standard triggers all correct
+  Mission 24 (G33 iosahar):       Country tag scope correct
+  Mission 25 (sanghariyar):       Estate loyalty/influence + province modifier correct
+
+================================================================================
+CATEGORY 2: REGION & GEOGRAPHY
+Sample: 15 countries
+Issues: 3
+================================================================================
+
+Sample results:
+  R36 (Endhuvi):     region=Dhujat, superregion=Rahen, provinces=3     — OK
+  M68 (unnamed):     NOT in regions_data, NOT in province_owners        — EXPECTED (unused tag)
+  H39 (Ozgarom):     region=Soruin, superregion=Effelai, provinces=0   — NOTE (a)
+  Z52 (Unguldavor):  region=Inner Castanor, superregion=Escann, prov=0 — NOTE (a)
+  G96 (Tholvis):     region=Trollsbay, superregion=Ruin Proper, prov=0 — NOTE (a)
+  I01 (Amldihr):     region=West Dwarovar, superregion=W.Serpentspine  — NOTE (a)
+  I38 (Beasteater):  region=West Deepwoods, superregion=Deepwoods, p=5 — OK
+  F96 (Xhurekal):    region=Far Bulwar, superregion=Bulwar, prov=0     — NOTE (a)
+  B79 (Jazhkredu):   NOT in regions_data, NOT in province_owners        — EXPECTED (unused tag)
+  I44 (Silvertusk):  region=East Deepwoods, superregion=Deepwoods, p=6 — OK
+  M72 (unnamed):     NOT in regions_data, NOT in province_owners        — EXPECTED (unused tag)
+  Y11 (Wudikmen):    region=Xianjie, superregion=Vimdatrong, prov=3    — OK
+  Y27 (Kohai):       region=Yanshen Coast, superregion=Yanshen, prov=5 — OK
+  B85 (Varlosen):    region=The Borders, superregion=Western Cannor     — NOTE (a)
+  U18 (Re-Uyel):     region=Bahar, superregion=Bulwar, prov=4          — OK
+
+NOTE (a): 467 of 1,271 countries have region data but 0 provinces in
+  province_owners.json. These are formable, releasable, or adventurer nations
+  that do not exist on the 1444 start date map. This is expected behavior —
+  province_owners.json only tracks start-date ownership.
+
+--- ISSUE 2.1: 11 countries with missions but NO region data
+  Severity: MEDIUM
+  These countries have mission trees but are missing from regions_data.json,
+  meaning the region/superregion pills in the UI will be blank:
+    H27 (Ynnic Empire):    213 missions — formable endgame tag
+    H21 (Eordand):         186 missions — formable endgame tag
+    I98 (Ves Udzenklan):    77 missions — formable
+    J33 (Kalsyto):          60 missions — formable
+    I89 (Khuraen Ulaeg):    52 missions — formable
+    U27 (Theanos):          46 missions — formable
+    H22 (Kheis):            37 missions — formable
+    Z97 (Ravelian State):   28 missions — formable
+    I99 (Nizhn Korvesto):   23 missions — formable
+    I94 (Desert Mane):      10 missions — formable
+    I97 (Vine Tearer):      10 missions — formable
+  Fix: Add these to regions_data.json with appropriate region/superregion
+    based on their capital or primary territory.
+
+--- ISSUE 2.2: 54 country tags not in regions_data.json at all
+  Severity: LOW (most are unused/internal tags with no missions)
+
+--- Province name coverage: GOOD
+  Tested 100 random missions for province IDs referenced in trigger_raw and
+  effect_raw: 0 province IDs missing from province_names.json.
+
+================================================================================
+CATEGORY 3: MODIFIER DISPLAY
+Sample: 30 random modifiers
+Issues: 2
+================================================================================
+
+Sample check results (30 modifiers):
+  - All 30 sampled modifiers have properly formatted names
+  - No color codes (section sign) found in the 30 samples
+  - Effect key names resolve correctly via EFFECT_NAMES in parse_modifiers.py
+  - Percentage formatting correct for standard modifiers
+  - Flat values (Global Settler Increase = +20) display correctly
+
+--- ISSUE 3.1: 592 modifiers still have EU4 color codes in their names
+  Severity: MEDIUM
+  File: modifiers_data.json (data source level)
+  These are primarily "Adventurers Wanted!" province modifiers using codes
+  like "section-Y(...) section-! section-g...section-! section-O...section-!"
+  The build_html.py modRef() function (line 3093) strips these at display time:
+    const name = rawName.replace(/section[A-Za-z!]/g, '');
+  So the DISPLAY is correct, but the raw data is noisy. These modifiers
+  show correctly in the UI because the strip happens at render time.
+  Status: Display is fine. Data-level cleanup would be nice but not critical.
+
+--- ISSUE 3.2: Liberty Desire and similar modifiers show extreme percentages
+  Severity: HIGH
+  File: modifiers_data.json (pre-computed by parse_modifiers.py)
+  424 modifiers have percentage values exceeding 500%.
+  Examples:
+    brambleskinner_loyal_vassal: Liberty Desire in Subjects = -5000%
+    bagcatir_vassal_rebellion:   Liberty Desire = -2500%
+    salla_cenag_heartsmitten:    Chance of New Heir = -100000%
+    I98_3015:                    Naval Morale = +75%  (this one is correct)
+  Root cause: In parse_modifiers.py, liberty_desire and heir_chance are in
+    the percent_keys set. EU4 stores these as whole numbers (e.g., -50 means
+    -50 liberty desire points), but format_value_nice() multiplies by 100,
+    producing -5000%. The game displays these as flat values (e.g., "-50").
+  Affected keys: liberty_desire, reduced_liberty_desire, heir_chance
+  Fix: Move liberty_desire, reduced_liberty_desire, and heir_chance out of
+    percent_keys in parse_modifiers.py, or add special-case handling to
+    treat them as flat values when abs(value) >= 1.
+
+================================================================================
+CATEGORY 4: UI / GRAMMAR / DISPLAY
+Issues: 5
+================================================================================
+
+--- ISSUE 4.1: Ko-fi button, credit line, played-country feature — ALL PRESENT
+  Status: PASS
+  - Ko-fi button: line 1144, CSS lines 104-128, mobile CSS line 951
+  - Credit line: "by Ijkee" at line 1142
+  - Played button: CSS lines 438-457, mobile CSS line 997
+  - Mark as Played toggle: JS at line 3287
+
+--- ISSUE 4.2: Mobile media query — comprehensive
+  Status: PASS
+  Single breakpoint at 768px (line 941) covers:
+  - Header resize, sidebar collapse with mobile-open toggle
+  - Detail header stacking, flag resize
+  - Tab navigation wrapping, mission grid adaptation
+  - Modal full-width, requirements/effects tighter spacing
+  - Map container height override
+  No additional breakpoints needed for typical phone/tablet sizes.
+
+--- ISSUE 4.3: Inconsistent capitalization in triggerToText display strings
+  Severity: LOW
+  Most entries use consistent sentence case ("Have at least", "Own all of").
+  A few entries use mixed patterns:
+  - "Be at war" vs "Be at peace" (consistent, OK)
+  - Generic fallthrough at line 2903: uses key.replace(/_/g, ' ') which
+    produces lowercase ("change trade goods: paper") instead of sentence
+    case. This is intentional for unknown keys but looks less polished.
+  - "Sailor Maintenance Modifer" (typo in EFFECT_NAMES in parse_modifiers.py
+    — "Modifer" should be "Modifier", line ~204 area of parse_modifiers.py)
+    This typo exists in the source data: key = "sailor_maintenance_modifer"
+    which is a typo in the EU4/Anbennar game files themselves.
+  Status: Acceptable. The typo is inherited from game data.
+
+--- ISSUE 4.4: negateCondition() has incomplete coverage
+  Severity: LOW
+  File: build_html.py lines 2045-2059
+  The negation function handles common patterns but falls back to "Not: " +
+  text for unmatched patterns. This is functional but produces less readable
+  output like "Not: Has reform: example reform" instead of "Does not have
+  reform: example reform". Covers the most frequent cases adequately.
+
+--- ISSUE 4.5: Hardcoded depth limit of 5 in parser
+  Severity: LOW
+  File: build_html.py line 1939: "if (depth <= 5)"
+  Deeply nested triggers (>5 levels) are silently dropped. Most EU4 mission
+  triggers stay within 4-5 levels, but complex conditionals (like mission 10
+  in the sample with DLC checks) can go deeper.
+  Impact: Some deeply nested conditions in ~5-10% of complex missions may
+  be silently truncated. The depth limit prevents runaway parsing and the
+  output cap of 50 items (line 2042) provides additional safety.
+
+================================================================================
+CATEGORY 5: DATA COMPLETENESS
+Issues: 2
+================================================================================
+
+Overall Statistics:
+  Countries in dataset:         1,271
+  Countries with missions:        386 (30.4%)
+  Countries without missions:     885 (69.6%)
+  Countries with no name:          29 (unused/internal tags)
+  Countries with lore but no missions: 0
+
+Mission Statistics:
+  Total missions:              12,291
+  Missions with empty trigger_raw:  22 (0.18%)
+  Missions with empty effect_raw:   19 (0.15%)
+  Missions with both empty:         14 (0.11%)
+  (These are typically placeholder or auto-complete missions)
+
+Province Coverage:
+  Province names:               6,687
+  Province owners (start date):   804 countries with starting provinces
+  No missing province references found in 100-mission sample
+
+Event Names:
+  Total event names:            17,030
+  Event IDs in mission effects:  3,388 unique
+  Found in event_names.json:     3,318 (97.9%)
+  Missing from event_names.json:    70 (2.1%)
+
+--- ISSUE 5.1: 70 event IDs referenced in mission effects not in event_names.json
+  Severity: LOW
+  These events are referenced in effect_raw (via country_event = { id = ... })
+  but have no entry in event_names.json. They appear to be primarily from
+  the G62 (one country's) event namespace:
+    G62_events.1, G62_events.2, G62_events.3, G62_events.4, G62_events.10,
+    G62_events.11, G62_events.12, G62_events.13, G62_events.15, G62_events.18
+    ... (and ~60 more from various namespaces)
+  Impact: When these events are triggered as mission effects, the event name
+  tooltip will show the raw ID instead of a human-readable title.
+  Fix: Re-run event name extraction to pick up these 70 events.
+
+--- ISSUE 5.2: Great projects coverage is adequate
+  Status: PASS
+  170 great project names in great_projects.json.
+  166 missions reference has_great_project in triggers.
+  26 missions use add_great_project in effects.
+  The GREAT_PROJECTS lookup in build_html.py correctly resolves project names.
+
+================================================================================
+SUMMARY OF ORIGINAL AUDIT FIXES (verified)
+================================================================================
+
+Issue #1 (num_of_provinces_owned_*_subjects_with null mapping):     FIXED
+Issue #2 (extractProvConditions missing qualifiers):                 FIXED (all 12 sub-items)
+Issue #3A (SKIP_KEYS additions):                                     FIXED
+Issue #3B (trigger keys: republican_tradition, legitimacy_equivalent,
+  religion_group, num_free_building_slots, ruler_has_mage_personality,
+  owned_by_subject_of, overlord_of):                                 FIXED
+Issue #3C (scope openers: all_country, all_province):                FIXED
+Issue #3D (Anbennar custom: high/medium/low_tolerance_race_trigger,
+  mission_faction_trigger, trading_policy_in_node,
+  taychend_hero_cult_has_passed_reform, have_cast_magnificent_feast,
+  _ideas pattern):                                                   FIXED
+Issue #3E (always = null):                                           FIXED
+Issue #4 (development_in_provinces qualifiers):                      FIXED
+Issue #5 (complex country tag scopes):                               PARTIALLY FIXED
+  (many common patterns added; some complex nested conditions still drop)
+
+================================================================================
+NEW ISSUES FOUND (this audit)
+================================================================================
+
+HIGH:
+  3.2  Liberty Desire / heir_chance modifiers show extreme percentages
+       (424 modifiers affected; parse_modifiers.py percent_keys miscategorization)
+
+MEDIUM:
+  1.1  calc_true_if global regex picks wrong amount for 2nd+ blocks
+       (103 missions with multiple calc_true_if blocks)
+  2.1  11 formable countries with missions have no region data
+       (742 total missions affected)
+
+LOW:
+  1.2  ~8 trigger keys still unhandled (vassal_of, hre_reform_passed,
+       trade_goods_produced_amount, investment, area_for_scope_province,
+       cavalry_in_province, attacker/defender_leader, lowercase 'or')
+  4.3  Minor capitalization inconsistency in generic fallthrough
+  4.4  negateCondition() incomplete coverage (falls back to "Not: " prefix)
+  4.5  Hardcoded depth limit of 5 may truncate deep nesting
+  5.1  70 event IDs missing from event_names.json
+
+INFO:
+  3.1  592 modifiers have EU4 color codes in raw data (display is stripped OK)
+
+OVERALL STATUS: ISSUES FOUND
+SUMMARY: Major improvements since original audit — all 5 original issues fixed
+or substantially addressed. Three new issues found: one HIGH (liberty desire
+percentage formatting in parse_modifiers.py), one MEDIUM (calc_true_if regex
+bug), and one MEDIUM (11 formable nations missing region data). The parser
+now handles the vast majority of EU4/Anbennar trigger and effect patterns.
+================================================================================

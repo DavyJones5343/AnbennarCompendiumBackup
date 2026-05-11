@@ -4,3 +4,7 @@ __pycache__/
 
 # Large source data files not needed for deployment are committed
 # since GitHub Pages serves them as static assets
+
+# Local IDE/agent config and debugging artifacts
+.claude/
+test_flag.png
