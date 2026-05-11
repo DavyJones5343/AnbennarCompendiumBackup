@@ -4424,6 +4424,7 @@ let geoHoverEl = null;
 let geoLoadingTimer = null;
 
 document.addEventListener('mouseenter', async (e) => {
+  if (!(e.target instanceof Element)) return;
   const ref = e.target.closest('.geo-ref');
   if (!ref) return;
   geoHoverEl = ref;
@@ -4446,6 +4447,7 @@ document.addEventListener('mouseenter', async (e) => {
 }, true);
 
 document.addEventListener('mouseleave', (e) => {
+  if (!(e.target instanceof Element)) return;
   const ref = e.target.closest('.geo-ref');
   if (ref) {
     geoHoverEl = null;

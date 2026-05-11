@@ -8,3 +8,7 @@ __pycache__/
 # Local IDE/agent config and debugging artifacts
 .claude/
 test_flag.png
+
+# Pipeline / local server logs
+run_all.log
+server.log

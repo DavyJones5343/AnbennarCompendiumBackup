@@ -19,7 +19,7 @@ RELIGION_FILES = [
 ]
 OUTPUT_DIR = r"C:\Users\jjdeg\OneDrive\Desktop\anbennar-guide\religion_icons"
 
-NUM_FRAMES = 141
+NUM_FRAMES = 150
 OUTPUT_SIZE = 32  # Resize icons to 32x32
 
 
