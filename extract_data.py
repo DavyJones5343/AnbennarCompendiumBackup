@@ -20,6 +20,22 @@ def read_file(filepath):
             continue
     return None
 
+# Anbennar uses stand-in glyphs for Polynesian macron vowels + okina because
+# EU4's built-in fonts lack them. The mod remaps these via a custom font at
+# runtime; our extractor has to undo that mapping for display in the web UI.
+STANDIN_MAP = str.maketrans({
+    '€': 'ā',  # € -> ā
+    '‹': 'ū',  # ‹ -> ū
+    '‡': 'ō',  # ‡ -> ō
+    '•': 'Ā',  # • -> Ā (capital A with macron — Māori names like Āwhina)
+    # ‘ (U+2018) is left alone: 2380 uses in loc, almost all are English quotation marks
+})
+
+def normalize_text(val):
+    """Strip EU4 §-color codes and remap mod stand-in glyphs to real Unicode."""
+    val = re.sub(r'§[A-Za-z!]', '', val)
+    return val.translate(STANDIN_MAP)
+
 def parse_localisation(filepath):
     """Parse a .yml localisation file into a dict of key -> value."""
     loc = {}
@@ -34,9 +50,7 @@ def parse_localisation(filepath):
             m = re.match(r'\s*([^:]+):(\d*)\s+"(.*)"', line)
             if m:
                 key = m.group(1).strip()
-                val = m.group(3)
-                val = re.sub(r'§[A-Za-z!]', '', val)
-                loc[key] = val
+                loc[key] = normalize_text(m.group(3))
     except Exception:
         pass
     return loc

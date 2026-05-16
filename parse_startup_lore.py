@@ -38,8 +38,17 @@ for match in re.finditer(r'string_start_(\w+):\s*\d*\s*"(.+)"\s*$', content, re.
         continue
     descriptions[key] = match.group(2)
 
+# Anbennar stand-in glyphs -> real Unicode (see extract_data.py for context)
+STANDIN_MAP = str.maketrans({
+    '€': 'ā',  # € -> ā
+    '‹': 'ū',  # ‹ -> ū
+    '‡': 'ō',  # ‡ -> ō
+    '•': 'Ā',  # • -> Ā
+    # ‘ (U+2018) intentionally not mapped — overwhelmingly English left-quote
+})
+
 def clean_text(text):
-    text = re.sub(r'§[A-Za-z!]', '', text)
+    text = re.sub(r'§[A-Za-z!]', '', text).translate(STANDIN_MAP)
     text = text.replace('\\n', '\n')
     text = text.replace('\\"', '"')
     text = re.sub(r'£\w+£', '', text)

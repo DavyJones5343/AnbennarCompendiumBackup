@@ -1175,6 +1175,7 @@ body {
       <button class="filter-btn" data-filter="playable">Playable 1444</button>
       <button class="filter-btn" data-filter="formable">Formable</button>
       <button class="filter-btn" data-filter="missions">Has Missions</button>
+      <button class="filter-btn" data-filter="event-spawned" title="Nations not on the map at 1444 — spawned later via events (e.g. Crown of Bera nations like Jarvema, Cagodor)">Event-Spawned</button>
       <button class="filter-btn" data-filter="played">Played</button>
       <button class="filter-btn" data-filter="unplayed">Unplayed</button>
     </div>
@@ -1244,7 +1245,7 @@ async function loadData() {
   const el = document.getElementById('country-list');
   el.innerHTML = '<div class="loading">Loading data...</div>';
   try {
-    const v = '4';
+    const v = '__BUILD_VERSION__';
     const [d1, d2, d3, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15, d16, d17] = await Promise.all([
       fetch('anbennar_data.json?v='+v).then(r => r.json()),
       fetch('religions_data.json?v='+v).then(r => r.json()),
@@ -1475,8 +1476,15 @@ function updateFilterDropdowns() {
 function passesFilter(c) {
   if (activeFilters.size === 0) return true;
   const s = STATUS[c.tag] || {};
-  if (activeFilters.has('playable') && !(s.status === 'playable' || s.status === 'both')) return false;
-  if (activeFilters.has('formable') && !(s.status === 'formable' || s.status === 'both')) return false;
+  // Direct-lookup intent: when a search query is active, ignore the "what kind
+  // of nation" filters (playable/formable/event-spawned) so users can always
+  // find a specific tag by name. Independent qualifiers (missions/played) stay.
+  const hasSearch = document.getElementById('search-input').value.trim() !== '';
+  if (!hasSearch) {
+    if (activeFilters.has('playable') && !(s.status === 'playable' || s.status === 'both')) return false;
+    if (activeFilters.has('formable') && !(s.status === 'formable' || s.status === 'both')) return false;
+    if (activeFilters.has('event-spawned') && !(s.status === 'other' && (s.provinces_owned || 0) === 0 && c.events && c.events.length > 0)) return false;
+  }
   if (activeFilters.has('missions') && !(c.missions && c.missions.length > 0)) return false;
   if (activeFilters.has('played') && !PLAYED.has(c.tag)) return false;
   if (activeFilters.has('unplayed') && PLAYED.has(c.tag)) return false;
@@ -1492,13 +1500,17 @@ function applyFilters() {
   const gov = document.getElementById('gov-select').value;
 
   let scored = [];
+  const hasSearch = query.length > 0;
+  const eventSpawnedActive = activeFilters.has('event-spawned');
   countries.forEach(c => {
-    // By default hide countries with no wiki, no missions, no ideas
+    // By default hide countries with no wiki, no missions, no ideas — but allow
+    // them through when the user is searching directly or asking specifically
+    // for event-spawned nations (which often have none of those by design).
     const w = WIKI[c.tag];
     const hasWiki = w && w.found && (w.page_size || w.page_length || 0) > 500;
     const hasMissions = c.missions && c.missions.length > 0;
     const hasIdeas = c.ideas && c.ideas.ideas && c.ideas.ideas.length > 0;
-    if (!hasWiki && !hasMissions && !hasIdeas) return;
+    if (!hasWiki && !hasMissions && !hasIdeas && !hasSearch && !eventSpawnedActive) return;
 
     if (!passesFilter(c)) return;
 
@@ -4461,6 +4473,10 @@ document.addEventListener('DOMContentLoaded', loadData);
 </script>
 </body>
 </html>'''
+
+    # Auto-stamp cache-bust version so each build invalidates browser cache
+    import time
+    html = html.replace('__BUILD_VERSION__', str(int(time.time())))
 
     output_path = r'C:\Users\jjdeg\OneDrive\Desktop\anbennar-guide\index.html'
     with open(output_path, 'w', encoding='utf-8') as f:
