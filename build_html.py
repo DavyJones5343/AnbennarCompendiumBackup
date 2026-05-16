@@ -1293,6 +1293,20 @@ function titleCase(s) {
   return s.replace(/\b\w/g, c => c.toUpperCase());
 }
 
+// EU4 building internal names -> display names (sourced from base game loc).
+// Fort centuries are particularly confusing when rendered as "fort 15th".
+const BUILDING_NAMES = {
+  fort_15th: 'Castle',
+  fort_16th: 'Bastion',
+  fort_17th: 'Star Fort',
+  fort_18th: 'Fortress',
+};
+function humanizeBuildingName(key) {
+  if (!key) return '';
+  if (BUILDING_NAMES[key]) return BUILDING_NAMES[key];
+  return titleCase(key.replace(/_/g, ' '));
+}
+
 function levenshtein(a, b) {
   if (a.length === 0) return b.length;
   if (b.length === 0) return a.length;
@@ -2632,7 +2646,7 @@ function triggerToText(key, val) {
     'army_professionalism': `Army professionalism at least <span class="val">${(parseFloat(val)*100).toFixed(0)}%</span>`,
     'overextension_percentage': `Overextension below <span class="val">${(parseFloat(val)*100).toFixed(0)}%</span>`,
     'religious_unity': `Religious unity at least <span class="val">${(parseFloat(val)*100).toFixed(0)}%</span>`,
-    'add_building_construction': (() => { const bm = val.match(/building\s*=\s*(\w+)/); return bm ? `Begin constructing <span class="tag">${bm[1].replace(/_/g, ' ')}</span>` : 'Begin building construction'; })(),
+    'add_building_construction': (() => { const bm = val.match(/building\s*=\s*(\w+)/); if (!bm) return 'Begin building construction'; const name = humanizeBuildingName(bm[1]); return `Begin constructing <span class="tag">${name}</span>`; })(),
     'add_siberian_construction': `Add <span class="val">${val}</span> colonist progress`,
     // Effects identified by audit
     'add_stability_or_adm_power': 'Add <span class="val">1</span> stability (or <span class="val">100</span> admin power if at 3)',
