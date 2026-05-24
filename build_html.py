@@ -1804,7 +1804,13 @@ function resolveGameText(text) {
     .replace(/\[Root\.Capital\.GetName\]/gi, 'our capital')
     .replace(/\[Root\.GovernmentName\]/gi, 'our government')
     .replace(/\[Root\.GetSelectableMissionTitle\]/gi, '')
-    // Strip remaining bracket references
+    // [Root.ideas_<name>] resolves to the idea group's display name in-game.
+    // For static rendering, humanize the snake_case key — e.g.
+    // "[Root.ideas_melting_pot]" -> "Melting Pot" (used as mission title
+    // by LakeFederation/Triunic shared missions).
+    .replace(/\[Root\.ideas_([\w]+)\]/gi, (_m, key) => titleCase(key.replace(/_/g, ' ')))
+    // Strip remaining bracket references (these are runtime-only refs we
+    // can't resolve statically — leaving them in produces visible noise)
     .replace(/\[Root\.[\w.]+\]/gi, '')
     .replace(/\[\w+\.[\w.]+\]/gi, '')
     .replace(/\[[\w.]+\]/g, '')
@@ -3327,7 +3333,7 @@ function selectCountry(tag) {
     <img class="flag" src="flags/${tag}.png" onerror="this.style.display='none'">
     <div class="info">
       <h2>${esc(c.name)}</h2>
-      <div class="tag-adj"><span class="color-dot" style="background:${color}"></span> ${tag} &middot; ${esc(c.adjective || '')}</div>
+      <div class="tag-adj"><span class="color-dot" style="background:${color}"></span> ${tag}${c.adjective && c.adjective.trim() && c.adjective !== c.name ? ' &middot; ' + esc(c.adjective) : ''}</div>
       <div class="pills">
         ${statusHtml}
         <span class="pill pill-gov clickable" onclick="setGovernmentFilter('${esc(c.government || '')}')">${esc(titleCase(c.government) || 'Unknown')}</span>
