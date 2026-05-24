@@ -215,12 +215,15 @@ def main():
             formables[tag] = info
     print(f"  Found {len(mission_formables)} formable nations (missions), {len(formables)} total")
 
-    print("Parsing formable events...")
-    event_formables = parse_formable_events()
-    for tag, info in event_formables.items():
-        if tag not in formables:
-            formables[tag] = info
-    print(f"  Found {len(event_formables)} formable nations (events), {len(formables)} total")
+    # NOTE: We deliberately do NOT merge parse_formable_events() into the
+    # formables set. In EU4, "formable" means *forms via a decision*. A
+    # `change_tag = X` in an event is just a story-driven tag swap (e.g.
+    # the Jianlin Independence event, Crown of Bera releases) — those
+    # countries should fall through to status='other' and surface via the
+    # Event-Spawned UI filter, not be falsely labelled "Formable".
+    # Reported by a user finding Jianlin (V22) wrongly labelled formable;
+    # affected ~20 nations including Eordand, Pearlsedge, Moredhal,
+    # Khasa, Konolkhatep, Maakhibkhii, Salla Cenág.
 
     # Build output
     result = {}

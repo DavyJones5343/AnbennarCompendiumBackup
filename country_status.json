@@ -60,10 +60,10 @@
     "formable_decision": null
   },
   "A11": {
-    "status": "both",
+    "status": "playable",
     "provinces_owned": 7,
-    "formable_from": "Flavour_Woodwell_A88.txt",
-    "formable_decision": "event in Flavour_Woodwell_A88.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "A12": {
     "status": "playable",
@@ -966,10 +966,10 @@
     "formable_decision": null
   },
   "B62": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "EscanniWars.txt",
-    "formable_decision": "event in EscanniWars.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "B63": {
     "status": "other",
@@ -990,10 +990,10 @@
     "formable_decision": null
   },
   "B66": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "Flavour_Bennon_A39.txt",
-    "formable_decision": "event in Flavour_Bennon_A39.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "B67": {
     "status": "other",
@@ -1410,10 +1410,10 @@
     "formable_decision": null
   },
   "F57": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "Group_Flavour_Akan.txt",
-    "formable_decision": "event in Group_Flavour_Akan.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "F58": {
     "status": "formable",
@@ -1458,10 +1458,10 @@
     "formable_decision": null
   },
   "F66": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "Flavour_Gnollakaz_U09.txt",
-    "formable_decision": "event in Flavour_Gnollakaz_U09.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "F67": {
     "status": "other",
@@ -1590,10 +1590,10 @@
     "formable_decision": null
   },
   "F88": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "Flavour_Gelkalis.txt",
-    "formable_decision": "event in Flavour_Gelkalis.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "F89": {
     "status": "other",
@@ -1662,10 +1662,10 @@
     "formable_decision": null
   },
   "G00": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "Flavour_Ameion_G52.txt",
-    "formable_decision": "event in Flavour_Ameion_G52.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "G01": {
     "status": "playable",
@@ -2364,10 +2364,10 @@
     "formable_decision": null
   },
   "H21": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "Flavour_Eordand.txt",
-    "formable_decision": "event in Flavour_Eordand.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "H22": {
     "status": "formable",
@@ -3012,10 +3012,10 @@
     "formable_decision": null
   },
   "I29": {
-    "status": "both",
+    "status": "playable",
     "provinces_owned": 4,
-    "formable_from": "Flavour_Salla_Ayeth_I33.txt",
-    "formable_decision": "event in Flavour_Salla_Ayeth_I33.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "I30": {
     "status": "playable",
@@ -3750,10 +3750,10 @@
     "formable_decision": null
   },
   "J53": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "Flavour_Lake_Splinters_JXX.txt",
-    "formable_decision": "event in Flavour_Lake_Splinters_JXX.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "J54": {
     "status": "formable",
@@ -4134,10 +4134,10 @@
     "formable_decision": null
   },
   "L28": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "KhetMandateEvents.txt",
-    "formable_decision": "event in KhetMandateEvents.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "L29": {
     "status": "formable",
@@ -5460,16 +5460,16 @@
     "formable_decision": null
   },
   "N78": {
-    "status": "both",
+    "status": "playable",
     "provinces_owned": 4,
-    "formable_from": "Flavour_Nispac_N78.txt",
-    "formable_decision": "event in Flavour_Nispac_N78.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "N79": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "Flavour_Nispac_N78.txt",
-    "formable_decision": "event in Flavour_Nispac_N78.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "N80": {
     "status": "playable",
@@ -6326,7 +6326,7 @@
   "R86": {
     "status": "formable",
     "provinces_owned": 0,
-    "formable_from": "YinquanDecisions.txt",
+    "formable_from": "HalessFormables.txt",
     "formable_decision": "Y26_form_lingyuk"
   },
   "R87": {
@@ -6810,10 +6810,10 @@
     "formable_decision": "amiratsamo_nation"
   },
   "S78": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "RintaSeekerEvents.txt",
-    "formable_decision": "event in RintaSeekerEvents.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "S79": {
     "status": "formable",
@@ -7530,16 +7530,16 @@
     "formable_decision": null
   },
   "V22": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "anb_beikling_events.txt",
-    "formable_decision": "event in anb_beikling_events.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "V23": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "anb_beikling_events.txt",
-    "formable_decision": "event in anb_beikling_events.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "V24": {
     "status": "playable",
@@ -7992,10 +7992,10 @@
     "formable_decision": null
   },
   "Y66": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "Flavour_Baihon_Xinh_Y97.txt",
-    "formable_decision": "event in Flavour_Baihon_Xinh_Y97.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "Y67": {
     "status": "other",
@@ -8196,10 +8196,10 @@
     "formable_decision": "form_one_xia"
   },
   "Z01": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "Flavour_OrdaAldresia_A77.txt",
-    "formable_decision": "event in Flavour_OrdaAldresia_A77.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "Z02": {
     "status": "playable",
@@ -8562,10 +8562,10 @@
     "formable_decision": null
   },
   "Z62": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "Flavour_Azkare_Y86.txt",
-    "formable_decision": "event in Flavour_Azkare_Y86.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "Z63": {
     "status": "formable",
@@ -8748,10 +8748,10 @@
     "formable_decision": null
   },
   "Z97": {
-    "status": "formable",
+    "status": "other",
     "provinces_owned": 0,
-    "formable_from": "Flavour_OrdaAldresia_A77.txt",
-    "formable_decision": "event in Flavour_OrdaAldresia_A77.txt"
+    "formable_from": null,
+    "formable_decision": null
   },
   "Z99": {
     "status": "formable",
