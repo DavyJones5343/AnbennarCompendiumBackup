@@ -960,6 +960,14 @@ body {
 /* RESPONSIVE */
 @media (max-width: 768px) {
   :root { --header-h: auto; }
+  /* Body must scroll on mobile — desktop locks it with overflow:hidden, but on
+     mobile the #layout height calc becomes invalid because --header-h is auto
+     (calc with non-length value falls through), breaking inner scroll regions.
+     Let the page itself scroll instead. */
+  html, body { overflow: auto; height: auto; min-height: 100vh; -webkit-overflow-scrolling: touch; }
+  #layout { height: auto; min-height: calc(100vh - 60px); }
+  #main { overflow-y: visible; }
+  #sidebar.mobile-open .country-list { -webkit-overflow-scrolling: touch; }
   #header {
     padding: 10px 16px;
     flex-wrap: wrap;
@@ -1176,6 +1184,7 @@ body {
       <button class="filter-btn" data-filter="formable">Formable</button>
       <button class="filter-btn" data-filter="missions">Has Missions</button>
       <button class="filter-btn" data-filter="event-spawned" title="Nations not on the map at 1444 — spawned later via events (e.g. Crown of Bera nations like Jarvema, Cagodor)">Event-Spawned</button>
+      <button class="filter-btn" data-filter="needs-lore" title="Countries with missions or tag-specific ideas authored but no startup lore in startup_lore.json — these are upstream content gaps where lore writers could contribute">Needs Lore</button>
       <button class="filter-btn" data-filter="played">Played</button>
       <button class="filter-btn" data-filter="unplayed">Unplayed</button>
     </div>
@@ -1500,6 +1509,15 @@ function passesFilter(c) {
     if (activeFilters.has('event-spawned') && !(s.status === 'other' && (s.provinces_owned || 0) === 0 && c.events && c.events.length > 0)) return false;
   }
   if (activeFilters.has('missions') && !(c.missions && c.missions.length > 0)) return false;
+  if (activeFilters.has('needs-lore')) {
+    // Has content (missions or tag-specific ideas) but no startup lore entry
+    const hasMissions = c.missions && c.missions.length > 0;
+    const tagIdeas = (c.ideas && c.ideas.ideas) ? c.ideas.ideas.filter(i => i && i.name && i.name.startsWith(c.tag + '_')).length : 0;
+    const hasContent = hasMissions || tagIdeas > 0;
+    const lore = STARTUP_LORE[c.tag];
+    const hasLore = !!(lore && lore.lore && lore.lore.trim());
+    if (!(hasContent && !hasLore)) return false;
+  }
   if (activeFilters.has('played') && !PLAYED.has(c.tag)) return false;
   if (activeFilters.has('unplayed') && PLAYED.has(c.tag)) return false;
   return true;
@@ -4122,7 +4140,11 @@ async function renderMap(tag) {
   const pw = maxX - minX, ph = maxY - minY;
   const centerX = (minX + maxX) / 2, centerY = (minY + maxY) / 2;
   const pad = 1.8;
-  mapScale = Math.min(cw / (pw * fitScale * pad), ch / (ph * fitScale * pad), 8);
+  // Cap was 8, but combined with fitScale (~0.23 for full-width container)
+  // that gave only ~1.8x effective zoom — tiny 1-province nations like P22
+  // Anatu'āgao or the M-block Polynesia tags rendered as ~30px specks.
+  // Bumping to 30 lets a single small province actually fill its frame.
+  mapScale = Math.min(cw / (pw * fitScale * pad), ch / (ph * fitScale * pad), 30);
   mapScale = Math.max(mapScale, 1);
   mapOffX = cw/2 - centerX * fitScale * mapScale;
   mapOffY = ch/2 - centerY * fitScale * mapScale;
