@@ -32,31 +32,23 @@ def parse_all_country_tags():
 
 def parse_province_owners():
     """
-    Parse all province history files to find initial owners.
-    Returns dict: tag -> number of provinces owned at start.
+    Parse all province history files to find owners at the 1444 bookmark.
+
+    Reads province_owners.json (produced by extract_province_owners.py) which
+    correctly applies all dated owner changes with date <= 1444.11.11.
+    Fixes a prior bug where this extractor stopped at the first date header
+    and used the initial top-level owner, missing pre-1444 transfers like
+    province 2732 (Kimanis) being moved from G61 to G47 on 1443.1.4.
     """
     owner_counts = defaultdict(int)
-    date_re = re.compile(r'^\d+\.\d+\.\d+\s*=')
-    owner_re = re.compile(r'^\s*owner\s*=\s*([A-Z][A-Z0-9]{2})')
-
-    for fname in os.listdir(PROVINCES_DIR):
-        if not fname.endswith(".txt"):
-            continue
-        fpath = os.path.join(PROVINCES_DIR, fname)
-        try:
-            with open(fpath, "r", encoding="utf-8-sig", errors="replace") as f:
-                initial_owner = None
-                for line in f:
-                    # Stop looking once we hit a date header
-                    if date_re.match(line.strip()):
-                        break
-                    m = owner_re.match(line)
-                    if m:
-                        initial_owner = m.group(1)
-                if initial_owner:
-                    owner_counts[initial_owner] += 1
-        except Exception as e:
-            print(f"  Warning: could not parse {fname}: {e}")
+    po_path = os.path.join(os.path.dirname(__file__), "province_owners.json")
+    if not os.path.exists(po_path):
+        print(f"  Warning: {po_path} not found — run extract_province_owners.py first")
+        return owner_counts
+    with open(po_path, "r", encoding="utf-8") as f:
+        tag_to_provs = json.load(f)
+    for tag, provs in tag_to_provs.items():
+        owner_counts[tag] = len(provs)
 
     return dict(owner_counts)
 

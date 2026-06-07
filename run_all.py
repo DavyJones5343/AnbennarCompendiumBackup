@@ -23,11 +23,11 @@ def run(script_name, desc):
 
 STEPS = [
     ("extract_data.py",             "Extract country data (tags, ideas, missions, religions)"),
+    ("extract_province_owners.py",  "Extract province ownership (must run before formables)"),
     ("extract_formables.py",        "Extract formable/playable nation status"),
     ("extract_areas.py",            "Extract areas and regions"),
     ("extract_diplomacy.py",        "Extract diplomatic relationships"),
     ("extract_province_details.py", "Extract province details"),
-    ("extract_province_owners.py",  "Extract province ownership"),
     ("extract_province_names.py",   "Extract province names (base EU4 + Anbennar)"),
     ("extract_triggers.py",         "Extract mission triggers and effects"),
     ("extract_extras.py",           "Extract government reforms and region mapping"),

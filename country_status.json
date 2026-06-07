@@ -151,13 +151,13 @@
   },
   "A26": {
     "status": "playable",
-    "provinces_owned": 12,
+    "provinces_owned": 13,
     "formable_from": null,
     "formable_decision": null
   },
   "A27": {
     "status": "playable",
-    "provinces_owned": 17,
+    "provinces_owned": 16,
     "formable_from": null,
     "formable_decision": null
   },
@@ -1915,13 +1915,13 @@
   },
   "G46": {
     "status": "playable",
-    "provinces_owned": 7,
+    "provinces_owned": 11,
     "formable_from": null,
     "formable_decision": null
   },
   "G47": {
     "status": "playable",
-    "provinces_owned": 7,
+    "provinces_owned": 10,
     "formable_from": null,
     "formable_decision": null
   },
@@ -1951,7 +1951,7 @@
   },
   "G52": {
     "status": "playable",
-    "provinces_owned": 7,
+    "provinces_owned": 14,
     "formable_from": null,
     "formable_decision": null
   },
@@ -2004,8 +2004,8 @@
     "formable_decision": null
   },
   "G61": {
-    "status": "playable",
-    "provinces_owned": 7,
+    "status": "other",
+    "provinces_owned": 0,
     "formable_from": null,
     "formable_decision": null
   },
@@ -2083,7 +2083,7 @@
   },
   "G74": {
     "status": "playable",
-    "provinces_owned": 5,
+    "provinces_owned": 2,
     "formable_from": null,
     "formable_decision": null
   },
@@ -2095,7 +2095,7 @@
   },
   "G76": {
     "status": "playable",
-    "provinces_owned": 4,
+    "provinces_owned": 3,
     "formable_from": null,
     "formable_decision": null
   },
@@ -2125,13 +2125,13 @@
   },
   "G81": {
     "status": "playable",
-    "provinces_owned": 5,
+    "provinces_owned": 4,
     "formable_from": null,
     "formable_decision": null
   },
   "G82": {
     "status": "playable",
-    "provinces_owned": 4,
+    "provinces_owned": 2,
     "formable_from": null,
     "formable_decision": null
   },
