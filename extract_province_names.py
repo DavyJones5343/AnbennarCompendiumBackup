@@ -3,31 +3,10 @@ import os
 import re
 import json
 
-EU4_PATH = r"C:\Program Files (x86)\Steam\steamapps\common\Europa Universalis IV"
-MOD_PATH = r"C:\Program Files (x86)\Steam\steamapps\workshop\content\236850\1385440355"
+from anb_common import EU4_PATH, MOD_PATH, read_file, normalize_text
+
 OUTPUT = os.path.join(os.path.dirname(__file__), "province_names.json")
-
-ENCODINGS = ["utf-8-sig", "utf-8", "latin-1", "cp1252"]
 PROV_RE = re.compile(r'\s*PROV(\d+):\d*\s+"(.*)"')
-
-# Anbennar stand-in glyphs -> real Unicode (see extract_data.py for context)
-STANDIN_MAP = str.maketrans({
-    '€': 'ā',  # € -> ā
-    '‹': 'ū',  # ‹ -> ū
-    '‡': 'ō',  # ‡ -> ō
-    '•': 'Ā',  # • -> Ā
-    # ‘ (U+2018) intentionally not mapped — overwhelmingly English left-quote
-})
-
-
-def read_file(filepath):
-    for enc in ENCODINGS:
-        try:
-            with open(filepath, "r", encoding=enc) as f:
-                return f.read()
-        except (UnicodeDecodeError, UnicodeError):
-            continue
-    return None
 
 
 def scan_loc_dir(loc_dir, province_names, label):
@@ -49,8 +28,7 @@ def scan_loc_dir(loc_dir, province_names, label):
                 m = PROV_RE.match(line)
                 if m:
                     prov_id, name = m.group(1), m.group(2)
-                    name = re.sub(r"§[A-Za-z!]", "", name).translate(STANDIN_MAP)
-                    province_names[prov_id] = name
+                    province_names[prov_id] = normalize_text(name)
                     added += 1
     print(f"  [{label}] scanned {loc_dir} ({added} entries)")
     return added

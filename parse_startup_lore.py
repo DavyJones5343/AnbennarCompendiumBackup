@@ -5,7 +5,8 @@ import os
 import unicodedata
 import glob
 
-MOD_PATH = r"C:\Program Files (x86)\Steam\steamapps\workshop\content\236850\1385440355"
+from anb_common import MOD_PATH, read_file, normalize_text
+
 LOC_DIR = os.path.join(MOD_PATH, "localisation")
 OUTPUT = os.path.join(os.path.dirname(__file__), "startup_lore.json")
 
@@ -19,19 +20,10 @@ with open(REGIONS_FILE, 'r', encoding='utf-8') as f:
 
 tag_to_name = {tag: info.get('name', '') for tag, info in data.items()}
 
-# Read ALL localisation files (same encoding-fallback chain as the other extractors)
-def read_loc_file(path):
-    for enc in ('utf-8-sig', 'utf-8', 'latin-1', 'cp1252'):
-        try:
-            with open(path, 'r', encoding=enc) as f:
-                return f.read()
-        except (UnicodeDecodeError, UnicodeError):
-            continue
-    return ""
-
+# Read ALL localisation files (shared encoding-fallback chain)
 content = ""
 for yml_file in glob.glob(os.path.join(LOC_DIR, "*_l_english.yml")):
-    content += read_loc_file(yml_file) + "\n"
+    content += (read_file(yml_file) or "") + "\n"
 
 # Parse titles and descriptions from all files
 titles = {}
@@ -46,17 +38,8 @@ for match in re.finditer(r'string_start_(\w+):\s*\d*\s*"(.+)"\s*$', content, re.
         continue
     descriptions[key] = match.group(2)
 
-# Anbennar stand-in glyphs -> real Unicode (see extract_data.py for context)
-STANDIN_MAP = str.maketrans({
-    '€': 'ā',  # € -> ā
-    '‹': 'ū',  # ‹ -> ū
-    '‡': 'ō',  # ‡ -> ō
-    '•': 'Ā',  # • -> Ā
-    # ‘ (U+2018) intentionally not mapped — overwhelmingly English left-quote
-})
-
 def clean_text(text):
-    text = re.sub(r'§[A-Za-z!]', '', text).translate(STANDIN_MAP)
+    text = normalize_text(text)
     text = text.replace('\\n', '\n')
     text = text.replace('\\"', '"')
     text = re.sub(r'£\w+£', '', text)

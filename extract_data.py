@@ -14,33 +14,7 @@ from collections import defaultdict
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
-MOD = r"C:\Program Files (x86)\Steam\steamapps\workshop\content\236850\1385440355"
-
-def read_file(filepath):
-    """Read a file with multiple encoding fallbacks."""
-    for enc in ['utf-8-sig', 'utf-8', 'latin-1', 'cp1252']:
-        try:
-            with open(filepath, 'r', encoding=enc) as f:
-                return f.read()
-        except UnicodeDecodeError:
-            continue
-    return None
-
-# Anbennar uses stand-in glyphs for Polynesian macron vowels + okina because
-# EU4's built-in fonts lack them. The mod remaps these via a custom font at
-# runtime; our extractor has to undo that mapping for display in the web UI.
-STANDIN_MAP = str.maketrans({
-    '€': 'ā',  # € -> ā
-    '‹': 'ū',  # ‹ -> ū
-    '‡': 'ō',  # ‡ -> ō
-    '•': 'Ā',  # • -> Ā (capital A with macron — Māori names like Āwhina)
-    # ‘ (U+2018) is left alone: 2380 uses in loc, almost all are English quotation marks
-})
-
-def normalize_text(val):
-    """Strip EU4 §-color codes and remap mod stand-in glyphs to real Unicode."""
-    val = re.sub(r'§[A-Za-z!]', '', val)
-    return val.translate(STANDIN_MAP)
+from anb_common import MOD_PATH as MOD, read_file, normalize_text
 
 def parse_localisation(filepath):
     """Parse a .yml localisation file into a dict of key -> value."""
@@ -840,7 +814,8 @@ def main():
             'mission_count': len(missions),
             'decisions': decisions,
             'decision_count': len(decisions),
-            'events': events,
+            # Full event objects were 26 MB (54% of the JSON) and the UI only
+            # ever used the count — keep the count, drop the bodies.
             'event_count': len(events),
             'has_flag': flag_exists,
         }

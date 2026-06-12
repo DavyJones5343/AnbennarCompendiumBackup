@@ -9,14 +9,15 @@
 <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Cinzel+Decorative:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0e0e12;
-  --card: #16161e;
+  --bg: #0c0c10;
+  --card: #14141c;
   --card-hover: #1c1c28;
-  --border: #2a2a35;
+  --border: #262633;
+  --border-soft: #1e1e2a;
   --gold: #c9a84c;
   --gold-dim: #8a7333;
   --gold-bright: #e8c84a;
-  --text: #d4d4e0;
+  --text: #dcdce6;
   --text-secondary: #9e9eb0;
   --text-muted: #5e5e70;
   --green: #4aba6a;
@@ -26,17 +27,35 @@
   --parchment: #1a1710;
   --sidebar-w: 320px;
   --header-h: 80px;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-pop: 0 8px 28px rgba(0,0,0,0.55);
+  --ring-gold: 0 0 0 3px rgba(201,168,76,0.18);
+  --ease: cubic-bezier(0.25, 0.8, 0.35, 1);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: 'Lora', Georgia, serif;
-  background: var(--bg);
+  background:
+    radial-gradient(1200px 500px at 75% -10%, rgba(201,168,76,0.045), transparent 60%),
+    radial-gradient(900px 600px at -10% 110%, rgba(91,155,213,0.035), transparent 55%),
+    var(--bg);
   color: var(--text);
   min-height: 100vh;
   overflow: hidden;
 }
+
+/* Global slim scrollbars, gold-tinted on hover */
+* { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; border: 2px solid transparent; background-clip: content-box; }
+*::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); background-clip: content-box; }
+
+::selection { background: rgba(201,168,76,0.3); }
 
 /* HEADER */
 #header {
@@ -133,17 +152,18 @@ body {
 }
 #search-input {
   width: 100%;
-  padding: 8px 12px;
-  background: #0e0e12;
-  border: 1px solid var(--gold-dim);
-  border-radius: 4px;
+  padding: 9px 14px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid var(--border);
+  border-radius: 999px;
   color: var(--text);
   font-family: 'Lora', serif;
   font-size: 13px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s var(--ease);
 }
-#search-input:focus { border-color: var(--gold); }
+#search-input:hover { border-color: var(--gold-dim); }
+#search-input:focus { border-color: var(--gold); box-shadow: var(--ring-gold); background: rgba(0,0,0,0.5); }
 #search-input::placeholder { color: var(--text-muted); }
 
 #filters {
@@ -154,18 +174,24 @@ body {
   gap: 4px;
 }
 .filter-btn {
-  padding: 3px 10px;
+  padding: 4px 12px;
   font-size: 11px;
   font-family: 'Lora', serif;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  background: transparent;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.02);
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.18s var(--ease);
 }
-.filter-btn:hover { border-color: var(--gold-dim); color: var(--text); }
-.filter-btn.active { background: var(--gold-dim); color: #fff; border-color: var(--gold); }
+.filter-btn:hover { border-color: var(--gold-dim); color: var(--text); background: rgba(201,168,76,0.06); transform: translateY(-1px); }
+.filter-btn.active {
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  color: #1a1508;
+  font-weight: 600;
+  border-color: var(--gold);
+  box-shadow: 0 2px 8px rgba(201,168,76,0.25);
+}
 
 #region-filter {
   padding: 8px 12px;
@@ -176,15 +202,21 @@ body {
 }
 .filter-select {
   width: 100%;
-  padding: 6px 8px;
-  background: #0e0e12;
-  border: 1px solid var(--gold-dim);
-  border-radius: 4px;
+  padding: 7px 30px 7px 10px;
+  background: rgba(0,0,0,0.35) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a7333' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   color: var(--text);
   font-family: 'Lora', serif;
   font-size: 12px;
   outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
 }
+.filter-select:hover { border-color: var(--gold-dim); }
+.filter-select:focus { border-color: var(--gold); box-shadow: var(--ring-gold); }
 .filter-select option { background: var(--card); }
 #active-filters {
   padding: 4px 12px;
@@ -233,21 +265,28 @@ body {
 .country-item {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
+  padding: 8px 10px;
+  margin: 2px 8px;
   cursor: pointer;
-  border-bottom: 1px solid #1a1a24;
-  transition: background 0.15s;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid transparent;
+  transition: background 0.15s var(--ease), border-color 0.15s var(--ease);
   gap: 8px;
 }
 .country-item:hover { background: var(--card-hover); }
-.country-item.selected { background: #1e1a14; border-left: 3px solid var(--gold); }
+.country-item.selected {
+  background: linear-gradient(90deg, rgba(201,168,76,0.12), rgba(201,168,76,0.03));
+  border-left-color: var(--gold);
+}
 .country-item img.flag {
   width: 32px; height: 32px;
   image-rendering: pixelated;
   border: 1px solid var(--border);
-  border-radius: 2px;
+  border-radius: 4px;
   flex-shrink: 0;
+  transition: border-color 0.15s var(--ease);
 }
+.country-item:hover img.flag, .country-item.selected img.flag { border-color: var(--gold-dim); }
 .country-item .name {
   flex: 1;
   font-size: 13px;
@@ -341,7 +380,11 @@ body {
 
 /* COUNTRY DETAIL */
 #detail { display: none; }
-#detail.visible { display: block; }
+#detail.visible { display: block; animation: detailIn 0.3s var(--ease); }
+@keyframes detailIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
 
 .detail-header {
   display: flex;
@@ -353,9 +396,10 @@ body {
   width: 80px; height: 80px;
   image-rendering: pixelated;
   border: 2px solid var(--gold-dim);
-  border-radius: 4px;
+  border-radius: var(--radius);
   flex-shrink: 0;
   background: #111;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 0 24px rgba(201,168,76,0.08);
 }
 .detail-header .info h2 {
   font-family: 'IM Fell English SC', serif;
@@ -418,7 +462,7 @@ body {
   margin-top: 10px;
   transition: all 0.2s;
 }
-.wiki-btn:hover { background: #2a2518; border-color: var(--gold); }
+.wiki-btn:hover { background: #2a2518; border-color: var(--gold); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.35); }
 .played-btn {
   display: inline-flex;
   align-items: center;
@@ -516,6 +560,7 @@ body {
   margin-bottom: 16px;
 }
 .tab-btn {
+  position: relative;
   padding: 10px 20px;
   background: transparent;
   border: none;
@@ -523,13 +568,23 @@ body {
   font-size: 14px;
   color: var(--text-muted);
   cursor: pointer;
-  border-bottom: 2px solid transparent;
   margin-bottom: -2px;
-  transition: all 0.2s;
+  transition: color 0.2s var(--ease);
   letter-spacing: 1px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
-.tab-btn:hover { color: var(--text-secondary); }
-.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  left: 50%; right: 50%; bottom: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--gold);
+  transition: left 0.22s var(--ease), right 0.22s var(--ease);
+}
+.tab-btn:hover { color: var(--text-secondary); background: rgba(255,255,255,0.02); }
+.tab-btn.active { color: var(--gold); }
+.tab-btn.active::after { left: 12px; right: 12px; }
 .tab-btn .count {
   font-family: monospace;
   font-size: 10px;
@@ -631,8 +686,8 @@ body {
   gap: 2px;
   position: relative;
 }
-.mission-node:hover { transform: scale(1.05); }
-.mission-node:hover .mission-icon { border-color: var(--blue); box-shadow: 0 0 8px rgba(91,155,213,0.3); }
+.mission-node:hover { transform: translateY(-3px) scale(1.04); }
+.mission-node:hover .mission-icon { border-color: var(--blue); box-shadow: 0 6px 16px rgba(0,0,0,0.4), 0 0 12px rgba(91,155,213,0.35); }
 .mission-node.selected .mission-icon { border-color: var(--gold); box-shadow: 0 0 10px rgba(201,168,76,0.4); }
 .mission-node .mission-icon {
   width: 52px; height: 52px;
@@ -701,15 +756,21 @@ body {
   position: fixed;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  background: var(--card);
-  border: 2px solid var(--gold-dim);
-  border-radius: 8px;
+  background: linear-gradient(180deg, #181820, var(--card));
+  border: 1px solid var(--gold-dim);
+  border-radius: 14px;
   padding: 24px;
   z-index: 1000;
   max-width: 600px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
+  box-shadow: var(--shadow-pop), 0 0 60px rgba(201,168,76,0.06);
+  animation: modalIn 0.22s var(--ease);
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translate(-50%, -48%) scale(0.97); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 #mission-modal.visible { display: block; }
 #mission-modal .close-btn {
@@ -1238,7 +1299,7 @@ async function loadData() {
   const el = document.getElementById('country-list');
   el.innerHTML = '<div class="loading">Loading data...</div>';
   try {
-    const v = '1781262759';
+    const v = '1781263211';
     const [d1, d2, d3, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15, d16, d17] = await Promise.all([
       fetch('anbennar_data.json?v='+v).then(r => r.json()),
       fetch('religions_data.json?v='+v).then(r => r.json()),
@@ -1490,7 +1551,7 @@ function passesFilter(c) {
   if (!hasSearch) {
     if (activeFilters.has('playable') && !(s.status === 'playable' || s.status === 'both')) return false;
     if (activeFilters.has('formable') && !(s.status === 'formable' || s.status === 'both')) return false;
-    if (activeFilters.has('event-spawned') && !(s.status === 'other' && (s.provinces_owned || 0) === 0 && c.events && c.events.length > 0)) return false;
+    if (activeFilters.has('event-spawned') && !(s.status === 'other' && (s.provinces_owned || 0) === 0 && (c.event_count || 0) > 0)) return false;
   }
   if (activeFilters.has('missions') && !(c.missions && c.missions.length > 0)) return false;
   if (activeFilters.has('needs-lore')) {
