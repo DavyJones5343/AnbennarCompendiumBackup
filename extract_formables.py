@@ -153,39 +153,6 @@ def parse_formable_missions():
     return formables
 
 
-def parse_formable_events():
-    """
-    Parse event files for change_tag lines.
-    Returns dict: tag -> {"file": filename, "decision": event_name}
-    """
-    formables = {}
-    events_dir = os.path.join(MOD_PATH, "events")
-    change_tag_re = re.compile(r'\bchange_tag\s*=\s*([A-Z][A-Z0-9]{2})')
-
-    if not os.path.isdir(events_dir):
-        return formables
-
-    for fname in os.listdir(events_dir):
-        if not fname.endswith(".txt"):
-            continue
-        fpath = os.path.join(events_dir, fname)
-        try:
-            with open(fpath, "r", encoding="utf-8-sig", errors="replace") as f:
-                content = f.read()
-        except Exception:
-            continue
-
-        for m in change_tag_re.finditer(content):
-            tag = m.group(1)
-            if tag not in formables:
-                formables[tag] = {
-                    "file": fname,
-                    "decision": f"event in {fname}",
-                }
-
-    return formables
-
-
 def main():
     print("Parsing country tags...")
     all_tags = parse_all_country_tags()
@@ -207,15 +174,13 @@ def main():
             formables[tag] = info
     print(f"  Found {len(mission_formables)} formable nations (missions), {len(formables)} total")
 
-    # NOTE: We deliberately do NOT merge parse_formable_events() into the
-    # formables set. In EU4, "formable" means *forms via a decision*. A
-    # `change_tag = X` in an event is just a story-driven tag swap (e.g.
-    # the Jianlin Independence event, Crown of Bera releases) — those
-    # countries should fall through to status='other' and surface via the
-    # Event-Spawned UI filter, not be falsely labelled "Formable".
-    # Reported by a user finding Jianlin (V22) wrongly labelled formable;
-    # affected ~20 nations including Eordand, Pearlsedge, Moredhal,
-    # Khasa, Konolkhatep, Maakhibkhii, Salla Cenág.
+    # NOTE: We deliberately do NOT treat `change_tag = X` in event files as
+    # evidence that X is formable. In EU4, "formable" means *forms via a
+    # decision*; an event change_tag is a story-driven tag swap (e.g. the
+    # Jianlin Independence event, Crown of Bera releases) — those countries
+    # fall through to status='other' and surface via the Event-Spawned UI
+    # filter. Reported by a user finding Jianlin (V22) wrongly labelled
+    # formable; affected ~20 nations.
 
     # Build output
     result = {}

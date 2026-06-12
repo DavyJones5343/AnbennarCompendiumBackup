@@ -19,11 +19,19 @@ with open(REGIONS_FILE, 'r', encoding='utf-8') as f:
 
 tag_to_name = {tag: info.get('name', '') for tag, info in data.items()}
 
-# Read ALL localisation files
+# Read ALL localisation files (same encoding-fallback chain as the other extractors)
+def read_loc_file(path):
+    for enc in ('utf-8-sig', 'utf-8', 'latin-1', 'cp1252'):
+        try:
+            with open(path, 'r', encoding=enc) as f:
+                return f.read()
+        except (UnicodeDecodeError, UnicodeError):
+            continue
+    return ""
+
 content = ""
 for yml_file in glob.glob(os.path.join(LOC_DIR, "*_l_english.yml")):
-    with open(yml_file, 'r', encoding='utf-8-sig') as f:
-        content += f.read() + "\n"
+    content += read_loc_file(yml_file) + "\n"
 
 # Parse titles and descriptions from all files
 titles = {}

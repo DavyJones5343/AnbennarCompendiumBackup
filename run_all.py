@@ -14,7 +14,10 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 def run(script_name, desc):
     print(f"\n{'='*70}\n  {desc}\n  -> {script_name}\n{'='*70}", flush=True)
     t0 = time.time()
-    result = subprocess.run([sys.executable, os.path.join(SCRIPT_DIR, script_name)], cwd=SCRIPT_DIR)
+    # Force UTF-8 in child stdout: country names contain macron chars that
+    # crash print() under Windows' default cp1252 console encoding.
+    env = {**os.environ, 'PYTHONIOENCODING': 'utf-8'}
+    result = subprocess.run([sys.executable, os.path.join(SCRIPT_DIR, script_name)], cwd=SCRIPT_DIR, env=env)
     dt = time.time() - t0
     status = "OK" if result.returncode == 0 else f"FAIL ({result.returncode})"
     print(f"  [{status}] {script_name} in {dt:.1f}s", flush=True)

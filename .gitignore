@@ -13,3 +13,6 @@ test_flag.png
 run_all.log
 server.log
 extract_data.log
+
+# Local debugging artifacts
+debug_*.png

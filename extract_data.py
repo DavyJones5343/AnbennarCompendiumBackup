@@ -5,8 +5,14 @@ cultures, religions, decisions, and events.
 """
 import re
 import os
+import sys
 import json
 from collections import defaultdict
+
+# Country names contain macron chars (Tākūrekōhukau); Windows consoles default
+# to cp1252 and crash on print without this.
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
 MOD = r"C:\Program Files (x86)\Steam\steamapps\workshop\content\236850\1385440355"
 
@@ -97,42 +103,87 @@ def parse_country_file(tag, filename):
         pass
     return info
 
+HISTORY_BOOKMARK = (1444, 11, 11)
+HISTORY_DATE_RE = re.compile(r'^[ \t]*(\d{1,4})\.(\d{1,2})\.(\d{1,2})\s*=\s*\{', re.MULTILINE)
+HISTORY_SCALAR_KEYS = ['government', 'primary_culture', 'religion', 'technology_group', 'capital', 'government_rank']
+
+def strip_nested_blocks(section):
+    """Remove nested { ... } sub-blocks (monarch, heir, queen, leader, ...) so
+    their inner keys (a ruler's religion/culture) aren't mistaken for country-level ones."""
+    prev = None
+    while prev != section:
+        prev = section
+        section = re.sub(r'\{[^{}]*\}', ' ', section)
+    return section
+
+def iter_dated_blocks(text):
+    """Yield (date_tuple, block_text) for each top-level dated block, brace-aware."""
+    pos = 0
+    n = len(text)
+    while pos < n:
+        m = HISTORY_DATE_RE.search(text, pos)
+        if not m:
+            break
+        date = (int(m.group(1)), int(m.group(2)), int(m.group(3)))
+        depth = 1
+        i = m.end()
+        while i < n and depth > 0:
+            ch = text[i]
+            if ch == '{':
+                depth += 1
+            elif ch == '}':
+                depth -= 1
+            i += 1
+        yield date, text[m.end():i - 1]
+        pos = i
+
+def apply_history_section(section, info):
+    """Apply country-level keys found in one history section (top or dated block)."""
+    section = strip_nested_blocks(section)
+    for key in HISTORY_SCALAR_KEYS:
+        last = None
+        for last in re.finditer(rf'{key}\s*=\s*(\S+)', section):
+            pass
+        if last:
+            info[key] = last.group(1)
+    info.setdefault('government_reforms', []).extend(re.findall(r'add_government_reform\s*=\s*(\w+)', section))
+    info.setdefault('accepted_cultures', []).extend(re.findall(r'add_accepted_culture\s*=\s*(\w+)', section))
+    info.setdefault('historical_rivals', []).extend(re.findall(r'historical_rival\s*=\s*(\w+)', section))
+    info.setdefault('historical_friends', []).extend(re.findall(r'historical_friend\s*=\s*(\w+)', section))
+
 def parse_country_history(tag):
-    """Parse country history file for government, religion, culture, capital, etc."""
+    """Parse country history for government, religion, culture, capital, etc.
+
+    EU4 applies every dated history block with date <= the bookmark when
+    loading 1444 — so do we. A previous version only read the top-level
+    section (and fell back to the WHOLE file, post-1444 included, when the
+    top was empty), missing pre-1444 changes; 422 country files have them.
+    """
     history_dir = os.path.join(MOD, "history", "countries")
     info = {}
     try:
         for f in os.listdir(history_dir):
             if f.startswith(tag + ' ') or f.startswith(tag + '-') or f.startswith(tag + '_'):
-                filepath = os.path.join(history_dir, f)
-                content = read_file(filepath)
+                content = read_file(os.path.join(history_dir, f))
                 if content is None:
                     break
-                top_content = re.split(r'\d+\.\d+\.\d+\s*=', content)[0]
-                content = top_content if top_content.strip() else content
+                content = re.sub(r'#.*', '', content)
 
-                for key in ['government', 'primary_culture', 'religion', 'technology_group', 'capital', 'government_rank']:
-                    m = re.search(rf'{key}\s*=\s*(\S+)', content)
-                    if m:
-                        info[key] = m.group(1)
+                first_date = HISTORY_DATE_RE.search(content)
+                top = content[:first_date.start()] if first_date else content
+                apply_history_section(top, info)
+                if first_date:
+                    for date, block in iter_dated_blocks(content):
+                        if date <= HISTORY_BOOKMARK:
+                            apply_history_section(block, info)
 
-                reforms = re.findall(r'add_government_reform\s*=\s*(\w+)', content)
-                if reforms:
-                    info['government_reforms'] = reforms
-
-                # Accepted cultures
-                accepted = re.findall(r'add_accepted_culture\s*=\s*(\w+)', content)
-                if accepted:
-                    info['accepted_cultures'] = accepted
-
-                # Historical rivals and friends
-                rivals = re.findall(r'historical_rival\s*=\s*(\w+)', content)
-                if rivals:
-                    info['historical_rivals'] = rivals
-                friends = re.findall(r'historical_friend\s*=\s*(\w+)', content)
-                if friends:
-                    info['historical_friends'] = friends
-
+                # Dedupe (order-preserving) and drop empty list fields so the
+                # output shape matches prior behavior
+                for k in ('government_reforms', 'accepted_cultures', 'historical_rivals', 'historical_friends'):
+                    if info.get(k):
+                        info[k] = list(dict.fromkeys(info[k]))
+                    else:
+                        info.pop(k, None)
                 break
     except Exception:
         pass

@@ -96,7 +96,6 @@ def main():
     # Create province ID array from pixel colors
     # Flatten pixels to (h*w, 3) for fast lookup
     flat = pixels.reshape(-1, 3)
-    id_map = np.zeros(flat.shape[0], dtype=np.uint16)
 
     # Build a fast lookup array using color hashing
     # Hash: r*256*256 + g*256 + b -> province_id
@@ -107,14 +106,12 @@ def main():
 
     flat_hash = flat[:, 0].astype(np.int32) * 65536 + flat[:, 1].astype(np.int32) * 256 + flat[:, 2].astype(np.int32)
 
-    # Vectorized lookup
-    unique_hashes = np.unique(flat_hash)
+    # Vectorized lookup: one LUT indexed by unique-color position instead of
+    # one full-image mask per color (was O(colors x pixels), ~7 min alone)
+    unique_hashes, inverse = np.unique(flat_hash, return_inverse=True)
     print(f"  {len(unique_hashes)} unique colors in provinces.bmp")
-
-    for uh in unique_hashes:
-        pid = color_hash.get(int(uh), 0)
-        if pid:
-            id_map[flat_hash == uh] = pid
+    hash_lut = np.array([color_hash.get(int(uh), 0) for uh in unique_hashes], dtype=np.uint16)
+    id_map = hash_lut[inverse]
 
     id_map_2d = id_map.reshape(h, w)
 
@@ -130,32 +127,32 @@ def main():
     id_pil.save(id_out, optimize=True)
     print(f"  Saved: {id_out} ({os.path.getsize(id_out):,} bytes)")
 
-    # Generate political base map
+    # Generate political base map via a province-id -> color LUT
+    # (was one full-image mask per sea/owned province; same precedence:
+    # unowned default, then water, then country colors)
     print("Generating map_base.png...")
-    base = np.zeros((h, w, 3), dtype=np.uint8)
-
-    # Color water provinces dark blue
     WATER_COLOR = np.array([18, 25, 40], dtype=np.uint8)
     LAND_UNOWNED = np.array([40, 38, 35], dtype=np.uint8)
 
-    # Default all to unowned land color
-    base[:] = LAND_UNOWNED
+    max_pid = max(id_to_rgb.keys())
+    color_lut = np.empty((max_pid + 1, 3), dtype=np.uint8)
+    color_lut[:] = LAND_UNOWNED
 
-    # Color water
     for pid in sea_provinces:
-        mask = id_map_2d == pid
-        base[mask] = WATER_COLOR
+        if pid <= max_pid:
+            color_lut[pid] = WATER_COLOR
 
-    # Color owned provinces by country color
+    present_pids = set(int(p) for p in np.unique(id_map_2d))
     colored_count = 0
     for tag, provs in tag_to_provinces.items():
         color = tag_to_color.get(tag, (128, 128, 128))
-        color_arr = np.array(color, dtype=np.uint8)
         for pid in provs:
-            mask = id_map_2d == pid
-            if mask.any():
-                base[mask] = color_arr
-                colored_count += 1
+            if pid <= max_pid:
+                color_lut[pid] = color
+                if pid in present_pids:
+                    colored_count += 1
+
+    base = color_lut[id_map_2d]
 
     # Add subtle province borders (darken pixels at edges between provinces)
     print("  Adding province borders...")
@@ -179,13 +176,23 @@ def main():
     print(f"  Colored {colored_count} province instances")
     print(f"  Saved: {base_out} ({os.path.getsize(base_out):,} bytes)")
 
-    # Also generate province bounding boxes for fast highlighting
+    # Also generate province bounding boxes for fast highlighting.
+    # Single pass with scatter-min/max instead of one np.where scan per pid.
     print("Generating province_bounds.json...")
+    flat_ids = id_map_2d.ravel()
+    nz = np.nonzero(flat_ids)[0]
+    ids_nz = flat_ids[nz].astype(np.int64)
+    xs_nz = (nz % w).astype(np.int64)
+    ys_nz = (nz // w).astype(np.int64)
+    size = max_pid + 1
+    minx = np.full(size, w, dtype=np.int64); maxx = np.full(size, -1, dtype=np.int64)
+    miny = np.full(size, h, dtype=np.int64); maxy = np.full(size, -1, dtype=np.int64)
+    np.minimum.at(minx, ids_nz, xs_nz); np.maximum.at(maxx, ids_nz, xs_nz)
+    np.minimum.at(miny, ids_nz, ys_nz); np.maximum.at(maxy, ids_nz, ys_nz)
     bounds = {}
-    for pid in range(1, 8001):
-        ys, xs = np.where(id_map_2d == pid)
-        if len(xs) > 0:
-            bounds[str(pid)] = [int(xs.min()), int(ys.min()), int(xs.max()), int(ys.max())]
+    for pid in range(1, size):
+        if maxx[pid] >= 0:
+            bounds[str(pid)] = [int(minx[pid]), int(miny[pid]), int(maxx[pid]), int(maxy[pid])]
 
     bounds_out = os.path.join(OUT_DIR, "province_bounds.json")
     with open(bounds_out, 'w') as f:
