@@ -4513,6 +4513,8 @@ document.addEventListener('mouseleave', (e) => {
 // Init
 document.addEventListener('DOMContentLoaded', loadData);
 </script>
+<script data-goatcounter="https://anbennar-compendium.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>'''
 
