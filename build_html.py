@@ -4515,6 +4515,15 @@ document.addEventListener('DOMContentLoaded', loadData);
 </script>
 <script data-goatcounter="https://anbennar-compendium.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var kofi = document.querySelector('.kofi-btn');
+  if (kofi) kofi.addEventListener('click', function() {
+    if (window.goatcounter && window.goatcounter.count)
+      window.goatcounter.count({path: 'kofi-click', title: 'Ko-fi button click', event: true});
+  });
+});
+</script>
 </body>
 </html>'''
 
