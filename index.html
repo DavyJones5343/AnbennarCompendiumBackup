@@ -353,6 +353,7 @@ body {
   text-align: left;
 }
 #world-map-wrap:active { cursor: grabbing; }
+#world-map-wrap, .map-container { touch-action: pan-y; }
 #world-map-wrap canvas {
   position: absolute;
   top: 0; left: 0;
@@ -1286,7 +1287,7 @@ async function loadData() {
   const el = document.getElementById('country-list');
   el.innerHTML = '<div class="loading">Loading data...</div>';
   try {
-    const v = '1783609769';
+    const v = '1783610293';
     const [d1, d2, d3, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15, d16, d17] = await Promise.all([
       fetch('anbennar_data.json?v='+v).then(r => r.json()),
       fetch('religions_data.json?v='+v).then(r => r.json()),
@@ -4352,6 +4353,13 @@ function setupMapInteraction(container, canvas) {
     }
   });
 
+  addPinchZoom(container, {
+    min: 0.5, max: 10,
+    getScale: () => mapScale,
+    getOff: () => [mapOffX, mapOffY],
+    set: (s, x, y) => { mapScale = s; mapOffX = x; mapOffY = y; applyMapTransform(); }
+  });
+
   container.addEventListener('wheel', (e) => {
     e.preventDefault();
     const rect = container.getBoundingClientRect();
@@ -4819,6 +4827,43 @@ function wmSetupInteraction(wrap) {
     wmScale = newScale;
     wmApplyTransform();
   }, { passive: false });
+
+  addPinchZoom(wrap, {
+    min: 0.8, max: 20,
+    getScale: () => wmScale,
+    getOff: () => [wmOffX, wmOffY],
+    set: (s, x, y) => { wmScale = s; wmOffX = x; wmOffY = y; wmApplyTransform(); }
+  });
+}
+
+// Two-finger pan + pinch zoom for touch devices; one finger keeps scrolling the page
+function addPinchZoom(el, st) {
+  let pinch = null;
+  const mid = (e, rect) => ({
+    dist: Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY),
+    x: (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left,
+    y: (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top
+  });
+  el.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      pinch = mid(e, el.getBoundingClientRect());
+    }
+  }, { passive: false });
+  el.addEventListener('touchmove', (e) => {
+    if (e.touches.length !== 2 || !pinch) return;
+    e.preventDefault();
+    const m = mid(e, el.getBoundingClientRect());
+    const scale = st.getScale();
+    const newScale = Math.max(st.min, Math.min(st.max, scale * (m.dist / pinch.dist)));
+    const off = st.getOff();
+    const nx = pinch.x - (pinch.x - off[0]) * (newScale / scale) + (m.x - pinch.x);
+    const ny = pinch.y - (pinch.y - off[1]) * (newScale / scale) + (m.y - pinch.y);
+    st.set(newScale, nx, ny);
+    pinch = m;
+  }, { passive: false });
+  el.addEventListener('touchend', (e) => { if (e.touches.length < 2) pinch = null; });
+  el.addEventListener('touchcancel', () => { pinch = null; });
 }
 
 function scheduleWorldMapRender() {
