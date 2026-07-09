@@ -441,6 +441,24 @@ body {
 .pill.pill-region:hover { border-color: var(--green); background: rgba(74,186,106,0.1); }
 .pill.pill-playable { border-color: var(--green); color: var(--green); background: rgba(74,186,106,0.1); }
 .pill.pill-formable { border-color: var(--purple); color: var(--purple); background: rgba(155,114,207,0.1); }
+.pill.pill-unique-mt { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.1); }
+.pill.pill-regional-mt { border-color: var(--text-muted); color: var(--text-muted); background: rgba(150,150,160,0.08); }
+
+/* Mission column badges: unique vs regional/shared trees */
+.slot-badge {
+  font-size: 10px;
+  text-align: center;
+  padding: 3px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  align-self: end;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.slot-badge-unique { color: var(--gold); border: 1px solid rgba(201,168,76,0.35); background: rgba(201,168,76,0.07); }
+.slot-badge-regional { color: var(--text-muted); border: 1px solid rgba(150,150,160,0.25); background: rgba(150,150,160,0.05); cursor: help; }
 
 .wiki-btn {
   display: inline-flex;
@@ -1206,6 +1224,8 @@ body {
       <button class="filter-btn" data-filter="playable">Playable 1444</button>
       <button class="filter-btn" data-filter="formable">Formable</button>
       <button class="filter-btn" data-filter="missions">Has Missions</button>
+      <button class="filter-btn" data-filter="unique-missions" title="Countries with a bespoke mission tree written for them (or shared only with their formable successor)">Unique Missions</button>
+      <button class="filter-btn" data-filter="regional-missions" title="Countries whose missions all come from shared regional or generic trees">Regional Only</button>
       <button class="filter-btn" data-filter="event-spawned" title="Nations not on the map at 1444 — spawned later via events (e.g. Crown of Bera nations like Jarvema, Cagodor)">Event-Spawned</button>
       <button class="filter-btn" data-filter="needs-lore" title="Countries with missions or tag-specific ideas authored but no startup lore in startup_lore.json — these are upstream content gaps where lore writers could contribute">Needs Lore</button>
       <button class="filter-btn" data-filter="played">Played</button>
@@ -1287,7 +1307,7 @@ async function loadData() {
   const el = document.getElementById('country-list');
   el.innerHTML = '<div class="loading">Loading data...</div>';
   try {
-    const v = '1783610293';
+    const v = '1783610844';
     const [d1, d2, d3, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15, d16, d17] = await Promise.all([
       fetch('anbennar_data.json?v='+v).then(r => r.json()),
       fetch('religions_data.json?v='+v).then(r => r.json()),
@@ -1310,6 +1330,7 @@ async function loadData() {
 
     countries = Object.values(DATA);
     countries.sort(countrySorter);
+    classifyMissions();
     populateRegions();
     populateFilterDropdowns();
     applyFilters();
@@ -1317,6 +1338,34 @@ async function loadData() {
     el.innerHTML = '<div class="loading">Error loading data: ' + e.message + '</div>';
     console.error(e);
   }
+}
+
+// Mission tree provenance: a mission group used by at most this many countries
+// counts as "unique" — bespoke trees are routinely shared with a formable
+// successor (e.g. Ovdal Lodhum -> Aul-Dwarov), so the cutoff is not 1.
+const UNIQUE_GROUP_MAX_TAGS = 3;
+let MISSION_GROUP_TAGS = {}; // mission group -> array of tags using it
+
+function classifyMissions() {
+  MISSION_GROUP_TAGS = {};
+  countries.forEach(c => {
+    const seen = new Set();
+    (c.missions || []).forEach(m => {
+      const g = m.group || '';
+      if (seen.has(g)) return;
+      seen.add(g);
+      (MISSION_GROUP_TAGS[g] = MISSION_GROUP_TAGS[g] || []).push(c.tag);
+    });
+  });
+  countries.forEach(c => {
+    if (!c.missions || !c.missions.length) { c.mission_class = null; return; }
+    let minShare = Infinity;
+    c.missions.forEach(m => {
+      const n = (MISSION_GROUP_TAGS[m.group || ''] || []).length;
+      if (n < minShare) minShare = n;
+    });
+    c.mission_class = minShare <= UNIQUE_GROUP_MAX_TAGS ? 'unique' : 'regional';
+  });
 }
 
 function countrySorter(a, b) {
@@ -1542,6 +1591,8 @@ function passesFilter(c) {
     if (activeFilters.has('event-spawned') && !(s.status === 'other' && (s.provinces_owned || 0) === 0 && c.events && c.events.length > 0)) return false;
   }
   if (activeFilters.has('missions') && !(c.missions && c.missions.length > 0)) return false;
+  if (activeFilters.has('unique-missions') && c.mission_class !== 'unique') return false;
+  if (activeFilters.has('regional-missions') && c.mission_class !== 'regional') return false;
   if (activeFilters.has('needs-lore')) {
     // Has content (missions or tag-specific ideas) but no startup lore entry
     const hasMissions = c.missions && c.missions.length > 0;
@@ -3379,6 +3430,11 @@ function selectCountry(tag) {
   if (s.provinces_owned) {
     statusHtml += `<span class="pill">${s.provinces_owned} starting provinces</span>`;
   }
+  if (c.mission_class === 'unique') {
+    statusHtml += '<span class="pill pill-unique-mt" title="Has a mission tree written specifically for this nation (or shared only with its formable successor)">Unique Mission Tree</span>';
+  } else if (c.mission_class === 'regional') {
+    statusHtml += '<span class="pill pill-regional-mt" title="Missions come from shared regional or generic trees, not a bespoke tree">Regional Missions</span>';
+  }
 
   // Header
   let html = `<div class="detail-header">
@@ -3622,6 +3678,28 @@ function renderMissionGrid(missions, missionById, tag) {
   if (maxPos === 0) maxPos = 1;
 
   let html = `<div class="mission-grid" id="mission-grid" style="grid-template-columns: repeat(${maxSlot}, 1fr);">`;
+
+  // Header row: label each column as unique (bespoke) or regional (shared tree)
+  for (let slot = 1; slot <= maxSlot; slot++) {
+    const slotMissions = missions.filter(mi => mi.slot === slot);
+    if (!slotMissions.length) continue;
+    let minShare = Infinity, maxShare = 0, sharedWith = [];
+    slotMissions.forEach(mi => {
+      const users = MISSION_GROUP_TAGS[mi.group || ''] || [];
+      if (users.length < minShare) minShare = users.length;
+      if (users.length > maxShare) { maxShare = users.length; sharedWith = users; }
+    });
+    const others = sharedWith.filter(t => t !== tag).slice(0, 10)
+      .map(t => DATA[t] ? DATA[t].name : t).join(', ');
+    if (maxShare <= UNIQUE_GROUP_MAX_TAGS) {
+      html += `<div class="slot-badge slot-badge-unique" style="grid-column:${slot};grid-row:1" title="This mission column was written specifically for this nation">&#9733; Unique</div>`;
+    } else if (minShare > UNIQUE_GROUP_MAX_TAGS) {
+      html += `<div class="slot-badge slot-badge-regional" style="grid-column:${slot};grid-row:1" title="Shared regional/generic missions — also used by: ${esc(others)}${sharedWith.length > 11 ? '…' : ''}">Regional &middot; ${maxShare} nations</div>`;
+    } else {
+      html += `<div class="slot-badge slot-badge-regional" style="grid-column:${slot};grid-row:1" title="Mostly unique, but some missions here come from a shared tree also used by: ${esc(others)}${sharedWith.length > 11 ? '…' : ''}">&#9733; Mixed</div>`;
+    }
+  }
+
   for (let pos = 1; pos <= maxPos; pos++) {
     for (let slot = 1; slot <= maxSlot; slot++) {
       const m = missions.find(mi => mi.slot === slot && mi.position === pos);
@@ -3640,7 +3718,7 @@ function renderMissionGrid(missions, missionById, tag) {
       let title = resolveGameText(m.title || m.id);
       if (!title || title.trim() === '') title = m.id.replace(/_/g, ' ');
 
-      html += `<div class="mission-node" data-mission-id="${esc(m.id)}" data-slot="${slot}" data-pos="${pos}" data-reqs="${esc(reqStr)}" style="grid-column:${slot};grid-row:${pos};">
+      html += `<div class="mission-node" data-mission-id="${esc(m.id)}" data-slot="${slot}" data-pos="${pos}" data-reqs="${esc(reqStr)}" style="grid-column:${slot};grid-row:${pos + 1};">
         ${iconHtml}
         <div class="mission-title">${esc(title)}</div>
       </div>`;
@@ -3825,7 +3903,15 @@ function showMissionDetail(tag, missionId) {
   if (mission.desc || trigger.desc) {
     html += `<div class="mission-desc">${esc(resolveGameText(mission.desc || trigger.desc || '')).replace(/\\n/g, '<br>')}</div>`;
   }
-  html += `<div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">Slot ${mission.slot}, Position ${mission.position} &middot; ${esc(mission.group || trigger.group || '')}</div>`;
+  const _groupUsers = MISSION_GROUP_TAGS[mission.group || ''] || [];
+  let provenance;
+  if (_groupUsers.length <= UNIQUE_GROUP_MAX_TAGS) {
+    provenance = '<span style="color:var(--gold)">&#9733; Unique mission</span>';
+  } else {
+    const _otherNames = _groupUsers.filter(t => t !== tag).slice(0, 10).map(t => DATA[t] ? DATA[t].name : t).join(', ');
+    provenance = `<span title="Also in the mission tree of: ${esc(_otherNames)}${_groupUsers.length > 11 ? '…' : ''}" style="cursor:help">Shared by ${_groupUsers.length} nations</span>`;
+  }
+  html += `<div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">Slot ${mission.slot}, Position ${mission.position} &middot; ${provenance}</div>`;
 
   // Required missions
   const reqs = mission.required_missions || trigger.required_missions || [];
