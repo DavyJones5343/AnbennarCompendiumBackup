@@ -1815,11 +1815,11 @@ function provSpan(id, label) {
   return `<span class="val geo-ref" data-provs="${id}" title="ID: ${id}">${label}</span>`;
 }
 function areaSpan(areaKey, label) {
-  if (!label) label = areaKey.replace(/_area$/, '').replace(/_/g, ' ');
+  if (!label) label = titleCase(areaKey.replace(/_area$/, '').replace(/_/g, ' '));
   return `<span class="tag geo-ref" data-area="${areaKey}">${label}</span>`;
 }
 function regionSpan(regionKey, label) {
-  if (!label) label = regionKey.replace(/_region$/, '').replace(/_/g, ' ');
+  if (!label) label = titleCase(regionKey.replace(/_region$/, '').replace(/_/g, ' '));
   return `<span class="tag geo-ref" data-region="${regionKey}">${label}</span>`;
 }
 
@@ -2166,7 +2166,7 @@ function parseTriggerToReadable(raw) {
         } else {
           // Check if this is a scope-opening key (area/region/province)
           if ((key.endsWith('_area') || key.endsWith('_region') || key.endsWith('_superregion')) && opens > closes) {
-            const sName = key.replace(/_area$|_region$|_superregion$/, '').replace(/_/g, ' ');
+            const sName = titleCase(key.replace(/_area$|_region$|_superregion$/, '').replace(/_/g, ' '));
             const sType = key.endsWith('_area') ? 'area' : key.endsWith('_region') ? 'region' : 'superregion';
             scopeStack.push({name: sName, type: sType, depth: depth, key: key});
           } else if (/^\d+$/.test(key) && opens > closes) {
@@ -2240,6 +2240,19 @@ function negateCondition(text) {
 }
 
 const SCOPE_VARS = new Set(['ROOT', 'FROM', 'PREV', 'THIS', 'root', 'from', 'prev', 'this']);
+// Display name for a religion script key, e.g. "the_jadd" -> "The Jadd"
+function religionName(key) {
+  const r = RELIGIONS[String(key)];
+  if (r && r.name) return r.name;
+  return titleCase(String(key).replace(/_/g, ' '));
+}
+// Humanize a raw script token: snake_case -> Title Case words; leave prose alone
+function prettyToken(v) {
+  const s = String(v);
+  if (!s.includes('_') || !/^[\w'-]+$/.test(s)) return s;
+  return titleCase(s.replace(/_/g, ' '));
+}
+
 function tagName(tag) {
   const t = tag.trim();
   const c = DATA[t];
@@ -2325,7 +2338,7 @@ function triggerToText(key, val) {
     'legitimacy': `Have at least <span class="val">${val}</span> legitimacy`,
     'republican_tradition': `Have at least <span class="val">${val}</span> republican tradition`,
     'legitimacy_equivalent': `Have at least <span class="val">${val}</span> legitimacy (or equivalent)`,
-    'religion_group': `Religion group: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'religion_group': `Religion group: <span class="tag">${prettyToken(val)}</span>`,
     'num_free_building_slots': `Have at least <span class="val">${val}</span> free building slots`,
     'ruler_has_mage_personality': val === 'yes' ? 'Ruler is a mage' : null,
     'owned_by_subject_of': isScopeVar(val) ? 'Owned by a subject' : `Owned by subject of <span class="tag">${tagName(val)}</span>`,
@@ -2354,8 +2367,8 @@ function triggerToText(key, val) {
     'is_at_war': val === 'no' ? 'Be at peace' : 'Be at war',
     'is_subject': val === 'no' ? 'Be independent (not a subject)' : 'Be a subject nation',
     'war_score': `Have <span class="val">${val}</span> war score`,
-    'has_reform': `Have government reform: <span class="tag">${val}</span>`,
-    'religion': isScopeVar(val) ? 'Follow our religion' : `Follow religion: <span class="tag">${val}</span>`,
+    'has_reform': `Have government reform: <span class="tag">${prettyToken(val)}</span>`,
+    'religion': isScopeVar(val) ? 'Follow our religion' : `Follow religion: <span class="tag">${religionName(val)}</span>`,
     'tag': isScopeVar(val) ? null : `Be country: <span class="tag">${tagName(val)}</span>`,
     'owns': `Own province ${/^\d+$/.test(val) ? provSpan(val) : val}`,
     'owns_core_province': `Own and core province ${/^\d+$/.test(val) ? provSpan(val) : val}`,
@@ -2372,26 +2385,26 @@ function triggerToText(key, val) {
     'inflation': val === '1' ? 'Have no inflation' : `Inflation below <span class="val">${val}</span>`,
     'overextension_percentage': `Overextension below <span class="val">${(parseFloat(val)*100)}%</span>`,
     'has_country_flag': `Has country flag: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'has_global_flag': `Global flag set: <span class="tag">${val}</span>`,
+    'has_global_flag': `Global flag set: <span class="tag">${prettyToken(val)}</span>`,
     'government_rank': `Government rank at least <span class="val">${val}</span>`,
     'total_own_and_non_tributary_subject_development': `Total dev (with subjects) at least <span class="val">${val}</span>`,
-    'production_leader': `Be production leader in: <span class="tag">${val}</span>`,
+    'production_leader': (() => { const gm = val.match(/trade_goods\s*=\s*(\w+)/); return `Be the world's leading producer of <span class="tag">${prettyToken(gm ? gm[1] : val)}</span>`; })(),
     'diplomatic_reputation': `Diplomatic reputation at least <span class="val">${val}</span>`,
     'power_projection': `Power projection at least <span class="val">${val}</span>`,
     'religious_unity': `Religious unity at least <span class="val">${(parseFloat(val)*100)}%</span>`,
     'average_autonomy_above_min': `Average autonomy above <span class="val">${val}</span>`,
-    'culture_group': `Culture group: <span class="tag">${val}</span>`,
-    'primary_culture': `Primary culture: <span class="tag">${val}</span>`,
-    'has_ruler_modifier': `Ruler has modifier: <span class="tag">${val}</span>`,
+    'culture_group': `Culture group: <span class="tag">${prettyToken(val)}</span>`,
+    'primary_culture': `Primary culture: <span class="tag">${prettyToken(val)}</span>`,
+    'has_ruler_modifier': `Ruler has modifier: ${modRef(val)}`,
     'has_country_modifier': (() => { return `Has modifier: ${modRef(val.trim())}`; })(),
     'is_core': isScopeVar(val) ? null : `Is a core of <span class="tag">${tagName(val)}</span>`,
     'owned_by': isScopeVar(val) ? null : `Owned by <span class="tag">${tagName(val)}</span>`,
     'controlled_by': isScopeVar(val) ? 'Controlled by us' : `Controlled by <span class="tag">${tagName(val)}</span>`,
-    'has_building': `Has building: <span class="tag">${val}</span>`,
+    'has_building': `Has building: <span class="tag">${humanizeBuildingName(val)}</span>`,
     'base_tax': `Base tax at least <span class="val">${val}</span>`,
     'base_production': `Base production at least <span class="val">${val}</span>`,
     'base_manpower': `Base manpower at least <span class="val">${val}</span>`,
-    'trade_goods': `Produces: <span class="tag">${val}</span>`,
+    'trade_goods': `Produces: <span class="tag">${prettyToken(val)}</span>`,
     'num_of_generals': `Have at least <span class="val">${val}</span> generals`,
     'num_of_admirals': `Have at least <span class="val">${val}</span> admirals`,
     'num_of_heavy_ship': `Have at least <span class="val">${val}</span> heavy ships`,
@@ -2400,11 +2413,11 @@ function triggerToText(key, val) {
     'num_of_transport': `Have at least <span class="val">${val}</span> transports`,
     'employed_advisor': `Have employed advisor: <span class="tag">${val === 'yes' ? 'any' : val.replace(/category\s*=\s*/i, '').replace('ADM', 'Administrative').replace('DIP', 'Diplomatic').replace('MIL', 'Military')}</span>`,
     'has_construction': `Currently constructing <span class="tag">${val.replace(/_/g, ' ')}</span> buildings`,
-    'has_advisor': `Have advisor: <span class="tag">${val}</span>`,
+    'has_advisor': `Have advisor: <span class="tag">${prettyToken(val)}</span>`,
     'num_of_cavalry': `Have at least <span class="val">${val}</span> cavalry`,
     'num_of_infantry': `Have at least <span class="val">${val}</span> infantry`,
     'num_of_artillery': isScopeVar(val) ? null : `Have at least <span class="val">${val}</span> artillery`,
-    'has_idea_group': `Have idea group: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'has_idea_group': `Have idea group: <span class="tag">${prettyToken(val)}</span>`,
     'full_idea_group': `Completed idea group: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
     // Subjects & diplomacy
     'num_of_non_tributary_subjects': `Have at least <span class="val">${val}</span> non-tributary subjects`,
@@ -2491,7 +2504,7 @@ function triggerToText(key, val) {
     'any_ally': 'Any ally:',
     'any_neighbor_country': 'Any neighbor:',
     'any_subject_country': 'Any subject:',
-    'has_disaster': `Has active disaster: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'has_disaster': `Has active disaster: <span class="tag">${prettyToken(val)}</span>`,
     'has_institution': `Has embraced institution: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
     'has_great_project': (() => { const pm = val.match(/type\s*=\s*(\w+)/); const tm = val.match(/tier\s*=\s*(\d+)/); if (pm) { const gpName = GREAT_PROJECTS[pm[1]] || pm[1].replace(/_/g, ' '); return `Has great project: <span class="tag">${esc(gpName)}</span>${tm ? ' (tier ' + tm[1] + '+)' : ''}`; } return null; })(),
     'has_manufactory_trigger': val === 'yes' ? 'Has a manufactory' : 'No manufactory',
@@ -2638,8 +2651,8 @@ function triggerToText(key, val) {
     'add_base_manpower': `Add <span class="val">${val}</span> base manpower`,
     'change_government': `Change government to: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
     'change_tag': `Form country: <span class="tag">${tagName(val)}</span>`,
-    'change_religion': isScopeVar(val) ? 'Change religion to ours' : `Change religion to: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'change_culture': isScopeVar(val) ? 'Change culture to ours' : `Change culture to: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'change_religion': isScopeVar(val) ? 'Change religion to ours' : `Change religion to: <span class="tag">${religionName(val)}</span>`,
+    'change_culture': isScopeVar(val) ? 'Change culture to ours' : `Change culture to: <span class="tag">${prettyToken(val)}</span>`,
     'change_primary_culture': isScopeVar(val) ? null : `Change primary culture to: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
     'add_accepted_culture': `Accept culture: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
     'remove_accepted_culture': `Remove accepted culture: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
@@ -2934,7 +2947,7 @@ function triggerToText(key, val) {
   // Anbennar race tolerance triggers
   if (/^(high|medium|low)_tolerance_(\w+)_race_trigger$/.test(key)) { const rm = key.match(/^(high|medium|low)_tolerance_(\w+)_race_trigger$/); if (rm) return { text: `Have ${rm[1]} tolerance of <span class="tag">${rm[2].replace(/_/g, ' ')}</span> race`, type: 'condition' }; }
   // Idea group progress checks (e.g. exploration_ideas = 1)
-  if (/_ideas$/.test(key) && /^\d+$/.test(val)) { return { text: `Have <span class="val">${val}</span> ideas in <span class="tag">${key.replace(/_ideas$/, '').replace(/_/g, ' ')}</span>`, type: 'condition' }; }
+  if (/_ideas$/.test(key) && /^\d+$/.test(val)) { return { text: `Have <span class="val">${val}</span> ideas in <span class="tag">${titleCase(key.replace(/_ideas$/, '').replace(/_/g, ' '))}</span>`, type: 'condition' }; }
   // Anbennar custom triggers
   if (/^taychend_hero_cult_has_passed_reform/.test(key)) return { text: 'Has passed Taychend hero cult reform', type: 'condition' };
   if (key === 'have_cast_magnificent_feast') return val === 'yes' ? { text: 'Have cast Magnificent Feast', type: 'condition' } : null;
@@ -3064,14 +3077,14 @@ function triggerToText(key, val) {
 
   if (key.startsWith('has_')) {
     if (isScopeVar(val)) return null;
-    const cleanKey = key.replace(/_/g, ' ').replace(/\bhas\b/, 'Has').replace(/\btrigger\b/, '');
-    const cleanVal = val === 'yes' ? '' : val === 'no' ? ' (no)' : `: <span class="tag">${resolveRef(val)}</span>`;
+    const cleanKey = key.replace(/_/g, ' ').replace(/\bhas\b/, 'Has').replace(/\btrigger\b/, '').replace(/\bhre\b/gi, 'HRE');
+    const cleanVal = val === 'yes' ? '' : val === 'no' ? ' (no)' : `: <span class="tag">${prettyToken(resolveRef(val))}</span>`;
     return { text: `${cleanKey.trim()}${cleanVal}`, type: 'condition' };
   }
   if (key.startsWith('is_')) {
     if (isScopeVar(val)) return null;
-    const label = key.replace(/_/g, ' ').replace(/\bis\b/, 'Is');
-    const cleanVal = val === 'yes' ? '' : val === 'no' ? ' — not' : `: <span class="val">${resolveRef(val)}</span>`;
+    const label = key.replace(/_/g, ' ').replace(/\bis\b/, 'Is').replace(/\bhre\b/gi, 'HRE');
+    const cleanVal = val === 'yes' ? '' : val === 'no' ? ' — not' : `: <span class="val">${prettyToken(resolveRef(val))}</span>`;
     return { text: `${label}${cleanVal}`, type: 'condition' };
   }
   if (key.startsWith('num_of_')) {
@@ -3084,9 +3097,11 @@ function triggerToText(key, val) {
 
   // Generic fallthrough - format as readable text
   if (val && !val.includes('{') && val.length < 60) {
-    const cleanKey = key.replace(/_/g, ' ');
-    const resolved = resolveRef(val);
-    const cleanVal = /^\d+(\.\d+)?$/.test(val) ? `<span class="val">${val}</span>` : `<span class="tag">${resolved}</span>`;
+    const cleanKey = key.replace(/_/g, ' ').replace(/\bhre\b/gi, 'HRE').replace(/^\w/, c => c.toUpperCase());
+    if (val === 'yes') return { text: cleanKey, type: 'raw' };
+    if (val === 'no') return { text: `Not: ${cleanKey.charAt(0).toLowerCase()}${cleanKey.slice(1)}`, type: 'raw' };
+    const resolved = prettyToken(resolveRef(val));
+    const cleanVal = /^-?\d+(\.\d+)?$/.test(val) ? `<span class="val">${val}</span>` : `<span class="tag">${resolved}</span>`;
     return { text: `${cleanKey}: ${cleanVal}`, type: 'raw' };
   }
 
@@ -4892,7 +4907,8 @@ function wmSetupInteraction(wrap) {
       const pname = PROVINCES[String(pid)];
       if (pname) label += ' • ' + pname;
     } else if (pid > 0 && PROVINCES[String(pid)]) {
-      label = PROVINCES[String(pid)] + ' • uncolonized';
+      // Only colonizable land has province details; seas and wastelands don't
+      label = PROVINCES[String(pid)] + (PROV_DETAILS[String(pid)] ? ' • uncolonized' : '');
     }
     if (label) {
       tt.textContent = label;
