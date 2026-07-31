@@ -379,7 +379,7 @@ body {
 
 #welcome {
   text-align: center;
-  padding: 60px 20px;
+  padding: 28px 20px 40px;
   color: var(--text-muted);
   max-width: 860px;
   margin: 0 auto;
@@ -416,69 +416,45 @@ body {
   font-style: italic;
   font-size: 15px;
 }
-#welcome-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
-  margin: 36px 0 28px;
-}
-.stat-card {
-  background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0));
+
+/* WORLD MAP (welcome screen) */
+#world-map-wrap {
+  position: relative;
+  width: 100%;
+  height: clamp(320px, calc(100vh - 320px), 640px);
+  overflow: hidden;
+  background: #0e1420;
+  border-radius: 8px;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px 12px 14px;
-  transition: border-color 0.2s var(--ease), transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  cursor: grab;
+  margin-top: 18px;
+  text-align: left;
 }
-.stat-card:hover {
-  border-color: var(--gold-dim);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.35), 0 0 18px rgba(201,168,76,0.07);
+#world-map-wrap:active { cursor: grabbing; }
+#world-map-wrap, .map-container { touch-action: pan-y; }
+#world-map-wrap canvas {
+  position: absolute;
+  top: 0; left: 0;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
-.stat-card .stat-num {
-  font-family: 'IM Fell English SC', serif;
-  font-size: 28px;
-  color: var(--gold);
-  line-height: 1.1;
-}
-.stat-card .stat-label {
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
+#world-map-status {
+  margin-top: 8px;
+  font-size: 12px;
   color: var(--text-muted);
-  margin-top: 4px;
+  font-style: normal;
 }
-#welcome-suggest { margin-top: 8px; }
-.suggest-label {
-  display: block;
-  font-family: 'IM Fell English', serif;
-  font-style: italic;
-  font-size: 13px;
+.back-to-map {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--gold-dim);
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 12px;
+  cursor: pointer;
   margin-bottom: 12px;
 }
-.suggest-chips {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-}
-.suggest-chip {
-  padding: 8px 18px;
-  font-family: 'Lora', serif;
-  font-size: 13px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: rgba(255,255,255,0.02);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.18s var(--ease);
-}
-.suggest-chip:hover {
-  border-color: var(--gold);
-  color: var(--gold);
-  background: rgba(201,168,76,0.08);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-}
+.back-to-map:hover { border-color: var(--gold-dim); color: var(--text); }
 
 /* COUNTRY DETAIL */
 #detail { display: none; }
@@ -548,6 +524,24 @@ body {
 .pill.pill-region:hover { border-color: var(--green); background: rgba(74,186,106,0.1); }
 .pill.pill-playable { border-color: var(--green); color: var(--green); background: rgba(74,186,106,0.1); }
 .pill.pill-formable { border-color: var(--purple); color: var(--purple); background: rgba(155,114,207,0.1); }
+.pill.pill-unique-mt { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.1); }
+.pill.pill-regional-mt { border-color: var(--text-muted); color: var(--text-muted); background: rgba(150,150,160,0.08); }
+
+/* Mission column badges: unique vs regional/shared trees */
+.slot-badge {
+  font-size: 10px;
+  text-align: center;
+  padding: 3px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  align-self: end;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.slot-badge-unique { color: var(--gold); border: 1px solid rgba(201,168,76,0.35); background: rgba(201,168,76,0.07); }
+.slot-badge-regional { color: var(--text-muted); border: 1px solid rgba(150,150,160,0.25); background: rgba(150,150,160,0.05); cursor: help; }
 
 .wiki-btn {
   display: inline-flex;
@@ -1330,6 +1324,8 @@ body {
       <button class="filter-btn" data-filter="playable">Playable 1444</button>
       <button class="filter-btn" data-filter="formable">Formable</button>
       <button class="filter-btn" data-filter="missions">Has Missions</button>
+      <button class="filter-btn" data-filter="unique-missions" title="Countries with a bespoke mission tree written for them (or shared only with their formable successor)">Unique Missions</button>
+      <button class="filter-btn" data-filter="regional-missions" title="Countries whose missions all come from shared regional or generic trees">Regional Only</button>
       <button class="filter-btn" data-filter="event-spawned" title="Nations not on the map at 1444 — spawned later via events (e.g. Crown of Bera nations like Jarvema, Cagodor)">Event-Spawned</button>
       <button class="filter-btn" data-filter="needs-lore" title="Countries with missions or tag-specific ideas authored but no startup lore in startup_lore.json — these are upstream content gaps where lore writers could contribute">Needs Lore</button>
       <button class="filter-btn" data-filter="played">Played</button>
@@ -1351,18 +1347,17 @@ body {
     <div id="welcome">
       <div class="welcome-rule"><span>&#10070;</span></div>
       <h2>Welcome, Adventurer</h2>
-      <p>Select a country from the sidebar to explore its history, missions, and national ideas.</p>
-      <div id="welcome-stats"></div>
-      <div id="welcome-suggest">
-        <span class="suggest-label">Or begin with a legend:</span>
-        <div class="suggest-chips">
-          <button class="suggest-chip" onclick="selectCountry('A01')">&#127801; Lorent</button>
-          <button class="suggest-chip" onclick="selectCountry('R62')">&#9876; The Command</button>
-          <button class="suggest-chip" onclick="selectCountry('I24')">&#9935; Aul-Dwarov</button>
-          <button class="suggest-chip" onclick="selectCountry('B47')">&#128737; Stalb&oacute;r</button>
-          <button class="suggest-chip" onclick="selectRandomCountry()">&#127922; Surprise me</button>
+      <p>Click a country on the map &mdash; or search and filter, and the map will show who matches.</p>
+      <div id="world-map-wrap">
+        <canvas id="world-map-canvas"></canvas>
+        <div class="map-controls">
+          <button class="map-ctrl-btn" onclick="wmZoom(1)">+</button>
+          <button class="map-ctrl-btn" onclick="wmZoom(-1)">&minus;</button>
+          <button class="map-ctrl-btn" onclick="wmResetView()">&#8634;</button>
         </div>
+        <div class="map-tooltip" id="world-map-tooltip"></div>
       </div>
+      <div id="world-map-status"></div>
     </div>
     <div id="detail"></div>
   </div>
@@ -1438,43 +1433,42 @@ async function loadData() {
 
     countries = Object.values(DATA);
     countries.sort(countrySorter);
+    classifyMissions();
     populateRegions();
     populateFilterDropdowns();
     applyFilters();
-    populateWelcomeStats();
   } catch(e) {
     el.innerHTML = '<div class="loading">Error loading data: ' + e.message + '</div>';
     console.error(e);
   }
 }
 
-function populateWelcomeStats() {
-  const el = document.getElementById('welcome-stats');
-  if (!el) return;
-  let missions = 0, ideas = 0;
-  const religions = new Set();
-  let playable = 0;
-  for (const c of countries) {
-    missions += c.mission_count || 0;
-    if (c.ideas && c.ideas.ideas) ideas += c.ideas.ideas.length;
-    if (c.religion) religions.add(c.religion);
-    const st = (STATUS[c.tag] || {}).status;
-    if (st === 'playable' || st === 'both') playable++;
-  }
-  const fmt = n => n.toLocaleString('en-US');
-  el.innerHTML = [
-    [fmt(countries.length), 'Nations'],
-    [fmt(playable), 'Playable in 1444'],
-    [fmt(missions), 'Missions'],
-    [fmt(religions.size), 'Religions'],
-  ].map(([num, label]) => `<div class="stat-card"><div class="stat-num">${num}</div><div class="stat-label">${label}</div></div>`).join('');
-}
+// Mission tree provenance: a mission group used by at most this many countries
+// counts as "unique" — bespoke trees are routinely shared with a formable
+// successor (e.g. Ovdal Lodhum -> Aul-Dwarov), so the cutoff is not 1.
+const UNIQUE_GROUP_MAX_TAGS = 3;
+let MISSION_GROUP_TAGS = {}; // mission group -> array of tags using it
 
-function selectRandomCountry() {
-  // Surprise from countries with substantial content so it lands somewhere fun
-  const rich = countries.filter(c => (c.mission_count || 0) >= 20);
-  const pick = rich[Math.floor(Math.random() * rich.length)];
-  if (pick) selectCountry(pick.tag);
+function classifyMissions() {
+  MISSION_GROUP_TAGS = {};
+  countries.forEach(c => {
+    const seen = new Set();
+    (c.missions || []).forEach(m => {
+      const g = m.group || '';
+      if (seen.has(g)) return;
+      seen.add(g);
+      (MISSION_GROUP_TAGS[g] = MISSION_GROUP_TAGS[g] || []).push(c.tag);
+    });
+  });
+  countries.forEach(c => {
+    if (!c.missions || !c.missions.length) { c.mission_class = null; return; }
+    let minShare = Infinity;
+    c.missions.forEach(m => {
+      const n = (MISSION_GROUP_TAGS[m.group || ''] || []).length;
+      if (n < minShare) minShare = n;
+    });
+    c.mission_class = minShare <= UNIQUE_GROUP_MAX_TAGS ? 'unique' : 'regional';
+  });
 }
 
 function countrySorter(a, b) {
@@ -1708,6 +1702,8 @@ function passesFilter(c) {
     if (activeFilters.has('event-spawned') && !(s.status === 'other' && (s.provinces_owned || 0) === 0 && (c.event_count || 0) > 0)) return false;
   }
   if (activeFilters.has('missions') && !(c.missions && c.missions.length > 0)) return false;
+  if (activeFilters.has('unique-missions') && c.mission_class !== 'unique') return false;
+  if (activeFilters.has('regional-missions') && c.mission_class !== 'regional') return false;
   if (activeFilters.has('needs-lore')) {
     // Has content (missions or tag-specific ideas) but no startup lore entry
     const hasMissions = c.missions && c.missions.length > 0;
@@ -1782,6 +1778,7 @@ function applyFilters() {
   renderCountryList();
   renderActiveFilters();
   updateFilterDropdowns();
+  scheduleWorldMapRender();
 }
 
 function renderActiveFilters() {
@@ -2366,6 +2363,20 @@ function negateCondition(text) {
 }
 
 const SCOPE_VARS = new Set(['ROOT', 'FROM', 'PREV', 'THIS', 'root', 'from', 'prev', 'this']);
+// Display name for a religion script key, e.g. "the_jadd" -> "The Jadd"
+function religionName(key) {
+  const r = RELIGIONS[String(key)];
+  if (r && r.name) return r.name;
+  return dn(key);
+}
+// Humanize a raw script token: prefer the game's own display name, else
+// snake_case -> Title Case words. Prose is left alone.
+function prettyToken(v) {
+  const s = String(v);
+  if (!s.includes('_') || !/^[\w'-]+$/.test(s)) return s;
+  return dn(s);
+}
+
 function tagName(tag) {
   const t = tag.trim();
   const c = DATA[t];
@@ -2494,7 +2505,7 @@ function triggerToText(key, val, depth) {
     'legitimacy': `Have at least <span class="val">${val}</span> legitimacy`,
     'republican_tradition': `Have at least <span class="val">${val}</span> republican tradition`,
     'legitimacy_equivalent': `Have at least <span class="val">${val}</span> legitimacy (or equivalent)`,
-    'religion_group': `Religion group: <span class="tag">${dn(val)}</span>`,
+    'religion_group': `Religion group: <span class="tag">${prettyToken(val)}</span>`,
     'num_free_building_slots': `Have at least <span class="val">${val}</span> free building slots`,
     'ruler_has_mage_personality': val === 'yes' ? 'Ruler is a mage' : null,
     'owned_by_subject_of': isScopeVar(val) ? 'Owned by a subject' : `Owned by subject of <span class="tag">${tagName(val)}</span>`,
@@ -2523,8 +2534,8 @@ function triggerToText(key, val, depth) {
     'is_at_war': val === 'no' ? 'Be at peace' : 'Be at war',
     'is_subject': val === 'no' ? 'Be independent (not a subject)' : 'Be a subject nation',
     'war_score': `Have <span class="val">${val}</span> war score`,
-    'has_reform': `Have government reform: <span class="tag">${dn(val)}</span>`,
-    'religion': isScopeVar(val) ? 'Follow our religion' : `Follow religion: <span class="tag">${dn(val)}</span>`,
+    'has_reform': `Have government reform: <span class="tag">${prettyToken(val)}</span>`,
+    'religion': isScopeVar(val) ? 'Follow our religion' : `Follow religion: <span class="tag">${religionName(val)}</span>`,
     'tag': isScopeVar(val) ? null : `Be country: <span class="tag">${tagName(val)}</span>`,
     'owns': `Own province ${/^\d+$/.test(val) ? provSpan(val) : val}`,
     'owns_core_province': `Own and core province ${/^\d+$/.test(val) ? provSpan(val) : val}`,
@@ -2541,26 +2552,26 @@ function triggerToText(key, val, depth) {
     'inflation': val === '1' ? 'Have no inflation' : `Inflation below <span class="val">${val}</span>`,
     'overextension_percentage': `Overextension below <span class="val">${(parseFloat(val)*100)}%</span>`,
     'has_country_flag': `Has country flag: <span class="tag">${dn(val)}</span>`,
-    'has_global_flag': `Global flag set: <span class="tag">${dn(val)}</span>`,
+    'has_global_flag': `Global flag set: <span class="tag">${prettyToken(val)}</span>`,
     'government_rank': `Government rank at least <span class="val">${val}</span>`,
     'total_own_and_non_tributary_subject_development': `Total dev (with subjects) at least <span class="val">${val}</span>`,
-    'production_leader': `Be production leader in: <span class="tag">${dn(val)}</span>`,
+    'production_leader': (() => { const gm = val.match(/trade_goods\s*=\s*(\w+)/); return `Be the world's leading producer of <span class="tag">${prettyToken(gm ? gm[1] : val)}</span>`; })(),
     'diplomatic_reputation': `Diplomatic reputation at least <span class="val">${val}</span>`,
     'power_projection': `Power projection at least <span class="val">${val}</span>`,
     'religious_unity': `Religious unity at least <span class="val">${(parseFloat(val)*100)}%</span>`,
     'average_autonomy_above_min': `Average autonomy above <span class="val">${val}</span>`,
-    'culture_group': `Culture group: <span class="tag">${dn(val)}</span>`,
-    'primary_culture': `Primary culture: <span class="tag">${dn(val)}</span>`,
-    'has_ruler_modifier': `Ruler has modifier: <span class="tag">${dn(val)}</span>`,
+    'culture_group': `Culture group: <span class="tag">${prettyToken(val)}</span>`,
+    'primary_culture': `Primary culture: <span class="tag">${prettyToken(val)}</span>`,
+    'has_ruler_modifier': `Ruler has modifier: ${modRef(val)}`,
     'has_country_modifier': (() => { return `Has modifier: ${modRef(val.trim())}`; })(),
     'is_core': isScopeVar(val) ? null : `Is a core of <span class="tag">${tagName(val)}</span>`,
     'owned_by': isScopeVar(val) ? null : `Owned by <span class="tag">${tagName(val)}</span>`,
     'controlled_by': isScopeVar(val) ? 'Controlled by us' : `Controlled by <span class="tag">${tagName(val)}</span>`,
-    'has_building': `Has building: <span class="tag">${dn(val)}</span>`,
+    'has_building': `Has building: <span class="tag">${humanizeBuildingName(val)}</span>`,
     'base_tax': `Base tax at least <span class="val">${val}</span>`,
     'base_production': `Base production at least <span class="val">${val}</span>`,
     'base_manpower': `Base manpower at least <span class="val">${val}</span>`,
-    'trade_goods': `Produces: <span class="tag">${dn(val)}</span>`,
+    'trade_goods': `Produces: <span class="tag">${prettyToken(val)}</span>`,
     'num_of_generals': `Have at least <span class="val">${val}</span> generals`,
     'num_of_admirals': `Have at least <span class="val">${val}</span> admirals`,
     'num_of_heavy_ship': `Have at least <span class="val">${val}</span> heavy ships`,
@@ -2676,9 +2687,9 @@ function triggerToText(key, val, depth) {
     'any_ally': 'Any ally:',
     'any_neighbor_country': 'Any neighbor:',
     'any_subject_country': 'Any subject:',
-    'has_disaster': `Has active disaster: <span class="tag">${dn(val)}</span>`,
+    'has_disaster': `Has active disaster: <span class="tag">${prettyToken(val)}</span>`,
     'has_institution': `Has embraced institution: <span class="tag">${dn(val)}</span>`,
-    'has_great_project': (() => { const pm = val.match(/type\s*=\s*(\w+)/); const tm = val.match(/tier\s*=\s*(\d+)/); if (pm) { const gpName = GREAT_PROJECTS[pm[1]] || dn(pm[1]); return `Has great project: <span class="tag">${esc(gpName)}</span>${tm ? ' (tier ' + tm[1] + '+)' : ''}`; } return null; })(),
+    'has_great_project': (() => { const pm = val.match(/type\s*=\s*(\w+)/); const tm = val.match(/tier\s*=\s*(\d+)/); if (pm) { const gpName = GREAT_PROJECTS[pm[1]] || pm[1].replace(/_/g, ' '); return `Has great project: <span class="tag">${esc(gpName)}</span>${tm ? ' (tier ' + tm[1] + '+)' : ''}`; } return null; })(),
     'has_manufactory_trigger': val === 'yes' ? 'Has a manufactory' : 'No manufactory',
     'has_courthouse_building_trigger': val === 'yes' ? 'Has a courthouse or town hall' : 'No courthouse',
     'has_forcelimit_building_trigger': val === 'yes' ? 'Has a forcelimit building' : 'No forcelimit building',
@@ -2823,8 +2834,8 @@ function triggerToText(key, val, depth) {
     'add_base_manpower': `Add <span class="val">${val}</span> base manpower`,
     'change_government': `Change government to: <span class="tag">${dn(val)}</span>`,
     'change_tag': `Form country: <span class="tag">${tagName(val)}</span>`,
-    'change_religion': isScopeVar(val) ? 'Change religion to ours' : `Change religion to: <span class="tag">${dn(val)}</span>`,
-    'change_culture': isScopeVar(val) ? 'Change culture to ours' : `Change culture to: <span class="tag">${dn(val)}</span>`,
+    'change_religion': isScopeVar(val) ? 'Change religion to ours' : `Change religion to: <span class="tag">${religionName(val)}</span>`,
+    'change_culture': isScopeVar(val) ? 'Change culture to ours' : `Change culture to: <span class="tag">${prettyToken(val)}</span>`,
     'change_primary_culture': isScopeVar(val) ? null : `Change primary culture to: <span class="tag">${dn(val)}</span>`,
     'add_accepted_culture': `Accept culture: <span class="tag">${dn(val)}</span>`,
     'remove_accepted_culture': `Remove accepted culture: <span class="tag">${dn(val)}</span>`,
@@ -3126,7 +3137,7 @@ function triggerToText(key, val, depth) {
   // Anbennar race tolerance triggers
   if (/^(high|medium|low)_tolerance_(\w+)_race_trigger$/.test(key)) { const rm = key.match(/^(high|medium|low)_tolerance_(\w+)_race_trigger$/); if (rm) return { text: `Have ${rm[1]} tolerance of <span class="tag">${dn(rm[2])}</span> race`, type: 'condition' }; }
   // Idea group progress checks (e.g. exploration_ideas = 1)
-  if (/_ideas$/.test(key) && /^\d+$/.test(val)) { return { text: `Have <span class="val">${val}</span> ideas in <span class="tag">${key.replace(/_ideas$/, '').replace(/_/g, ' ')}</span>`, type: 'condition' }; }
+  if (/_ideas$/.test(key) && /^\d+$/.test(val)) { return { text: `Have <span class="val">${val}</span> ideas in <span class="tag">${titleCase(key.replace(/_ideas$/, '').replace(/_/g, ' '))}</span>`, type: 'condition' }; }
   // Anbennar custom triggers
   if (/^taychend_hero_cult_has_passed_reform/.test(key)) return { text: 'Has passed Taychend hero cult reform', type: 'condition' };
   if (key === 'have_cast_magnificent_feast') return val === 'yes' ? { text: 'Have cast Magnificent Feast', type: 'condition' } : null;
@@ -3269,14 +3280,14 @@ function triggerToText(key, val, depth) {
 
   if (key.startsWith('has_')) {
     if (isScopeVar(val)) return null;
-    const cleanKey = dn(key).replace(/\bhas\b/, 'Has').replace(/\btrigger\b/, '');
-    const cleanVal = val === 'yes' ? '' : val === 'no' ? ' (no)' : `: <span class="tag">${resolveRef(val)}</span>`;
+    const cleanKey = key.replace(/_/g, ' ').replace(/\bhas\b/, 'Has').replace(/\btrigger\b/, '').replace(/\bhre\b/gi, 'HRE');
+    const cleanVal = val === 'yes' ? '' : val === 'no' ? ' (no)' : `: <span class="tag">${prettyToken(resolveRef(val))}</span>`;
     return { text: `${cleanKey.trim()}${cleanVal}`, type: 'condition' };
   }
   if (key.startsWith('is_')) {
     if (isScopeVar(val)) return null;
-    const label = dn(key).replace(/\bis\b/, 'Is');
-    const cleanVal = val === 'yes' ? '' : val === 'no' ? ' — not' : `: <span class="val">${resolveRef(val)}</span>`;
+    const label = key.replace(/_/g, ' ').replace(/\bis\b/, 'Is').replace(/\bhre\b/gi, 'HRE');
+    const cleanVal = val === 'yes' ? '' : val === 'no' ? ' — not' : `: <span class="val">${prettyToken(resolveRef(val))}</span>`;
     return { text: `${label}${cleanVal}`, type: 'condition' };
   }
   if (key.startsWith('num_of_')) {
@@ -3289,9 +3300,11 @@ function triggerToText(key, val, depth) {
 
   // Generic fallthrough - format as readable text
   if (val && !val.includes('{') && val.length < 60) {
-    const cleanKey = dn(key);
-    const resolved = resolveRef(val);
-    const cleanVal = /^\d+(\.\d+)?$/.test(val) ? `<span class="val">${val}</span>` : `<span class="tag">${resolved}</span>`;
+    const cleanKey = key.replace(/_/g, ' ').replace(/\bhre\b/gi, 'HRE').replace(/^\w/, c => c.toUpperCase());
+    if (val === 'yes') return { text: cleanKey, type: 'raw' };
+    if (val === 'no') return { text: `Not: ${cleanKey.charAt(0).toLowerCase()}${cleanKey.slice(1)}`, type: 'raw' };
+    const resolved = prettyToken(resolveRef(val));
+    const cleanVal = /^-?\d+(\.\d+)?$/.test(val) ? `<span class="val">${val}</span>` : `<span class="tag">${resolved}</span>`;
     return { text: `${cleanKey}: ${cleanVal}`, type: 'raw' };
   }
 
@@ -3651,6 +3664,11 @@ function selectCountry(tag) {
   if (s.provinces_owned) {
     statusHtml += `<span class="pill">${s.provinces_owned} starting provinces</span>`;
   }
+  if (c.mission_class === 'unique') {
+    statusHtml += '<span class="pill pill-unique-mt" title="Has a mission tree written specifically for this nation (or shared only with its formable successor)">Unique Mission Tree</span>';
+  } else if (c.mission_class === 'regional') {
+    statusHtml += '<span class="pill pill-regional-mt" title="Missions come from shared regional or generic trees, not a bespoke tree">Regional Missions</span>';
+  }
 
   // Header
   let html = `<div class="detail-header">
@@ -3809,7 +3827,7 @@ function selectCountry(tag) {
     html += '</div>';
   }
 
-  detail.innerHTML = html;
+  detail.innerHTML = '<button class="back-to-map" onclick="showWorldMap()">&#8592; World Map</button>' + html;
 
   // Track whether connectors have been drawn for missions tab
   let _connectorsDrawn = false;
@@ -3894,6 +3912,28 @@ function renderMissionGrid(missions, missionById, tag) {
   if (maxPos === 0) maxPos = 1;
 
   let html = `<div class="mission-grid" id="mission-grid" style="grid-template-columns: repeat(${maxSlot}, 1fr);">`;
+
+  // Header row: label each column as unique (bespoke) or regional (shared tree)
+  for (let slot = 1; slot <= maxSlot; slot++) {
+    const slotMissions = missions.filter(mi => mi.slot === slot);
+    if (!slotMissions.length) continue;
+    let minShare = Infinity, maxShare = 0, sharedWith = [];
+    slotMissions.forEach(mi => {
+      const users = MISSION_GROUP_TAGS[mi.group || ''] || [];
+      if (users.length < minShare) minShare = users.length;
+      if (users.length > maxShare) { maxShare = users.length; sharedWith = users; }
+    });
+    const others = sharedWith.filter(t => t !== tag).slice(0, 10)
+      .map(t => DATA[t] ? DATA[t].name : t).join(', ');
+    if (maxShare <= UNIQUE_GROUP_MAX_TAGS) {
+      html += `<div class="slot-badge slot-badge-unique" style="grid-column:${slot};grid-row:1" title="This mission column was written specifically for this nation">&#9733; Unique</div>`;
+    } else if (minShare > UNIQUE_GROUP_MAX_TAGS) {
+      html += `<div class="slot-badge slot-badge-regional" style="grid-column:${slot};grid-row:1" title="Shared regional/generic missions — also used by: ${esc(others)}${sharedWith.length > 11 ? '…' : ''}">Regional &middot; ${maxShare} nations</div>`;
+    } else {
+      html += `<div class="slot-badge slot-badge-regional" style="grid-column:${slot};grid-row:1" title="Mostly unique, but some missions here come from a shared tree also used by: ${esc(others)}${sharedWith.length > 11 ? '…' : ''}">&#9733; Mixed</div>`;
+    }
+  }
+
   for (let pos = 1; pos <= maxPos; pos++) {
     for (let slot = 1; slot <= maxSlot; slot++) {
       const m = missions.find(mi => mi.slot === slot && mi.position === pos);
@@ -3912,7 +3952,7 @@ function renderMissionGrid(missions, missionById, tag) {
       let title = resolveGameText(m.title || m.id);
       if (!title || title.trim() === '') title = m.id.replace(/_/g, ' ');
 
-      html += `<div class="mission-node" data-mission-id="${esc(m.id)}" data-slot="${slot}" data-pos="${pos}" data-reqs="${esc(reqStr)}" style="grid-column:${slot};grid-row:${pos};">
+      html += `<div class="mission-node" data-mission-id="${esc(m.id)}" data-slot="${slot}" data-pos="${pos}" data-reqs="${esc(reqStr)}" style="grid-column:${slot};grid-row:${pos + 1};">
         ${iconHtml}
         <div class="mission-title">${esc(title)}</div>
       </div>`;
@@ -4097,7 +4137,15 @@ function showMissionDetail(tag, missionId) {
   if (mission.desc || trigger.desc) {
     html += `<div class="mission-desc">${esc(resolveGameText(mission.desc || trigger.desc || '')).replace(/\\n/g, '<br>')}</div>`;
   }
-  html += `<div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">Slot ${mission.slot}, Position ${mission.position} &middot; ${esc(mission.group || trigger.group || '')}</div>`;
+  const _groupUsers = MISSION_GROUP_TAGS[mission.group || ''] || [];
+  let provenance;
+  if (_groupUsers.length <= UNIQUE_GROUP_MAX_TAGS) {
+    provenance = '<span style="color:var(--gold)">&#9733; Unique mission</span>';
+  } else {
+    const _otherNames = _groupUsers.filter(t => t !== tag).slice(0, 10).map(t => DATA[t] ? DATA[t].name : t).join(', ');
+    provenance = `<span title="Also in the mission tree of: ${esc(_otherNames)}${_groupUsers.length > 11 ? '…' : ''}" style="cursor:help">Shared by ${_groupUsers.length} nations</span>`;
+  }
+  html += `<div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">Slot ${mission.slot}, Position ${mission.position} &middot; ${provenance}</div>`;
 
   // Required missions
   const reqs = mission.required_missions || trigger.required_missions || [];
@@ -4625,6 +4673,13 @@ function setupMapInteraction(container, canvas) {
     }
   });
 
+  addPinchZoom(container, {
+    min: 0.5, max: 10,
+    getScale: () => mapScale,
+    getOff: () => [mapOffX, mapOffY],
+    set: (s, x, y) => { mapScale = s; mapOffX = x; mapOffY = y; applyMapTransform(); }
+  });
+
   container.addEventListener('wheel', (e) => {
     e.preventDefault();
     const rect = container.getBoundingClientRect();
@@ -4816,8 +4871,350 @@ document.addEventListener('mouseleave', (e) => {
   }
 }, true);
 
+// === WORLD MAP (welcome overview) ===
+let wmScale = 1, wmOffX = 0, wmOffY = 0, wmFitScale = 1;
+let wmOwnerByPid = null, wmTags = null, wmTagIndex = null;
+let wmColorR = null, wmColorG = null, wmColorB = null;
+let wmRendered = false, wmDirty = false, wmTimer = null, wmRendering = false, wmHandlersSet = false;
+let wmLandBox = null; // [x1, y1, x2, y2] bounding box of all owned provinces
+let wmFocus = null;   // province-density-weighted center — where most countries live
+
+function wmBuildOwnerIndex() {
+  if (wmOwnerByPid) return;
+  wmTags = Object.keys(PROVINCE_OWNERS);
+  wmTagIndex = {};
+  wmOwnerByPid = new Int16Array(65536).fill(-1);
+  const n = wmTags.length;
+  wmColorR = new Uint8Array(n); wmColorG = new Uint8Array(n); wmColorB = new Uint8Array(n);
+  let bx1 = MAP_W, by1 = MAP_H, bx2 = 0, by2 = 0;
+  let sumX = 0, sumY = 0, nProv = 0;
+  wmTags.forEach((tag, i) => {
+    wmTagIndex[tag] = i;
+    const c = DATA[tag];
+    const col = c && c.color ? c.color : [110, 110, 120];
+    wmColorR[i] = col[0]; wmColorG[i] = col[1]; wmColorB[i] = col[2];
+    const provs = PROVINCE_OWNERS[tag] || [];
+    for (let j = 0; j < provs.length; j++) {
+      const pid = provs[j];
+      if (pid > 0 && pid < 65536) {
+        wmOwnerByPid[pid] = i;
+        const b = mapBounds && mapBounds[String(pid)];
+        if (b) {
+          if (b[0] < bx1) bx1 = b[0];
+          if (b[1] < by1) by1 = b[1];
+          if (b[2] > bx2) bx2 = b[2];
+          if (b[3] > by2) by2 = b[3];
+          sumX += (b[0] + b[2]) / 2; sumY += (b[1] + b[3]) / 2; nProv++;
+        }
+      }
+    }
+  });
+  if (bx2 > bx1) {
+    wmLandBox = [bx1, by1, bx2, by2];
+    if (nProv > 0) wmFocus = [sumX / nProv, sumY / nProv];
+  }
+}
+
+function wmFilterActive() {
+  if (activeFilters.size > 0) return true;
+  if (document.getElementById('search-input').value.trim()) return true;
+  return ['region-select','culture-select','religion-select','tech-select','gov-select']
+    .some(id => document.getElementById(id).value);
+}
+
+async function renderWorldMap() {
+  const wrap = document.getElementById('world-map-wrap');
+  const canvas = document.getElementById('world-map-canvas');
+  if (!wrap || !canvas || wmRendering) return;
+  wmRendering = true;
+  try {
+    await loadMapAssets();
+    wmBuildOwnerIndex();
+
+    const filtering = wmFilterActive();
+    const lit = new Uint8Array(wmTags.length);
+    if (filtering) {
+      for (const c of filteredCountries) {
+        const i = wmTagIndex[c.tag];
+        if (i !== undefined) lit[i] = 1;
+      }
+    } else {
+      lit.fill(1);
+    }
+
+    canvas.width = MAP_W; canvas.height = MAP_H;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(mapBaseImg, 0, 0);
+    const imgData = ctx.getImageData(0, 0, MAP_W, MAP_H);
+    const px = imgData.data;
+    const id = mapIdData;
+
+    // Color pass: paint every owned province with its country color;
+    // when filtering, non-matching countries collapse to dark grey.
+    for (let i = 0, n = MAP_W * MAP_H; i < n; i++) {
+      const k = i * 4;
+      const pid = (id[k] << 8) | id[k + 1];
+      const ci = pid > 0 ? wmOwnerByPid[pid] : -1;
+      if (ci < 0) {
+        // Water / uncolonized: dimmed terrain
+        px[k] = (px[k] * 0.7) | 0;
+        px[k+1] = (px[k+1] * 0.7) | 0;
+        px[k+2] = (px[k+2] * 0.7) | 0;
+        continue;
+      }
+      if (lit[ci]) {
+        px[k] = wmColorR[ci]; px[k+1] = wmColorG[ci]; px[k+2] = wmColorB[ci];
+      } else {
+        const g = (((wmColorR[ci] + wmColorG[ci] + wmColorB[ci]) / 3) * 0.28 + 22) | 0;
+        px[k] = g; px[k+1] = g; px[k+2] = g;
+      }
+      px[k+3] = 255;
+    }
+
+    // Border pass: darken pixels whose right/bottom neighbor has a different owner
+    for (let y = 0; y < MAP_H; y++) {
+      const rowOff = y * MAP_W;
+      for (let x = 0; x < MAP_W; x++) {
+        const k = (rowOff + x) * 4;
+        const pid = (id[k] << 8) | id[k + 1];
+        const ci = pid > 0 ? wmOwnerByPid[pid] : -1;
+        if (ci < 0) continue;
+        let border = false;
+        if (x + 1 < MAP_W) {
+          const k2 = k + 4;
+          const pid2 = (id[k2] << 8) | id[k2 + 1];
+          if ((pid2 > 0 ? wmOwnerByPid[pid2] : -1) !== ci) border = true;
+        }
+        if (!border && y + 1 < MAP_H) {
+          const k2 = k + MAP_W * 4;
+          const pid2 = (id[k2] << 8) | id[k2 + 1];
+          if ((pid2 > 0 ? wmOwnerByPid[pid2] : -1) !== ci) border = true;
+        }
+        if (border) {
+          px[k] = (px[k] * 0.35) | 0;
+          px[k+1] = (px[k+1] * 0.35) | 0;
+          px[k+2] = (px[k+2] * 0.35) | 0;
+        }
+      }
+    }
+
+    ctx.putImageData(imgData, 0, 0);
+
+    const cw = wrap.clientWidth;
+    wmFitScale = cw / MAP_W;
+    canvas.style.width = cw + 'px';
+    canvas.style.height = Math.round(MAP_H * wmFitScale) + 'px';
+
+    if (!wmRendered) {
+      wmResetView();
+      wmSetupInteraction(wrap);
+      wmRendered = true;
+    } else {
+      wmApplyTransform();
+    }
+
+    const status = document.getElementById('world-map-status');
+    if (status) {
+      status.textContent = filtering
+        ? 'Highlighting ' + filteredCountries.length + ' matching countr' + (filteredCountries.length === 1 ? 'y' : 'ies') + ' — greyed-out nations do not match your filters'
+        : 'The known world in 1444 — click any country to explore it';
+    }
+    wmDirty = false;
+  } finally {
+    wmRendering = false;
+  }
+}
+
+function wmApplyTransform() {
+  const canvas = document.getElementById('world-map-canvas');
+  if (!canvas) return;
+  canvas.style.transformOrigin = '0 0';
+  canvas.style.transform = 'translate(' + wmOffX + 'px, ' + wmOffY + 'px) scale(' + wmScale + ')';
+}
+
+function wmResetView() {
+  const wrap = document.getElementById('world-map-wrap');
+  if (!wrap) return;
+  const cw = wrap.clientWidth, ch = wrap.clientHeight;
+  if (wmLandBox) {
+    // Fill the frame height with the inhabited land strip, centered on the
+    // densest part of the world; the rest stays reachable by pan/zoom.
+    const [x1, y1, x2, y2] = wmLandBox;
+    const bh = (y2 - y1) * wmFitScale;
+    wmScale = Math.max(1, ch / (bh * 1.02));
+    const fx = wmFocus ? wmFocus[0] : (x1 + x2) / 2;
+    const fy = wmFocus ? wmFocus[1] : (y1 + y2) / 2;
+    // Clamp focus so the viewport stays within the land box where possible
+    const viewW = cw / (wmScale * wmFitScale), viewH = ch / (wmScale * wmFitScale);
+    const cxm = Math.max(x1 + viewW / 2, Math.min(x2 - viewW / 2, fx));
+    const cym = Math.max(y1 + viewH / 2, Math.min(y2 - viewH / 2, fy));
+    wmOffX = cw / 2 - cxm * wmFitScale * wmScale;
+    wmOffY = ch / 2 - cym * wmFitScale * wmScale;
+  } else {
+    wmScale = Math.max(1, ch / (MAP_H * wmFitScale));
+    wmOffX = (cw - MAP_W * wmFitScale * wmScale) / 2;
+    wmOffY = (ch - MAP_H * wmFitScale * wmScale) / 2;
+  }
+  wmApplyTransform();
+}
+
+function wmZoom(dir) {
+  const wrap = document.getElementById('world-map-wrap');
+  if (!wrap) return;
+  const cx = wrap.clientWidth / 2, cy = wrap.clientHeight / 2;
+  const factor = dir > 0 ? 1.3 : 1 / 1.3;
+  const newScale = Math.max(0.8, Math.min(20, wmScale * factor));
+  wmOffX = cx - (cx - wmOffX) * (newScale / wmScale);
+  wmOffY = cy - (cy - wmOffY) * (newScale / wmScale);
+  wmScale = newScale;
+  wmApplyTransform();
+}
+
+function wmProvAt(mx, my) {
+  const mapX = Math.floor((mx - wmOffX) / (wmScale * wmFitScale));
+  const mapY = Math.floor((my - wmOffY) / (wmScale * wmFitScale));
+  if (mapX < 0 || mapX >= MAP_W || mapY < 0 || mapY >= MAP_H) return 0;
+  const k = (mapY * MAP_W + mapX) * 4;
+  return (mapIdData[k] << 8) | mapIdData[k + 1];
+}
+
+function wmSetupInteraction(wrap) {
+  if (wmHandlersSet) return;
+  wmHandlersSet = true;
+  let dragging = false, lastX, lastY, didDrag = false;
+
+  wrap.addEventListener('mousedown', (e) => {
+    dragging = true; didDrag = false;
+    lastX = e.clientX; lastY = e.clientY;
+  });
+  wrap.addEventListener('mousemove', (e) => {
+    const rect = wrap.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    if (dragging) {
+      const dx = e.clientX - lastX, dy = e.clientY - lastY;
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag = true;
+      wmOffX += dx; wmOffY += dy;
+      lastX = e.clientX; lastY = e.clientY;
+      wmApplyTransform();
+      return;
+    }
+    if (!mapIdData || !wmOwnerByPid) return;
+    const pid = wmProvAt(mx, my);
+    const tt = document.getElementById('world-map-tooltip');
+    if (!tt) return;
+    const ci = pid > 0 ? wmOwnerByPid[pid] : -1;
+    let label = '';
+    if (ci >= 0) {
+      const tag = wmTags[ci];
+      label = (DATA[tag] ? DATA[tag].name : tag);
+      const pname = PROVINCES[String(pid)];
+      if (pname) label += ' • ' + pname;
+    } else if (pid > 0 && PROVINCES[String(pid)]) {
+      // Only colonizable land has province details; seas and wastelands don't
+      label = PROVINCES[String(pid)] + (PROV_DETAILS[String(pid)] ? ' • uncolonized' : '');
+    }
+    if (label) {
+      tt.textContent = label;
+      tt.style.display = 'block';
+      tt.style.left = (mx + 12) + 'px';
+      tt.style.top = (my - 8) + 'px';
+    } else {
+      tt.style.display = 'none';
+    }
+  });
+  wrap.addEventListener('mouseup', () => { dragging = false; });
+  wrap.addEventListener('mouseleave', () => {
+    dragging = false;
+    const tt = document.getElementById('world-map-tooltip');
+    if (tt) tt.style.display = 'none';
+  });
+
+  wrap.addEventListener('click', (e) => {
+    if (didDrag) return;
+    const rect = wrap.getBoundingClientRect();
+    const pid = wmProvAt(e.clientX - rect.left, e.clientY - rect.top);
+    const ci = pid > 0 ? wmOwnerByPid[pid] : -1;
+    if (ci >= 0 && DATA[wmTags[ci]]) selectCountry(wmTags[ci]);
+  });
+
+  wrap.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const rect = wrap.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+    const newScale = Math.max(0.8, Math.min(20, wmScale * factor));
+    wmOffX = mx - (mx - wmOffX) * (newScale / wmScale);
+    wmOffY = my - (my - wmOffY) * (newScale / wmScale);
+    wmScale = newScale;
+    wmApplyTransform();
+  }, { passive: false });
+
+  addPinchZoom(wrap, {
+    min: 0.8, max: 20,
+    getScale: () => wmScale,
+    getOff: () => [wmOffX, wmOffY],
+    set: (s, x, y) => { wmScale = s; wmOffX = x; wmOffY = y; wmApplyTransform(); }
+  });
+}
+
+// Two-finger pan + pinch zoom for touch devices; one finger keeps scrolling the page
+function addPinchZoom(el, st) {
+  let pinch = null;
+  const mid = (e, rect) => ({
+    dist: Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY),
+    x: (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left,
+    y: (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top
+  });
+  el.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      pinch = mid(e, el.getBoundingClientRect());
+    }
+  }, { passive: false });
+  el.addEventListener('touchmove', (e) => {
+    if (e.touches.length !== 2 || !pinch) return;
+    e.preventDefault();
+    const m = mid(e, el.getBoundingClientRect());
+    const scale = st.getScale();
+    const newScale = Math.max(st.min, Math.min(st.max, scale * (m.dist / pinch.dist)));
+    const off = st.getOff();
+    const nx = pinch.x - (pinch.x - off[0]) * (newScale / scale) + (m.x - pinch.x);
+    const ny = pinch.y - (pinch.y - off[1]) * (newScale / scale) + (m.y - pinch.y);
+    st.set(newScale, nx, ny);
+    pinch = m;
+  }, { passive: false });
+  el.addEventListener('touchend', (e) => { if (e.touches.length < 2) pinch = null; });
+  el.addEventListener('touchcancel', () => { pinch = null; });
+}
+
+function scheduleWorldMapRender() {
+  const welcome = document.getElementById('welcome');
+  if (!welcome || welcome.style.display === 'none') { wmDirty = true; return; }
+  clearTimeout(wmTimer);
+  wmTimer = setTimeout(renderWorldMap, 200);
+}
+
+function showWorldMap() {
+  document.getElementById('detail').className = '';
+  document.getElementById('welcome').style.display = '';
+  selectedTag = null;
+  document.querySelectorAll('.country-item').forEach(el => el.classList.remove('selected'));
+  if (!wmRendered || wmDirty) renderWorldMap();
+}
+
 // Init
 document.addEventListener('DOMContentLoaded', loadData);
+</script>
+<script data-goatcounter="https://anbennar-compendium.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var kofi = document.querySelector('.kofi-btn');
+  if (kofi) kofi.addEventListener('click', function() {
+    if (window.goatcounter && window.goatcounter.count)
+      window.goatcounter.count({path: 'kofi-click', title: 'Ko-fi button click', event: true});
+  });
+});
 </script>
 </body>
 </html>'''
@@ -4826,7 +5223,8 @@ document.addEventListener('DOMContentLoaded', loadData);
     import time
     html = html.replace('__BUILD_VERSION__', str(int(time.time())))
 
-    output_path = r'C:\Users\jjdeg\OneDrive\Desktop\anbennar-guide\index.html'
+    import os
+    output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'index.html')
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html)
     print(f'Written {len(html):,} bytes to {output_path}')
