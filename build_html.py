@@ -379,19 +379,105 @@ body {
 
 #welcome {
   text-align: center;
-  padding: 80px 20px;
+  padding: 60px 20px;
   color: var(--text-muted);
+  max-width: 860px;
+  margin: 0 auto;
+  animation: detailIn 0.4s var(--ease);
 }
+.welcome-rule {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--gold-dim);
+  margin-bottom: 28px;
+  font-size: 14px;
+}
+.welcome-rule::before, .welcome-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim));
+}
+.welcome-rule::after { background: linear-gradient(90deg, var(--gold-dim), transparent); }
 #welcome h2 {
   font-family: 'IM Fell English SC', serif;
-  color: var(--gold-dim);
-  font-size: 24px;
+  font-size: 38px;
   margin-bottom: 12px;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold-dim));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
 }
 #welcome p {
   font-family: 'IM Fell English', serif;
   font-style: italic;
+  font-size: 15px;
+}
+#welcome-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 36px 0 28px;
+}
+.stat-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 12px 14px;
+  transition: border-color 0.2s var(--ease), transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+.stat-card:hover {
+  border-color: var(--gold-dim);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35), 0 0 18px rgba(201,168,76,0.07);
+}
+.stat-card .stat-num {
+  font-family: 'IM Fell English SC', serif;
+  font-size: 28px;
+  color: var(--gold);
+  line-height: 1.1;
+}
+.stat-card .stat-label {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+#welcome-suggest { margin-top: 8px; }
+.suggest-label {
+  display: block;
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+.suggest-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.suggest-chip {
+  padding: 8px 18px;
+  font-family: 'Lora', serif;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.02);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.18s var(--ease);
+}
+.suggest-chip:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(201,168,76,0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
 }
 
 /* COUNTRY DETAIL */
@@ -1263,8 +1349,20 @@ body {
 
   <div id="main">
     <div id="welcome">
+      <div class="welcome-rule"><span>&#10070;</span></div>
       <h2>Welcome, Adventurer</h2>
       <p>Select a country from the sidebar to explore its history, missions, and national ideas.</p>
+      <div id="welcome-stats"></div>
+      <div id="welcome-suggest">
+        <span class="suggest-label">Or begin with a legend:</span>
+        <div class="suggest-chips">
+          <button class="suggest-chip" onclick="selectCountry('A01')">&#127801; Lorent</button>
+          <button class="suggest-chip" onclick="selectCountry('R62')">&#9876; The Command</button>
+          <button class="suggest-chip" onclick="selectCountry('I24')">&#9935; Aul-Dwarov</button>
+          <button class="suggest-chip" onclick="selectCountry('B47')">&#128737; Stalb&oacute;r</button>
+          <button class="suggest-chip" onclick="selectRandomCountry()">&#127922; Surprise me</button>
+        </div>
+      </div>
     </div>
     <div id="detail"></div>
   </div>
@@ -1278,7 +1376,7 @@ body {
 
 <script>
 // --- DATA ---
-let DATA = {}, RELIGIONS = {}, WIKI = {}, REGIONS = {}, TRIGGERS = {}, STATUS = {}, ICON_MAP = {}, PROVINCES = {}, MODIFIERS = {}, STARTUP_LORE = {}, PROVINCE_OWNERS = {}, DIPLOMACY = {}, PROV_DETAILS = {}, AREA_DATA = {}, EVENT_NAMES = {}, GREAT_PROJECTS = {};
+let DATA = {}, RELIGIONS = {}, WIKI = {}, REGIONS = {}, TRIGGERS = {}, STATUS = {}, ICON_MAP = {}, PROVINCES = {}, MODIFIERS = {}, STARTUP_LORE = {}, PROVINCE_OWNERS = {}, DIPLOMACY = {}, PROV_DETAILS = {}, AREA_DATA = {}, EVENT_NAMES = {}, GREAT_PROJECTS = {}, SCRIPTED = {}, NAMES = {};
 // Map state
 let mapBaseImg = null, mapIdImg = null, mapIdData = null, mapBounds = null;
 let mapScale = 1, mapOffX = 0, mapOffY = 0, mapCurrentTag = null;
@@ -1316,7 +1414,7 @@ async function loadData() {
   el.innerHTML = '<div class="loading">Loading data...</div>';
   try {
     const v = '__BUILD_VERSION__';
-    const [d1, d2, d3, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15, d16, d17] = await Promise.all([
+    const [d1, d2, d3, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15, d16, d17, d18, d19] = await Promise.all([
       fetch('anbennar_data.json?v='+v).then(r => r.json()),
       fetch('religions_data.json?v='+v).then(r => r.json()),
       fetch('wiki_data.json?v='+v).then(r => r.json()),
@@ -1333,18 +1431,50 @@ async function loadData() {
       fetch('area_data.json?v='+v).then(r => r.json()).catch(() => ({})),
       fetch('event_names.json?v='+v).then(r => r.json()).catch(() => ({})),
       fetch('great_projects.json?v='+v).then(r => r.json()).catch(() => ({})),
+      fetch('scripted_defs.json?v='+v).then(r => r.json()).catch(() => ({})),
+      fetch('display_names.json?v='+v).then(r => r.json()).catch(() => ({})),
     ]);
-    DATA = d1; RELIGIONS = d2; WIKI = d3; REGIONS = d5; TRIGGERS = d6; STATUS = d7; ICON_MAP = d8; PROVINCES = d9; MODIFIERS = d10 || {}; STARTUP_LORE = d11 || {}; PROVINCE_OWNERS = d12 || {}; DIPLOMACY = d13 || {}; PROV_DETAILS = d14 || {}; AREA_DATA = d15 || {}; EVENT_NAMES = d16 || {}; GREAT_PROJECTS = d17 || {};
+    DATA = d1; RELIGIONS = d2; WIKI = d3; REGIONS = d5; TRIGGERS = d6; STATUS = d7; ICON_MAP = d8; PROVINCES = d9; MODIFIERS = d10 || {}; STARTUP_LORE = d11 || {}; PROVINCE_OWNERS = d12 || {}; DIPLOMACY = d13 || {}; PROV_DETAILS = d14 || {}; AREA_DATA = d15 || {}; EVENT_NAMES = d16 || {}; GREAT_PROJECTS = d17 || {}; SCRIPTED = d18 || {}; NAMES = d19 || {};
 
     countries = Object.values(DATA);
     countries.sort(countrySorter);
     populateRegions();
     populateFilterDropdowns();
     applyFilters();
+    populateWelcomeStats();
   } catch(e) {
     el.innerHTML = '<div class="loading">Error loading data: ' + e.message + '</div>';
     console.error(e);
   }
+}
+
+function populateWelcomeStats() {
+  const el = document.getElementById('welcome-stats');
+  if (!el) return;
+  let missions = 0, ideas = 0;
+  const religions = new Set();
+  let playable = 0;
+  for (const c of countries) {
+    missions += c.mission_count || 0;
+    if (c.ideas && c.ideas.ideas) ideas += c.ideas.ideas.length;
+    if (c.religion) religions.add(c.religion);
+    const st = (STATUS[c.tag] || {}).status;
+    if (st === 'playable' || st === 'both') playable++;
+  }
+  const fmt = n => n.toLocaleString('en-US');
+  el.innerHTML = [
+    [fmt(countries.length), 'Nations'],
+    [fmt(playable), 'Playable in 1444'],
+    [fmt(missions), 'Missions'],
+    [fmt(religions.size), 'Religions'],
+  ].map(([num, label]) => `<div class="stat-card"><div class="stat-num">${num}</div><div class="stat-label">${label}</div></div>`).join('');
+}
+
+function selectRandomCountry() {
+  // Surprise from countries with substantial content so it lands somewhere fun
+  const rich = countries.filter(c => (c.mission_count || 0) >= 20);
+  const pick = rich[Math.floor(Math.random() * rich.length)];
+  if (pick) selectCountry(pick.tag);
 }
 
 function countrySorter(a, b) {
@@ -1363,18 +1493,26 @@ function titleCase(s) {
   return s.replace(/\b\w/g, c => c.toUpperCase());
 }
 
-// EU4 building internal names -> display names (sourced from base game loc).
-// Fort centuries are particularly confusing when rendered as "fort 15th".
-const BUILDING_NAMES = {
-  fort_15th: 'Castle',
-  fort_16th: 'Bastion',
-  fort_17th: 'Star Fort',
-  fort_18th: 'Fortress',
-};
-function humanizeBuildingName(key) {
-  if (!key) return '';
-  if (BUILDING_NAMES[key]) return BUILDING_NAMES[key];
+// Turn an internal game identifier into its proper display name.
+// display_names.json carries the game's own localisation for buildings,
+// religions, cultures, trade goods, reforms, estates and more (5.5k entries),
+// so "mage_tower" reads as "Mage Tower" and "fort_17th" as "Star Fort"
+// instead of the underscore-stripped "mage tower" / "fort 17th".
+function dn(id) {
+  if (!id) return '';
+  const key = String(id).trim();
+  // Callers sometimes pass a whole script fragment rather than a single
+  // identifier (province/area scope bodies). Those aren't names to look up —
+  // just make them readable and let the caller's own parsing take over.
+  if (/[\s={}]/.test(key)) return key.replace(/_/g, ' ');
+  if (NAMES[key]) return NAMES[key];
+  // Some ids are referenced with a namespace prefix already applied
+  const bare = key.replace(/^(building_|estate_)/, '');
+  if (NAMES[bare]) return NAMES[bare];
   return titleCase(key.replace(/_/g, ' '));
+}
+function humanizeBuildingName(key) {
+  return dn(key);
 }
 
 function levenshtein(a, b) {
@@ -1775,11 +1913,11 @@ function provSpan(id, label) {
   return `<span class="val geo-ref" data-provs="${id}" title="ID: ${id}">${label}</span>`;
 }
 function areaSpan(areaKey, label) {
-  if (!label) label = areaKey.replace(/_area$/, '').replace(/_/g, ' ');
+  if (!label) label = titleCase(areaKey.replace(/_area$/, '').replace(/_/g, ' '));
   return `<span class="tag geo-ref" data-area="${areaKey}">${label}</span>`;
 }
 function regionSpan(regionKey, label) {
-  if (!label) label = regionKey.replace(/_region$/, '').replace(/_/g, ' ');
+  if (!label) label = titleCase(regionKey.replace(/_(region|superregion)$/, '').replace(/_/g, ' '));
   return `<span class="tag geo-ref" data-region="${regionKey}">${label}</span>`;
 }
 
@@ -2071,6 +2209,21 @@ function parseTriggerToReadable(raw) {
 
     if (depth <= 5) {
       let m;
+      // Mod script often puts several scalar statements on one line, e.g.
+      //   add_base_tax = 1 add_base_production = 1 add_base_manpower = 1
+      // Taking the rest of the line as a single value garbles all but the
+      // first, so split brace-free lines into their individual statements.
+      if (!opens && !closes) {
+        const stmts = [...trimmed.matchAll(/([A-Za-z_][\w]*)\s*=\s*(-?[\w.:']+)/g)];
+        if (stmts.length > 1 && stmts.every(s => !SKIP_KEYS.has(s[1]))) {
+          for (const s of stmts) {
+            const readable = triggerToText(s[1], s[2]);
+            if (readable) results.push(readable);
+          }
+          depth = Math.max(0, newDepth);
+          continue;
+        }
+      }
       if ((m = trimmed.match(/^(\w+)\s*=\s*(.+)$/))) {
         const key = m[1];
         const val = m[2].replace(/[{}]/g, '').trim();
@@ -2126,7 +2279,7 @@ function parseTriggerToReadable(raw) {
         } else {
           // Check if this is a scope-opening key (area/region/province)
           if ((key.endsWith('_area') || key.endsWith('_region') || key.endsWith('_superregion')) && opens > closes) {
-            const sName = key.replace(/_area$|_region$|_superregion$/, '').replace(/_/g, ' ');
+            const sName = titleCase(key.replace(/_area$|_region$|_superregion$/, '').replace(/_/g, ' '));
             const sType = key.endsWith('_area') ? 'area' : key.endsWith('_region') ? 'region' : 'superregion';
             scopeStack.push({name: sName, type: sType, depth: depth, key: key});
           } else if (/^\d+$/.test(key) && opens > closes) {
@@ -2179,7 +2332,20 @@ function parseTriggerToReadable(raw) {
 
     depth = Math.max(0, newDepth);
   }
-  return _results.slice(0, 50);
+  // Drop lines whose substance failed to resolve — "Has modifier:" with no
+  // modifier name, a bare separator, "(has modifier: )". Scope headers
+  // legitimately end in a colon ("Every owned province:"), so keep those.
+  const SCOPE_HEADER = /^(every|any|all|random|one of|at least|in\s|the\s)/i;
+  const meaningful = _results.filter(r => {
+    const plain = String(r && r.text || '').replace(/<[^>]*>/g, '').replace(/&[a-z]+;/g, ' ').trim();
+    if (!plain) return false;
+    if (/^[:—–-]+$/.test(plain)) return false;                 // just punctuation
+    if (/^[—–-]\s/.test(plain)) return false;                  // lost its subject
+    if (/:\s*$/.test(plain) && !SCOPE_HEADER.test(plain)) return false;  // label with no value
+    if (/\([^)]*:\s*\)/.test(plain)) return false;                      // "(has modifier: )"
+    return true;
+  });
+  return meaningful.slice(0, 50);
 }
 
 function negateCondition(text) {
@@ -2203,7 +2369,7 @@ const SCOPE_VARS = new Set(['ROOT', 'FROM', 'PREV', 'THIS', 'root', 'from', 'pre
 function tagName(tag) {
   const t = tag.trim();
   const c = DATA[t];
-  return c ? c.name : t.replace(/_/g, ' ');
+  return c ? c.name : dn(t);
 }
 function resolveRef(v) {
   // Resolve a value that could be a country tag, province ID, or plain text
@@ -2211,27 +2377,32 @@ function resolveRef(v) {
   if (isScopeVar(t)) return t;
   if (/^\d+$/.test(t)) return provName(t);
   if (DATA[t]) return DATA[t].name;
-  return t.replace(/_/g, ' ');
+  return dn(t);
 }
-function isScopeVar(v) { return SCOPE_VARS.has(v.trim()); }
+// event_target:foo / variable:foo are runtime references — there is nothing
+// meaningful to show a reader, so treat them as scope vars and suppress.
+function isScopeVar(v) {
+  const t = String(v).trim();
+  return SCOPE_VARS.has(t) || /^(event_target|variable|parameter|flag):/i.test(t);
+}
 function resolveProvOrTag(v) {
   const t = v.trim();
   if (isScopeVar(t)) return null; // suppress scope vars
   if (/^\d+$/.test(t)) return provName(t);
-  return t.replace(/_/g, ' ');
+  return dn(t);
 }
 // Shared helper: extract province qualifiers from a num_of_*_provinces_with block
 function extractProvConditions(val) {
   const conditions = [];
   const tgMatches = val.matchAll(/trade_goods\s*=\s*(\w+)/g);
   const goods = new Set();
-  for (const tg of tgMatches) goods.add(tg[1].replace(/_/g, ' '));
+  for (const tg of tgMatches) goods.add(dn(tg[1]));
   if (goods.size) conditions.push('produces ' + [...goods].join(' or '));
   if (/has_building\s*=\s*(\w+)/.test(val)) conditions.push('has ' + val.match(/has_building\s*=\s*(\w+)/)[1].replace(/_/g, ' '));
-  if (/culture\s*=\s*(\w+)/.test(val) && !/culture_group/.test(val)) { const cv = val.match(/culture\s*=\s*(\w+)/)[1]; conditions.push(cv === 'ROOT' ? 'our culture' : 'culture: ' + cv.replace(/_/g, ' ')); }
-  if (/culture_group\s*=\s*(\w+)/.test(val)) { const cv = val.match(/culture_group\s*=\s*(\w+)/)[1]; conditions.push(cv === 'ROOT' ? 'our culture group' : 'culture group: ' + cv.replace(/_/g, ' ')); }
-  if (/religion\s*=\s*(\w+)/.test(val)) { const rv = val.match(/religion\s*=\s*(\w+)/)[1]; conditions.push(rv === 'ROOT' ? 'our religion' : 'religion: ' + rv.replace(/_/g, ' ')); }
-  if (/has_\w+_minority_trigger/.test(val)) { const mm = val.match(/has_(\w+)_minority_trigger/); if (mm) conditions.push('has ' + mm[1].replace(/_/g, ' ') + ' minority'); }
+  if (/culture\s*=\s*(\w+)/.test(val) && !/culture_group/.test(val)) { const cv = val.match(/culture\s*=\s*(\w+)/)[1]; conditions.push(cv === 'ROOT' ? 'our culture' : 'culture: ' + dn(cv)); }
+  if (/culture_group\s*=\s*(\w+)/.test(val)) { const cv = val.match(/culture_group\s*=\s*(\w+)/)[1]; conditions.push(cv === 'ROOT' ? 'our culture group' : 'culture group: ' + dn(cv)); }
+  if (/religion\s*=\s*(\w+)/.test(val)) { const rv = val.match(/religion\s*=\s*(\w+)/)[1]; conditions.push(rv === 'ROOT' ? 'our religion' : 'religion: ' + dn(rv)); }
+  if (/has_\w+_minority_trigger/.test(val)) { const mm = val.match(/has_(\w+)_minority_trigger/); if (mm) conditions.push('has ' + dn(mm[1]) + ' minority'); }
   if (/development\s*=\s*(\d+)/.test(val)) conditions.push('at least ' + val.match(/development\s*=\s*(\d+)/)[1] + ' dev');
   if (/base_production\s*=\s*(\d+)/.test(val)) conditions.push('base production ≥ ' + val.match(/base_production\s*=\s*(\d+)/)[1]);
   if (/base_tax\s*=\s*(\d+)/.test(val)) conditions.push('base tax ≥ ' + val.match(/base_tax\s*=\s*(\d+)/)[1]);
@@ -2239,7 +2410,7 @@ function extractProvConditions(val) {
   if (/has_port\s*=\s*yes/.test(val)) conditions.push('has a port');
   if (/is_city\s*=\s*yes/.test(val)) conditions.push('is a city');
   // Geographic
-  const regions = [...val.matchAll(/region\s*=\s*(\w+)/g)].map(m => m[1].replace(/_/g, ' '));
+  const regions = [...val.matchAll(/region\s*=\s*(\w+)/g)].map(m => dn(m[1]));
   if (regions.length) conditions.push('in ' + regions.join(' or '));
   if (/area\s*=\s*(\w+)/.test(val)) conditions.push('in ' + val.match(/area\s*=\s*(\w+)/)[1].replace(/_/g, ' '));
   if (/superregion\s*=\s*(\w+)/.test(val)) conditions.push('in ' + val.match(/superregion\s*=\s*(\w+)/)[1].replace(/_/g, ' '));
@@ -2267,7 +2438,45 @@ function extractProvConditions(val) {
   return conditions.length ? ' (' + conditions.join(', ') + ')' : '';
 }
 
-function triggerToText(key, val) {
+// Render a scripted effect/trigger invocation. `def` is {tip, body} from
+// scripted_defs.json. Depth-guarded because scripted effects nest.
+function renderScripted(key, def, val, depth) {
+  depth = depth || 0;
+  if (def.tip) {
+    const tip = resolveGameText(def.tip).trim();
+    if (tip) return { text: esc(tip), type: 'condition' };
+  }
+  if (depth >= 2 || !def.body) return null;
+
+  // Substitute macro arguments: body uses $name$, the call site passes
+  // `key = { name = value ... }`.
+  let body = def.body;
+  if (val && val.includes('=')) {
+    for (const m of val.matchAll(/([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*([^\s{}]+)/g)) {
+      body = body.split('$' + m[1] + '$').join(m[2]);
+    }
+  }
+  if (body.includes('$')) return null;  // unresolved macro args — don't show script
+
+  // Render the body's top-level statements and join the readable ones.
+  const parts = [];
+  for (const m of body.matchAll(/([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(\{[^{}]*\}|[^\s{}]+)/g)) {
+    if (parts.length >= 4) break;
+    const inner = triggerToText(m[1], m[2].replace(/^\{|\}$/g, '').trim(), depth + 1);
+    if (inner && inner.text && inner.type !== 'raw') parts.push(inner.text);
+  }
+  if (!parts.length) return null;
+  return { text: parts.join(', '), type: 'condition' };
+}
+
+function triggerToText(key, val, depth) {
+  // A scalar value followed by more statements means the caller handed us a
+  // multi-statement fragment; keep the number so templates like
+  // "Have {val} army tradition" don't splice raw script into the sentence.
+  if (typeof val === 'string') {
+    const lead = val.match(/^(-?[\d.]+)\s+[A-Za-z_]\w*\s*=/);
+    if (lead) val = lead[1];
+  }
   const map = {
     'army_size': isScopeVar(val) ? null : (/^[A-Z][A-Z0-9]{1,2}$/.test(val) ? `Army size at least equal to <span class="tag">${tagName(val)}</span>` : `Have at least <span class="val">${val}</span> regiments`),
     'army_size_percentage': `Army at <span class="val">${(parseFloat(val)*100)}%</span> of force limit`,
@@ -2285,14 +2494,14 @@ function triggerToText(key, val) {
     'legitimacy': `Have at least <span class="val">${val}</span> legitimacy`,
     'republican_tradition': `Have at least <span class="val">${val}</span> republican tradition`,
     'legitimacy_equivalent': `Have at least <span class="val">${val}</span> legitimacy (or equivalent)`,
-    'religion_group': `Religion group: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'religion_group': `Religion group: <span class="tag">${dn(val)}</span>`,
     'num_free_building_slots': `Have at least <span class="val">${val}</span> free building slots`,
     'ruler_has_mage_personality': val === 'yes' ? 'Ruler is a mage' : null,
     'owned_by_subject_of': isScopeVar(val) ? 'Owned by a subject' : `Owned by subject of <span class="tag">${tagName(val)}</span>`,
     'overlord_of': `Be overlord of <span class="tag">${tagName(val)}</span>`,
     'vassal_of': isScopeVar(val) ? null : `Be vassal of <span class="tag">${tagName(val)}</span>`,
-    'hre_reform_passed': `HRE reform passed: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'trade_goods_produced_amount': (() => { const vm = val.match(/amount\s*=\s*([\d.]+)/); const tg = val.match(/trade_goods\s*=\s*(\w+)/); if (vm && tg) return `Produce at least <span class="val">${vm[1]}</span> of <span class="tag">${tg[1].replace(/_/g, ' ')}</span>`; return null; })(),
+    'hre_reform_passed': `HRE reform passed: <span class="tag">${dn(val)}</span>`,
+    'trade_goods_produced_amount': (() => { const vm = val.match(/amount\s*=\s*([\d.]+)/); const tg = val.match(/trade_goods\s*=\s*(\w+)/); if (vm && tg) return `Produce at least <span class="val">${vm[1]}</span> of <span class="tag">${dn(tg[1])}</span>`; return null; })(),
     'investment': null,
     'always': null,
     'total_development': `Have at least <span class="val">${val}</span> total development`,
@@ -2314,8 +2523,8 @@ function triggerToText(key, val) {
     'is_at_war': val === 'no' ? 'Be at peace' : 'Be at war',
     'is_subject': val === 'no' ? 'Be independent (not a subject)' : 'Be a subject nation',
     'war_score': `Have <span class="val">${val}</span> war score`,
-    'has_reform': `Have government reform: <span class="tag">${val}</span>`,
-    'religion': isScopeVar(val) ? 'Follow our religion' : `Follow religion: <span class="tag">${val}</span>`,
+    'has_reform': `Have government reform: <span class="tag">${dn(val)}</span>`,
+    'religion': isScopeVar(val) ? 'Follow our religion' : `Follow religion: <span class="tag">${dn(val)}</span>`,
     'tag': isScopeVar(val) ? null : `Be country: <span class="tag">${tagName(val)}</span>`,
     'owns': `Own province ${/^\d+$/.test(val) ? provSpan(val) : val}`,
     'owns_core_province': `Own and core province ${/^\d+$/.test(val) ? provSpan(val) : val}`,
@@ -2331,41 +2540,57 @@ function triggerToText(key, val) {
     'corruption': `Corruption below <span class="val">${val}</span>`,
     'inflation': val === '1' ? 'Have no inflation' : `Inflation below <span class="val">${val}</span>`,
     'overextension_percentage': `Overextension below <span class="val">${(parseFloat(val)*100)}%</span>`,
-    'has_country_flag': `Has country flag: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'has_global_flag': `Global flag set: <span class="tag">${val}</span>`,
+    'has_country_flag': `Has country flag: <span class="tag">${dn(val)}</span>`,
+    'has_global_flag': `Global flag set: <span class="tag">${dn(val)}</span>`,
     'government_rank': `Government rank at least <span class="val">${val}</span>`,
     'total_own_and_non_tributary_subject_development': `Total dev (with subjects) at least <span class="val">${val}</span>`,
-    'production_leader': `Be production leader in: <span class="tag">${val}</span>`,
+    'production_leader': `Be production leader in: <span class="tag">${dn(val)}</span>`,
     'diplomatic_reputation': `Diplomatic reputation at least <span class="val">${val}</span>`,
     'power_projection': `Power projection at least <span class="val">${val}</span>`,
     'religious_unity': `Religious unity at least <span class="val">${(parseFloat(val)*100)}%</span>`,
     'average_autonomy_above_min': `Average autonomy above <span class="val">${val}</span>`,
-    'culture_group': `Culture group: <span class="tag">${val}</span>`,
-    'primary_culture': `Primary culture: <span class="tag">${val}</span>`,
-    'has_ruler_modifier': `Ruler has modifier: <span class="tag">${val}</span>`,
+    'culture_group': `Culture group: <span class="tag">${dn(val)}</span>`,
+    'primary_culture': `Primary culture: <span class="tag">${dn(val)}</span>`,
+    'has_ruler_modifier': `Ruler has modifier: <span class="tag">${dn(val)}</span>`,
     'has_country_modifier': (() => { return `Has modifier: ${modRef(val.trim())}`; })(),
     'is_core': isScopeVar(val) ? null : `Is a core of <span class="tag">${tagName(val)}</span>`,
     'owned_by': isScopeVar(val) ? null : `Owned by <span class="tag">${tagName(val)}</span>`,
     'controlled_by': isScopeVar(val) ? 'Controlled by us' : `Controlled by <span class="tag">${tagName(val)}</span>`,
-    'has_building': `Has building: <span class="tag">${val}</span>`,
+    'has_building': `Has building: <span class="tag">${dn(val)}</span>`,
     'base_tax': `Base tax at least <span class="val">${val}</span>`,
     'base_production': `Base production at least <span class="val">${val}</span>`,
     'base_manpower': `Base manpower at least <span class="val">${val}</span>`,
-    'trade_goods': `Produces: <span class="tag">${val}</span>`,
+    'trade_goods': `Produces: <span class="tag">${dn(val)}</span>`,
     'num_of_generals': `Have at least <span class="val">${val}</span> generals`,
     'num_of_admirals': `Have at least <span class="val">${val}</span> admirals`,
     'num_of_heavy_ship': `Have at least <span class="val">${val}</span> heavy ships`,
     'num_of_light_ship': `Have at least <span class="val">${val}</span> light ships`,
     'num_of_galley': `Have at least <span class="val">${val}</span> galleys`,
     'num_of_transport': `Have at least <span class="val">${val}</span> transports`,
-    'employed_advisor': `Have employed advisor: <span class="tag">${val === 'yes' ? 'any' : val.replace(/category\s*=\s*/i, '').replace('ADM', 'Administrative').replace('DIP', 'Diplomatic').replace('MIL', 'Military')}</span>`,
-    'has_construction': `Currently constructing <span class="tag">${val.replace(/_/g, ' ')}</span> buildings`,
-    'has_advisor': `Have advisor: <span class="tag">${val}</span>`,
+    // employed_advisor takes a block of qualifiers: category/type/culture/religion/skill
+    'employed_advisor': (() => {
+      if (val === 'yes' || !val) return 'Have an advisor employed';
+      const parts = [];
+      const cat = val.match(/category\s*=\s*(\w+)/i);
+      if (cat) parts.push({ADM: 'Administrative', DIP: 'Diplomatic', MIL: 'Military'}[cat[1].toUpperCase()] || cat[1]);
+      const type = val.match(/\btype\s*=\s*(\w+)/i);
+      if (type) parts.push(dn(type[1]));
+      const cult = val.match(/\bculture\s*=\s*(\w+)/i);
+      if (cult) parts.push(dn(cult[1]) + ' culture');
+      const rel = val.match(/\breligion\s*=\s*(\w+)/i);
+      if (rel) parts.push(dn(rel[1]) + ' religion');
+      const skill = val.match(/\bskill\s*=\s*(\d+)/i);
+      const skillTxt = skill ? ` of skill <span class="val">${skill[1]}</span> or higher` : '';
+      if (!parts.length) return `Have an advisor employed${skillTxt}`;
+      return `Have a <span class="tag">${parts.join(' ')}</span> advisor employed${skillTxt}`;
+    })(),
+    'has_construction': `Currently constructing <span class="tag">${dn(val)}</span> buildings`,
+    'has_advisor': `Have advisor: <span class="tag">${dn(val)}</span>`,
     'num_of_cavalry': `Have at least <span class="val">${val}</span> cavalry`,
     'num_of_infantry': `Have at least <span class="val">${val}</span> infantry`,
     'num_of_artillery': isScopeVar(val) ? null : `Have at least <span class="val">${val}</span> artillery`,
-    'has_idea_group': `Have idea group: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'full_idea_group': `Completed idea group: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'has_idea_group': `Have idea group: <span class="tag">${dn(val)}</span>`,
+    'full_idea_group': `Completed idea group: <span class="tag">${dn(val)}</span>`,
     // Subjects & diplomacy
     'num_of_non_tributary_subjects': `Have at least <span class="val">${val}</span> non-tributary subjects`,
     'num_of_royal_marriages': `Have at least <span class="val">${val}</span> royal marriages`,
@@ -2373,11 +2598,11 @@ function triggerToText(key, val) {
     'country_or_subject_holds': isScopeVar(val) ? null : `You or subject own ${/^\d+$/.test(val) ? provSpan(val) : tagName(val)}`,
     'share_of_starting_income': `Income at <span class="val">${(parseFloat(val)*100)}%</span> of starting income`,
     // Estate & privileges
-    'estate_loyalty': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const lm = val.match(/loyalty\s*=\s*(\d+)/); return (em && lm) ? `${em[1].replace(/_/g, ' ')} loyalty at least <span class="val">${lm[1]}</span>` : null; })(),
-    'estate_influence': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const im = val.match(/influence\s*=\s*(\d+)/); return (em && im) ? `${em[1].replace(/_/g, ' ')} influence at least <span class="val">${im[1]}</span>` : null; })(),
-    'add_estate_influence_modifier': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const im = val.match(/influence\s*=\s*(-?\d+)/); if (em && im) return `Add <span class="val">${im[1]}</span> ${em[1].replace(/_/g, ' ')} estate influence`; return null; })(),
-    'add_estate_loyalty_modifier': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const lm = val.match(/loyalty\s*=\s*(-?\d+)/); if (em && lm) return `Add <span class="val">${lm[1]}</span> ${em[1].replace(/_/g, ' ')} estate loyalty`; return null; })(),
-    'has_estate_privilege': `Have estate privilege: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'estate_loyalty': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const lm = val.match(/loyalty\s*=\s*(\d+)/); return (em && lm) ? `${dn(em[1])} loyalty at least <span class="val">${lm[1]}</span>` : null; })(),
+    'estate_influence': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const im = val.match(/influence\s*=\s*(\d+)/); return (em && im) ? `${dn(em[1])} influence at least <span class="val">${im[1]}</span>` : null; })(),
+    'add_estate_influence_modifier': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const im = val.match(/influence\s*=\s*(-?\d+)/); if (em && im) return `Add <span class="val">${im[1]}</span> ${dn(em[1])} estate influence`; return null; })(),
+    'add_estate_loyalty_modifier': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const lm = val.match(/loyalty\s*=\s*(-?\d+)/); if (em && lm) return `Add <span class="val">${lm[1]}</span> ${dn(em[1])} estate loyalty`; return null; })(),
+    'has_estate_privilege': `Have estate privilege: <span class="tag">${dn(val)}</span>`,
     // Building triggers
     'has_tax_building_trigger': val === 'yes' ? 'Has a tax building (temple/cathedral)' : 'No tax building',
     'has_production_building_trigger': val === 'yes' ? 'Has a production building (workshop/counting house)' : 'No production building',
@@ -2389,11 +2614,11 @@ function triggerToText(key, val) {
     'has_port': val === 'yes' ? 'Has a port' : 'Has no port',
     'light_ships_in_province': `Has at least <span class="val">${val}</span> light ships in province`,
     'num_of_owned_provinces_with': (() => { const vm = val.match(/value\s*=\s*(\d+)/); const count = vm ? vm[1] : '?'; return `Own at least <span class="val">${count}</span> provinces${extractProvConditions(val)}`; })(),
-    'num_of_estate_agendas_completed': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const vm = val.match(/value\s*=\s*(\d+)/); return (em && vm) ? `Have completed <span class="val">${vm[1]}</span> ${em[1].replace(/_/g, ' ')} estate agendas` : null; })(),
-    'num_of_estate_privileges': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const vm = val.match(/value\s*=\s*(\d+)/); return (em && vm) ? `Have at least <span class="val">${vm[1]}</span> ${em[1].replace(/_/g, ' ')} estate privileges` : null; })(),
+    'num_of_estate_agendas_completed': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const vm = val.match(/value\s*=\s*(\d+)/); return (em && vm) ? `Have completed <span class="val">${vm[1]}</span> ${dn(em[1])} estate agendas` : null; })(),
+    'num_of_estate_privileges': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const vm = val.match(/value\s*=\s*(\d+)/); return (em && vm) ? `Have at least <span class="val">${vm[1]}</span> ${dn(em[1])} estate privileges` : null; })(),
     // Province conditions
-    'culture': `Culture is: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'culture_group_claim': `Culture group claim on: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'culture': `Culture is: <span class="tag">${dn(val)}</span>`,
+    'culture_group_claim': `Culture group claim on: <span class="tag">${dn(val)}</span>`,
     'has_discovered': isScopeVar(val) ? 'Has been discovered' : `Has discovered ${/^\d+$/.test(val) ? provSpan(val) : val}`,
     'capital_scope': 'In capital province:',
     // Date & time
@@ -2412,7 +2637,7 @@ function triggerToText(key, val) {
     'is_in_deficit': val === 'no' ? 'Not be running a deficit' : 'Be running a deficit',
     'is_rival': isScopeVar(val) ? null : `Be rivaled with <span class="tag">${tagName(val)}</span>`,
     'is_neighbor_of': isScopeVar(val) ? null : `Be a neighbor of <span class="tag">${tagName(val)}</span>`,
-    'is_strongest_trade_power': isScopeVar(val) ? null : `Be the strongest trade power in <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'is_strongest_trade_power': isScopeVar(val) ? null : `Be the strongest trade power in <span class="tag">${dn(val)}</span>`,
     'is_prosperous': val === 'yes' ? 'Province is prosperous' : 'Province is not prosperous',
     'is_state_core': isScopeVar(val) ? null : `Is a state core`,
     'is_state': val === 'yes' ? 'Is a full state' : null,
@@ -2424,12 +2649,12 @@ function triggerToText(key, val) {
     'is_hegemon': val === 'yes' ? 'Be a hegemon' : null,
     'is_emperor_of_china': val === 'yes' ? 'Hold the Mandate' : 'Not hold the Mandate',
     'is_ahead_of_time_in_technology': val === 'yes' ? 'Be ahead of time in technology' : null,
-    'is_institution_enabled': `Institution <span class="tag">${val.replace(/_/g, ' ')}</span> is enabled`,
-    'is_religion_enabled': `Religion <span class="tag">${val.replace(/_/g, ' ')}</span> is enabled`,
+    'is_institution_enabled': `Institution <span class="tag">${dn(val)}</span> is enabled`,
+    'is_religion_enabled': `Religion <span class="tag">${dn(val)}</span> is enabled`,
     'is_colonial_nation_of': isScopeVar(val) ? null : `Be a colonial nation of <span class="tag">${tagName(val)}</span>`,
     'is_the_raja': val === 'yes' ? 'Be the Raja' : null,
-    'government': `Have government type: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'technology_group': `Technology group: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'government': `Have government type: <span class="tag">${dn(val)}</span>`,
+    'technology_group': `Technology group: <span class="tag">${dn(val)}</span>`,
     'exists': val === 'yes' ? 'Country exists' : val === 'no' ? null : `<span class="tag">${tagName(val)}</span> exists`,
     // War & military
     'is_in_war': val === 'no' ? 'Be at peace' : 'Be at war',
@@ -2451,20 +2676,20 @@ function triggerToText(key, val) {
     'any_ally': 'Any ally:',
     'any_neighbor_country': 'Any neighbor:',
     'any_subject_country': 'Any subject:',
-    'has_disaster': `Has active disaster: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'has_institution': `Has embraced institution: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'has_great_project': (() => { const pm = val.match(/type\s*=\s*(\w+)/); const tm = val.match(/tier\s*=\s*(\d+)/); if (pm) { const gpName = GREAT_PROJECTS[pm[1]] || pm[1].replace(/_/g, ' '); return `Has great project: <span class="tag">${esc(gpName)}</span>${tm ? ' (tier ' + tm[1] + '+)' : ''}`; } return null; })(),
+    'has_disaster': `Has active disaster: <span class="tag">${dn(val)}</span>`,
+    'has_institution': `Has embraced institution: <span class="tag">${dn(val)}</span>`,
+    'has_great_project': (() => { const pm = val.match(/type\s*=\s*(\w+)/); const tm = val.match(/tier\s*=\s*(\d+)/); if (pm) { const gpName = GREAT_PROJECTS[pm[1]] || dn(pm[1]); return `Has great project: <span class="tag">${esc(gpName)}</span>${tm ? ' (tier ' + tm[1] + '+)' : ''}`; } return null; })(),
     'has_manufactory_trigger': val === 'yes' ? 'Has a manufactory' : 'No manufactory',
     'has_courthouse_building_trigger': val === 'yes' ? 'Has a courthouse or town hall' : 'No courthouse',
     'has_forcelimit_building_trigger': val === 'yes' ? 'Has a forcelimit building' : 'No forcelimit building',
     'has_production_or_gold_building_trigger': val === 'yes' ? 'Has a production or gold building' : null,
-    'has_terrain': `Terrain is: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'has_province_modifier': `Has province modifier: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'has_terrain': `Terrain is: <span class="tag">${dn(val)}</span>`,
+    'has_province_modifier': `Has province modifier: <span class="tag">${dn(val)}</span>`,
     'has_spy_network_from': null, // complex scope
     'has_spy_network_in': null, // complex scope
     'has_any_ongoing_construction': val === 'yes' ? 'Has ongoing construction' : null,
-    'has_state_edict': `Has state edict: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'has_personal_deity': `Worships: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'has_state_edict': `Has state edict: <span class="tag">${dn(val)}</span>`,
+    'has_personal_deity': `Worships: <span class="tag">${dn(val)}</span>`,
     'has_seat_in_parliament': val === 'yes' ? 'Has a seat in parliament' : null,
     'has_government_power': (() => { const mm = val.match(/mechanic_type\s*=\s*(\w+)/); const vm = val.match(/power_type\s*=\s*(\w+)/); return mm ? `Has government mechanic power` : null; })(),
     'has_dwarven_hold_4': val === 'yes' ? 'Has a level 4 dwarven hold' : null,
@@ -2477,10 +2702,10 @@ function triggerToText(key, val) {
     'normal_or_historical_nations': null,
     'controls': isScopeVar(val) ? null : `Control ${/^\d+$/.test(val.trim()) ? provSpan(val.trim()) : '<span class="val">' + resolveRef(val) + '</span>'}`,
     'is_subject_of': isScopeVar(val) ? null : `Be subject of <span class="tag">${tagName(val)}</span>`,
-    'is_subject_of_type': `Be subject of type: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'is_subject_of_type': `Be subject of type: <span class="tag">${dn(val)}</span>`,
     'liberty_desire': `Liberty desire at least <span class="val">${val}</span>`,
-    'add_building': `Build <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'remove_building': `Remove building: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'add_building': `Build <span class="tag">${dn(val)}</span>`,
+    'remove_building': `Remove building: <span class="tag">${dn(val)}</span>`,
     'num_of_missionaries': `Have at least <span class="val">${val}</span> missionaries`,
     'num_of_diplomats': `Have at least <span class="val">${val}</span> diplomats`,
     'has_missionary': val === 'yes' ? 'Have an available missionary' : null,
@@ -2505,16 +2730,16 @@ function triggerToText(key, val) {
     'share': null, // nested value inside trade_share
     'region': `In region: ${regionSpan(val)}`,
     'area': `In area: ${areaSpan(val)}`,
-    'superregion': `In superregion: <span class="tag">${val.replace(/_/g, ' ').replace(/ superregion$/, '')}</span>`,
-    'continent': `On continent: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'superregion': `In superregion: <span class="tag">${dn(val).replace(/ superregion$/, '')}</span>`,
+    'continent': `On continent: <span class="tag">${dn(val)}</span>`,
     'loyalty': null, // nested inside estate block
     'estate': null, // nested
     // Audit Round 3 additions - province triggers
     'fort_level': `Fort level at least <span class="val">${val}</span>`,
-    'accepted_culture': `Have accepted culture: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'accepted_culture': `Have accepted culture: <span class="tag">${dn(val)}</span>`,
     'num_of_times_expanded_infrastructure': `Infrastructure expanded at least <span class="val">${val}</span> times`,
-    'province_group': `In province group: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'mission_completed': `Completed mission: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'province_group': `In province group: <span class="tag">${dn(val)}</span>`,
+    'mission_completed': `Completed mission: <span class="tag">${dn(val)}</span>`,
     'crown_land_share': `Crown land at least <span class="val">${val}%</span>`,
     'infantry_in_province': `At least <span class="val">${val}</span> infantry in province`,
     'unrest': `Province unrest below <span class="val">${val}</span>`,
@@ -2524,12 +2749,12 @@ function triggerToText(key, val) {
     'has_owner_religion': val === 'yes' ? "Province follows owner's religion" : "Province does not follow owner's religion",
     'num_of_times_improved': `Province improved at least <span class="val">${val}</span> times`,
     'num_of_times_improved_by_owner': `Province improved by owner at least <span class="val">${val}</span> times`,
-    'faction_in_power': `Faction in power: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'faction_in_power': `Faction in power: <span class="tag">${dn(val)}</span>`,
     'num_of_marines': `Have at least <span class="val">${val}</span> marines`,
     'war_score_against': (() => { const wm = val.match(/who\s*=\s*(\w+)/); const vm = val.match(/value\s*=\s*(-?\d+)/); if (wm && vm) return `War score against <span class="tag">${isScopeVar(wm[1]) ? 'target' : tagName(wm[1])}</span> at least <span class="val">${vm[1]}</span>`; return null; })(),
-    'num_of_subjects_of_type': (() => { const tm = val.match(/type\s*=\s*(\w+)/); const vm = val.match(/amount\s*=\s*(\d+)/); if (tm && vm) return `Have at least <span class="val">${vm[1]}</span> ${tm[1].replace(/_/g, ' ')} subjects`; return null; })(),
+    'num_of_subjects_of_type': (() => { const tm = val.match(/type\s*=\s*(\w+)/); const vm = val.match(/amount\s*=\s*(\d+)/); if (tm && vm) return `Have at least <span class="val">${vm[1]}</span> ${dn(tm[1])} subjects`; return null; })(),
     'has_ruler_leader_from': isScopeVar(val) ? 'Ruler is leading troops in province' : null,
-    'capital': isScopeVar(val) ? null : (/^\d+$/.test(val) ? `Capital is ${provSpan(val)}` : `Capital: <span class="tag">${val.replace(/_/g, ' ')}</span>`),
+    'capital': isScopeVar(val) ? null : (/^\d+$/.test(val) ? `Capital is ${provSpan(val)}` : `Capital: <span class="tag">${dn(val)}</span>`),
     'local_autonomy': `Local autonomy below <span class="val">${val}</span>`,
     'higher_development_than': isScopeVar(val) ? null : `Higher development than <span class="tag">${tagName(val)}</span>`,
     'all_neighbor_province': 'All neighboring provinces:',
@@ -2547,13 +2772,13 @@ function triggerToText(key, val) {
     'current_size_of_parliament': `Parliament has at least <span class="val">${val}</span> seats`,
     // Common EFFECTS
     'random_list': 'Random one of the following:',
-    'complete_mission': `Auto-complete mission: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'complete_mission': `Auto-complete mission: <span class="tag">${dn(val)}</span>`,
     'remove_core': isScopeVar(val) ? null : `Remove core of <span class="tag">${tagName(val)}</span>`,
-    'add_faction_influence': (() => { const fm = val.match(/faction\s*=\s*(\w+)/); const im = val.match(/influence\s*=\s*(-?[\d.]+)/); if (fm && im) return `Add <span class="val">${im[1]}</span> ${fm[1].replace(/_/g, ' ')} faction influence`; return null; })(),
+    'add_faction_influence': (() => { const fm = val.match(/faction\s*=\s*(\w+)/); const im = val.match(/influence\s*=\s*(-?[\d.]+)/); if (fm && im) return `Add <span class="val">${im[1]}</span> ${dn(fm[1])} faction influence`; return null; })(),
     'create_union': isScopeVar(val) ? null : `Create personal union with <span class="tag">${tagName(val)}</span>`,
-    'add_great_project': (() => { const tp = val.match(/type\s*=\s*(\w+)/); const tm = val.match(/tier\s*=\s*(\d+)/); if (tp) { const n = GREAT_PROJECTS[tp[1]] || tp[1].replace(/_/g, ' '); return `Add great project: <span class="tag">${esc(n)}</span>${tm ? ' (tier ' + tm[1] + ')' : ''}`; } return 'Add a great project'; })(),
-    'destroy_great_project': (() => { const tp = val.match(/type\s*=\s*(\w+)/); if (tp) { const n = GREAT_PROJECTS[tp[1]] || tp[1].replace(/_/g, ' '); return `Destroy great project: <span class="tag">${esc(n)}</span>`; } return 'Destroy a great project'; })(),
-    'move_great_project': (() => { const tp = val.match(/type\s*=\s*(\w+)/); if (tp) { const n = GREAT_PROJECTS[tp[1]] || tp[1].replace(/_/g, ' '); return `Move great project: <span class="tag">${esc(n)}</span>`; } return 'Move a great project'; })(),
+    'add_great_project': (() => { const tp = val.match(/type\s*=\s*(\w+)/); const tm = val.match(/tier\s*=\s*(\d+)/); if (tp) { const n = GREAT_PROJECTS[tp[1]] || dn(tp[1]); return `Add great project: <span class="tag">${esc(n)}</span>${tm ? ' (tier ' + tm[1] + ')' : ''}`; } return 'Add a great project'; })(),
+    'destroy_great_project': (() => { const tp = val.match(/type\s*=\s*(\w+)/); if (tp) { const n = GREAT_PROJECTS[tp[1]] || dn(tp[1]); return `Destroy great project: <span class="tag">${esc(n)}</span>`; } return 'Destroy a great project'; })(),
+    'move_great_project': (() => { const tp = val.match(/type\s*=\s*(\w+)/); if (tp) { const n = GREAT_PROJECTS[tp[1]] || dn(tp[1]); return `Move great project: <span class="tag">${esc(n)}</span>`; } return 'Move a great project'; })(),
     'override_country_name': `Change country name to: <span class="tag">${val.replace(/"/g, '').replace(/_/g, ' ')}</span>`,
     'increase_ruler_adm_effect': 'Increase ruler admin skill',
     'increase_ruler_dip_effect': 'Increase ruler diplo skill',
@@ -2596,14 +2821,14 @@ function triggerToText(key, val) {
     'add_base_tax': `Add <span class="val">${val}</span> base tax`,
     'add_base_production': `Add <span class="val">${val}</span> base production`,
     'add_base_manpower': `Add <span class="val">${val}</span> base manpower`,
-    'change_government': `Change government to: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'change_government': `Change government to: <span class="tag">${dn(val)}</span>`,
     'change_tag': `Form country: <span class="tag">${tagName(val)}</span>`,
-    'change_religion': isScopeVar(val) ? 'Change religion to ours' : `Change religion to: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'change_culture': isScopeVar(val) ? 'Change culture to ours' : `Change culture to: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'change_primary_culture': isScopeVar(val) ? null : `Change primary culture to: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'add_accepted_culture': `Accept culture: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'remove_accepted_culture': `Remove accepted culture: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'add_government_reform': `Add government reform: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'change_religion': isScopeVar(val) ? 'Change religion to ours' : `Change religion to: <span class="tag">${dn(val)}</span>`,
+    'change_culture': isScopeVar(val) ? 'Change culture to ours' : `Change culture to: <span class="tag">${dn(val)}</span>`,
+    'change_primary_culture': isScopeVar(val) ? null : `Change primary culture to: <span class="tag">${dn(val)}</span>`,
+    'add_accepted_culture': `Accept culture: <span class="tag">${dn(val)}</span>`,
+    'remove_accepted_culture': `Remove accepted culture: <span class="tag">${dn(val)}</span>`,
+    'add_government_reform': `Add government reform: <span class="tag">${dn(val)}</span>`,
     'set_government_rank': `Set government rank to <span class="val">${val}</span>`,
     'add_casus_belli': (() => { const tm = val.match(/target\s*=\s*(\w+)/); const tgt = tm ? tagName(tm[1]) : val.replace(/[{}]/g, '').replace(/_/g, ' ').trim(); return `Gain casus belli against <span class="tag">${tgt}</span>`; })(),
     'create_subject': `Create subject: <span class="tag">${val.replace(/[{}]/g, '').replace(/_/g, ' ').trim()}</span>`,
@@ -2678,7 +2903,7 @@ function triggerToText(key, val) {
     'adm': null,
     'dip': null,
     'mil': null,
-    'culture': isScopeVar(val) ? 'Change culture to ours' : `Culture: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'culture': isScopeVar(val) ? 'Change culture to ours' : `Culture: <span class="tag">${dn(val)}</span>`,
     'sign': null,
     'var': null,
     'effect': null, // nested
@@ -2699,8 +2924,8 @@ function triggerToText(key, val) {
     'has_country_flag': null, // internal game flag
     'has_province_flag': null, // internal game flag
     'custom_trigger_tooltip': null,
-    'is_subject_of_type_with_overlord': (() => { const tm = val.match(/type\s*=\s*(\w+)/); const wm = val.match(/who\s*=\s*(\w+)/); const tLabel = tm ? tm[1].replace(/_/g, ' ') : 'subject'; if (wm && !isScopeVar(wm[1])) return `Is ${tLabel} of <span class="tag">${tagName(wm[1])}</span>`; return `Is a ${tLabel}`; })(),
-    'check_variable': (() => { const wm = val.match(/which\s*=\s*(\w+)/); const vm = val.match(/value\s*=\s*(\d+)/); if (wm && vm) return `${wm[1].replace(/_/g, ' ')} at least <span class="val">${vm[1]}</span>`; return null; })(),
+    'is_subject_of_type_with_overlord': (() => { const tm = val.match(/type\s*=\s*(\w+)/); const wm = val.match(/who\s*=\s*(\w+)/); const tLabel = tm ? dn(tm[1]) : 'subject'; if (wm && !isScopeVar(wm[1])) return `Is ${tLabel} of <span class="tag">${tagName(wm[1])}</span>`; return `Is a ${tLabel}`; })(),
+    'check_variable': (() => { const wm = val.match(/which\s*=\s*(\w+)/); const vm = val.match(/value\s*=\s*(\d+)/); if (wm && vm) return `${dn(wm[1])} at least <span class="val">${vm[1]}</span>`; return null; })(),
     'num_of_hussars': /^\d+$/.test(val) ? `Have at least <span class="val">${val}</span> hussars` : null,
     'num_of_artillery': /^\d+$/.test(val) ? `Have at least <span class="val">${val}</span> artillery` : null,
     'num_of_cavalry': /^\d+$/.test(val) ? `Have at least <span class="val">${val}</span> cavalry` : null,
@@ -2709,7 +2934,7 @@ function triggerToText(key, val) {
     'num_of_light_ship': /^\d+$/.test(val) ? `Have at least <span class="val">${val}</span> light ships` : null,
     'num_of_galley': /^\d+$/.test(val) ? `Have at least <span class="val">${val}</span> galleys` : null,
     'num_of_transport': /^\d+$/.test(val) ? `Have at least <span class="val">${val}</span> transports` : null,
-    'has_global_modifier_value': (() => { const wm = val.match(/which\s*=\s*(\w+)/); const vm = val.match(/value\s*=\s*([\d.]+)/); if (wm && vm) return `${wm[1].replace(/_/g, ' ')} at least <span class="val">${vm[1]}</span>`; return null; })(),
+    'has_global_modifier_value': (() => { const wm = val.match(/which\s*=\s*(\w+)/); const vm = val.match(/value\s*=\s*([\d.]+)/); if (wm && vm) return `${dn(wm[1])} at least <span class="val">${vm[1]}</span>`; return null; })(),
     'development_in_provinces': (() => { const vm = val.match(/value\s*=\s*(\d+)/); if (vm) return `Development in provinces at least <span class="val">${vm[1]}</span>${extractProvConditions(val)}`; return null; })(),
     'birth_date': null,
     'monarch_name': null,
@@ -2735,26 +2960,26 @@ function triggerToText(key, val) {
     'add_siberian_construction': `Add <span class="val">${val}</span> colonist progress`,
     // Effects identified by audit
     'add_stability_or_adm_power': 'Add <span class="val">1</span> stability (or <span class="val">100</span> admin power if at 3)',
-    'set_estate_privilege': `Grant estate privilege: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'remove_estate_privilege': `Remove estate privilege: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'set_estate_privilege': `Grant estate privilege: <span class="tag">${dn(val)}</span>`,
+    'remove_estate_privilege': `Remove estate privilege: <span class="tag">${dn(val)}</span>`,
     'discover_country': isScopeVar(val) ? null : `Discover country: <span class="tag">${tagName(val)}</span>`,
-    'add_trade_modifier': (() => { const wm = val.match(/who\s*=\s*(\w+)/); const pm = val.match(/power\s*=\s*(-?[\d.]+)/); const km = val.match(/key\s*=\s*(\w+)/); if (km) return `Add trade modifier: <span class="tag">${km[1].replace(/_/g, ' ')}</span>${pm ? ' (' + pm[1] + ' power)' : ''}`; return 'Add trade modifier'; })(),
-    'unlock_merc_company': (() => { const nm = val.match(/merc_company\s*=\s*(\w+)/); return nm ? `Unlock mercenary company: <span class="tag">${nm[1].replace(/_/g, ' ')}</span>` : 'Unlock a mercenary company'; })(),
+    'add_trade_modifier': (() => { const wm = val.match(/who\s*=\s*(\w+)/); const pm = val.match(/power\s*=\s*(-?[\d.]+)/); const km = val.match(/key\s*=\s*(\w+)/); if (km) return `Add trade modifier: <span class="tag">${dn(km[1])}</span>${pm ? ' (' + pm[1] + ' power)' : ''}`; return 'Add trade modifier'; })(),
+    'unlock_merc_company': (() => { const nm = val.match(/merc_company\s*=\s*(\w+)/); return nm ? `Unlock mercenary company: <span class="tag">${dn(nm[1])}</span>` : 'Unlock a mercenary company'; })(),
     'rename_capital': `Rename capital to: <span class="tag">${val.replace(/"/g, '')}</span>`,
     'change_province_name': `Rename province to: <span class="tag">${val.replace(/"/g, '')}</span>`,
     'change_innovativeness': `Add <span class="val">${val}</span> innovativeness`,
-    'add_estate_loyalty': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const lm = val.match(/loyalty\s*=\s*(-?[\d.]+)/); if (em && lm) return `Add <span class="val">${lm[1]}</span> ${em[1].replace(/_/g, ' ')} loyalty`; return null; })(),
-    'declare_war_with_cb': (() => { const wm = val.match(/who\s*=\s*(\w+)/); const cm = val.match(/casus_belli\s*=\s*(\w+)/); const tgt = wm ? (isScopeVar(wm[1]) ? 'target' : tagName(wm[1])) : 'target'; return `Declare war on <span class="tag">${tgt}</span>${cm ? ' (CB: ' + cm[1].replace(/_/g, ' ') + ')' : ''}`; })(),
+    'add_estate_loyalty': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const lm = val.match(/loyalty\s*=\s*(-?[\d.]+)/); if (em && lm) return `Add <span class="val">${lm[1]}</span> ${dn(em[1])} loyalty`; return null; })(),
+    'declare_war_with_cb': (() => { const wm = val.match(/who\s*=\s*(\w+)/); const cm = val.match(/casus_belli\s*=\s*(\w+)/); const tgt = wm ? (isScopeVar(wm[1]) ? 'target' : tagName(wm[1])) : 'target'; return `Declare war on <span class="tag">${tgt}</span>${cm ? ' (CB: ' + dn(cm[1]) + ')' : ''}`; })(),
     'create_alliance': isScopeVar(val) ? null : `Create alliance with <span class="tag">${tagName(val)}</span>`,
-    'change_estate_land_share': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const sm = val.match(/share\s*=\s*(-?[\d.]+)/); if (em && sm) return `Change ${em[1].replace(/_/g, ' ')} land share by <span class="val">${sm[1]}</span>`; return null; })(),
-    'add_government_power': (() => { const mm = val.match(/mechanic_type\s*=\s*(\w+)/); const pm = val.match(/power_type\s*=\s*(\w+)/); const vm = val.match(/amount\s*=\s*(-?\d+)/); if (pm && vm) return `Add <span class="val">${vm[1]}</span> ${pm[1].replace(/_/g, ' ')}`; return mm ? `Add government power (${mm[1].replace(/_/g, ' ')})` : null; })(),
-    'unlock_estate_privilege': `Unlock estate privilege: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'change_estate_land_share': (() => { const em = val.match(/estate\s*=\s*estate_(\w+)/); const sm = val.match(/share\s*=\s*(-?[\d.]+)/); if (em && sm) return `Change ${dn(em[1])} land share by <span class="val">${sm[1]}</span>`; return null; })(),
+    'add_government_power': (() => { const mm = val.match(/mechanic_type\s*=\s*(\w+)/); const pm = val.match(/power_type\s*=\s*(\w+)/); const vm = val.match(/amount\s*=\s*(-?\d+)/); if (pm && vm) return `Add <span class="val">${vm[1]}</span> ${dn(pm[1])}`; return mm ? `Add government power (${dn(mm[1])})` : null; })(),
+    'unlock_estate_privilege': `Unlock estate privilege: <span class="tag">${dn(val)}</span>`,
     'kill_units': (() => { const wm = val.match(/who\s*=\s*(\w+)/); return wm ? `Kill units belonging to <span class="tag">${isScopeVar(wm[1]) ? 'us' : tagName(wm[1])}</span>` : 'Kill units in province'; })(),
     'define_ruler': (() => { const nm = val.match(/name\s*=\s*"?([^"}\n]+)"?/); return nm ? `Gain a new ruler: <span class="tag">${nm[1].trim()}</span>` : 'Gain a new ruler'; })(),
     'add_truce_with': isScopeVar(val) ? null : `Add truce with <span class="tag">${tagName(val)}</span>`,
     'add_spy_network_in': null,
     'add_spy_network_from': null,
-    'change_trade_goods': `Change trade goods to: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'change_trade_goods': `Change trade goods to: <span class="tag">${dn(val)}</span>`,
     'add_adm_tech': `Add <span class="val">${val}</span> admin tech levels`,
     'add_dip_tech': `Add <span class="val">${val}</span> diplo tech levels`,
     'add_mil_tech': `Add <span class="val">${val}</span> military tech levels`,
@@ -2770,7 +2995,7 @@ function triggerToText(key, val) {
     'set_capital': `Move capital to ${/^\d+$/.test(val) ? provSpan(val) : '<span class="val">' + val + '</span>'}`,
     'move_capital': `Move capital to ${/^\d+$/.test(val) ? provSpan(val) : '<span class="val">' + val + '</span>'}`,
     'add_next_institution_embracement': `Add <span class="val">${val}</span> progress to next institution`,
-    'add_institution_embracement': (() => { const wm = val.match(/which\s*=\s*(\w+)/); const vm = val.match(/value\s*=\s*(-?[\d.]+)/); if (wm && vm) return `Add <span class="val">${vm[1]}</span> ${wm[1].replace(/_/g, ' ')} progress`; return 'Add institution progress'; })(),
+    'add_institution_embracement': (() => { const wm = val.match(/which\s*=\s*(\w+)/); const vm = val.match(/value\s*=\s*(-?[\d.]+)/); if (wm && vm) return `Add <span class="val">${vm[1]}</span> ${dn(wm[1])} progress`; return 'Add institution progress'; })(),
     'every_province': 'Every province in scope:',
     'random_province': 'A random province:',
     'every_core_province': 'Every core province:',
@@ -2804,10 +3029,10 @@ function triggerToText(key, val) {
     'any_trade_node': 'Any trade node:',
     // Missing triggers (audit round 2)
     'reverse_has_opinion': null, // complex nested diplomacy check
-    'faction_influence': (() => { const fm = val.match(/faction\s*=\s*(\w+)/); const vm = val.match(/influence\s*=\s*(\d+)/); if (fm && vm) return `${fm[1].replace(/_/g, ' ')} faction influence at least <span class="val">${vm[1]}</span>`; return null; })(),
-    'trading_bonus': `Has trading bonus in: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'trading_policy_in_node': (() => { const pm = val.match(/policy\s*=\s*(\w+)/); return pm ? `Have trading policy: <span class="tag">${pm[1].replace(/_/g, ' ')}</span>` : 'Have a trading policy'; })(),
-    'mission_faction_trigger': (() => { const fm = val.match(/faction\s*=\s*(\w+)/); const vm = val.match(/value\s*=\s*(\d+)/); const tm = val.match(/type\s*=\s*(\w+)/); if (fm) { let name = fm[1].replace(/^mr_/, '').replace(/_/g, ' '); const typeName = tm ? tm[1].replace(/_/g, ' ') : ''; const req = vm ? ` at least <span class="val">${vm[1]}</span>` : ''; return `${name} faction${typeName ? ' (' + typeName + ')' : ''}${req}`; } return null; })(),
+    'faction_influence': (() => { const fm = val.match(/faction\s*=\s*(\w+)/); const vm = val.match(/influence\s*=\s*(\d+)/); if (fm && vm) return `${dn(fm[1])} faction influence at least <span class="val">${vm[1]}</span>`; return null; })(),
+    'trading_bonus': `Has trading bonus in: <span class="tag">${dn(val)}</span>`,
+    'trading_policy_in_node': (() => { const pm = val.match(/policy\s*=\s*(\w+)/); return pm ? `Have trading policy: <span class="tag">${dn(pm[1])}</span>` : 'Have a trading policy'; })(),
+    'mission_faction_trigger': (() => { const fm = val.match(/faction\s*=\s*(\w+)/); const vm = val.match(/value\s*=\s*(\d+)/); const tm = val.match(/type\s*=\s*(\w+)/); if (fm) { let name = fm[1].replace(/^mr_/, '').replace(/_/g, ' '); const typeName = tm ? dn(tm[1]) : ''; const req = vm ? ` at least <span class="val">${vm[1]}</span>` : ''; return `${name} faction${typeName ? ' (' + typeName + ')' : ''}${req}`; } return null; })(),
     'any_hired_mercenary_company': 'Has hired mercenary company:',
     'army_strength': (() => { if (isScopeVar(val)) return null; return /^\d+$/.test(val) ? `Army strength at least <span class="val">${val}</span>` : `Army strength at least equal to <span class="tag">${tagName(val)}</span>`; })(),
     'subsidised_percent_amount': null, // internal subsidy check
@@ -2820,23 +3045,23 @@ function triggerToText(key, val) {
     'has_consort': val === 'yes' ? 'Has a consort' : val === 'no' ? 'Has no consort' : null,
     'ruler_age': `Ruler age at least <span class="val">${val}</span>`,
     'heir_age': `Heir age at least <span class="val">${val}</span>`,
-    'ruler_has_personality': `Ruler has personality: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'ruler_has_personality': `Ruler has personality: <span class="tag">${dn(val)}</span>`,
     'total_base_tax': `Total base tax at least <span class="val">${val}</span>`,
     'trade_income_percentage': `Trade income at least <span class="val">${(parseFloat(val)*100).toFixed(0)}%</span> of total`,
     'production_income_percentage': `Production income at least <span class="val">${(parseFloat(val)*100).toFixed(0)}%</span> of total`,
     // Missing effects (audit round 2)
-    'spawn_rebels': (() => { const tm = val.match(/type\s*=\s*(\w+)/); const sm = val.match(/size\s*=\s*(\d+)/); return tm ? `Spawn <span class="tag">${tm[1].replace(/_/g, ' ')}</span> rebels${sm ? ' (size ' + sm[1] + ')' : ''}` : 'Spawn rebels'; })(),
+    'spawn_rebels': (() => { const tm = val.match(/type\s*=\s*(\w+)/); const sm = val.match(/size\s*=\s*(\d+)/); return tm ? `Spawn <span class="tag">${dn(tm[1])}</span> rebels${sm ? ' (size ' + sm[1] + ')' : ''}` : 'Spawn rebels'; })(),
     'define_conquistador': (() => { const nm = val.match(/name\s*=\s*"?([^"}\n]+)"?/); return nm ? `Gain a new conquistador: <span class="tag">${nm[1].trim()}</span>` : 'Gain a new conquistador'; })(),
     'define_explorer': (() => { const nm = val.match(/name\s*=\s*"?([^"}\n]+)"?/); return nm ? `Gain a new explorer: <span class="tag">${nm[1].trim()}</span>` : 'Gain a new explorer'; })(),
     'define_heir': (() => { const nm = val.match(/name\s*=\s*"?([^"}\n]+)"?/); return nm ? `Gain a new heir: <span class="tag">${nm[1].trim()}</span>` : 'Gain a new heir'; })(),
     'add_favors': (() => { const wm = val.match(/who\s*=\s*(\w+)/); const vm = val.match(/amount\s*=\s*(-?\d+)/); if (wm && vm) { if (isScopeVar(wm[1])) return `Add <span class="val">${vm[1]}</span> favors`; return `Add <span class="val">${vm[1]}</span> favors with <span class="tag">${tagName(wm[1])}</span>`; } return null; })(),
     'reverse_add_casus_belli': 'Target gains CB against us',
-    'add_ruler_personality': `Add ruler personality: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'remove_ruler_personality': `Remove ruler personality: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'add_heir_personality': `Add heir personality: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
-    'add_consort_personality': `Add consort personality: <span class="tag">${val.replace(/_/g, ' ')}</span>`,
+    'add_ruler_personality': `Add ruler personality: <span class="tag">${dn(val)}</span>`,
+    'remove_ruler_personality': `Remove ruler personality: <span class="tag">${dn(val)}</span>`,
+    'add_heir_personality': `Add heir personality: <span class="tag">${dn(val)}</span>`,
+    'add_consort_personality': `Add consort personality: <span class="tag">${dn(val)}</span>`,
     'add_ruler_modifier': (() => { const mk = extractModKey(val); return `Add ruler modifier: ${modRef(mk)}${extractDuration(val)}`; })(),
-    'change_ruler_stat': (() => { const tm = val.match(/type\s*=\s*(\w+)/); const am = val.match(/amount\s*=\s*(-?\d+)/); if (tm && am) return `Change ruler ${tm[1].replace(/_/g, ' ')} by <span class="val">${am[1]}</span>`; return null; })(),
+    'change_ruler_stat': (() => { const tm = val.match(/type\s*=\s*(\w+)/); const am = val.match(/amount\s*=\s*(-?\d+)/); if (tm && am) return `Change ruler ${dn(tm[1])} by <span class="val">${am[1]}</span>`; return null; })(),
     'set_ruler_flag': null, // internal
     'clr_ruler_flag': null, // internal
     'hidden_effect': null, // transparent — parser descends into block
@@ -2878,6 +3103,13 @@ function triggerToText(key, val) {
     if (map[key] === null) return null;
     // For scope-like labels ending with ':', try to inline the val content as a sub-condition
     if (map[key].endsWith(':') && val && val.length > 2 && !val.includes('{')) {
+      // The scope body may hold several statements — render each, not just the first
+      const stmts = [...val.matchAll(/([A-Za-z_][\w]*)\s*=\s*(-?[\w.:']+)/g)];
+      if (stmts.length > 1) {
+        const texts = stmts.map(s => triggerToText(s[1], s[2], (depth || 0) + 1))
+                           .filter(r => r && r.text).map(r => r.text);
+        if (texts.length) return { text: map[key] + ' ' + texts.join(', '), type: 'condition' };
+      }
       const innerMatch = val.match(/^(\w+)\s*=\s*(.+)$/);
       if (innerMatch) {
         const inner = triggerToText(innerMatch[1], innerMatch[2]);
@@ -2892,7 +3124,7 @@ function triggerToText(key, val) {
   // Suppress has_XX_opinion_* triggers (complex nested with target = ROOT)
   if (/^has_\d+_opinion_/.test(key) || /^has_any_opinion_/.test(key)) return null;
   // Anbennar race tolerance triggers
-  if (/^(high|medium|low)_tolerance_(\w+)_race_trigger$/.test(key)) { const rm = key.match(/^(high|medium|low)_tolerance_(\w+)_race_trigger$/); if (rm) return { text: `Have ${rm[1]} tolerance of <span class="tag">${rm[2].replace(/_/g, ' ')}</span> race`, type: 'condition' }; }
+  if (/^(high|medium|low)_tolerance_(\w+)_race_trigger$/.test(key)) { const rm = key.match(/^(high|medium|low)_tolerance_(\w+)_race_trigger$/); if (rm) return { text: `Have ${rm[1]} tolerance of <span class="tag">${dn(rm[2])}</span> race`, type: 'condition' }; }
   // Idea group progress checks (e.g. exploration_ideas = 1)
   if (/_ideas$/.test(key) && /^\d+$/.test(val)) { return { text: `Have <span class="val">${val}</span> ideas in <span class="tag">${key.replace(/_ideas$/, '').replace(/_/g, ' ')}</span>`, type: 'condition' }; }
   // Anbennar custom triggers
@@ -2900,7 +3132,7 @@ function triggerToText(key, val) {
   if (key === 'have_cast_magnificent_feast') return val === 'yes' ? { text: 'Have cast Magnificent Feast', type: 'condition' } : null;
   // Continent scopes (europe = { type = all ... })
   if (/^(europe|asia|africa|north_america|south_america|oceania|serpentspine)$/.test(key)) {
-    const cName = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const cName = dn(key).replace(/\b\w/g, c => c.toUpperCase());
     if (/type\s*=\s*all/.test(val) && /owned_by|country_or/.test(val)) return { text: `Own all of <span class="tag">${cName}</span>`, type: 'condition' };
     if (/type\s*=\s*all/.test(val)) return { text: `All provinces in <span class="tag">${cName}</span>:`, type: 'scope' };
     return { text: `In <span class="tag">${cName}</span>:`, type: 'scope' };
@@ -2909,12 +3141,12 @@ function triggerToText(key, val) {
   // EU4 advisor type checks (e.g. trader = 3, natural_scientist = 5)
   const ADVISOR_TYPES = new Set(['trader','natural_scientist','fortification_expert','artist','army_organiser','army_reformer','commandant','diplomat','colonial_governor','grand_captain','inquisitor','master_of_mint','master_recruiter','naval_reformer','navigator','philosopher','spymaster','statesman','theologian','treasurer']);
   if (ADVISOR_TYPES.has(key) && /^\d+$/.test(val)) {
-    const advName = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const advName = dn(key).replace(/\b\w/g, c => c.toUpperCase());
     return { text: `Have <span class="tag">${advName}</span> advisor (level <span class="val">${val}</span>)`, type: 'condition' };
   }
 
   // change_trade_goods effect
-  if (key === 'change_trade_goods') return { text: `Change trade goods to <span class="tag">${val.replace(/_/g, ' ')}</span>`, type: 'condition' };
+  if (key === 'change_trade_goods') return { text: `Change trade goods to <span class="tag">${dn(val)}</span>`, type: 'condition' };
 
   // has_adm/dip/mil_advisor_X checks (e.g. has_adm_advisor_3 = yes, or has_mil_advisor = 5)
   if (/^has_(adm|dip|mil)_advisor_?(\d*)$/.test(key)) {
@@ -2943,13 +3175,13 @@ function triggerToText(key, val) {
       if (modMatch) return { text: `<span class="tag" title="Province ID: ${key}">${esc(pn)}</span> — Add modifier: ${modRef(modMatch[1])}`, type: 'condition' };
     }
     // Great project check inside province scope
-    if (/has great project/.test(rawVal.replace(/_/g, ' '))) {
+    if (/has great project/.test(dn(rawVal))) {
       const gpm = rawVal.match(/type\s*=\s*(\w+)/);
       const gtm = rawVal.match(/tier\s*=\s*(\d+)/);
-      if (gpm) { const gpn = GREAT_PROJECTS[gpm[1]] || gpm[1].replace(/_/g, ' '); return { text: `<span class="tag" title="Province ID: ${key}">${esc(pn)}</span> — Has great project: <span class="tag">${esc(gpn)}</span>${gtm ? ' (tier ' + gtm[1] + '+)' : ''}`, type: 'condition' }; }
+      if (gpm) { const gpn = GREAT_PROJECTS[gpm[1]] || dn(gpm[1]); return { text: `<span class="tag" title="Province ID: ${key}">${esc(pn)}</span> — Has great project: <span class="tag">${esc(gpn)}</span>${gtm ? ' (tier ' + gtm[1] + '+)' : ''}`, type: 'condition' }; }
     }
     // Parse the province condition value for readability
-    let provCondition = val.replace(/_/g, ' ');
+    let provCondition = dn(val);
     // Suppress most conditions that reference ROOT/FROM/PREV (scope variables)
     if (/\b(ROOT|FROM|PREV|THIS)\b/.test(provCondition)) return null;
     // Suppress noisy/internal province conditions
@@ -2957,9 +3189,12 @@ function triggerToText(key, val) {
     // Common province conditions
     provCondition = provCondition.replace(/fort level\s*=\s*/i, 'Fort level ');
     provCondition = provCondition.replace(/has construction\s*=\s*(\w[\w ]*)/i, (m, b) => { const bk = b.trim().replace(/ /g, '_'); return GREAT_PROJECTS[bk] ? 'Building great project: ' + GREAT_PROJECTS[bk] : 'Building: ' + b; });
-    provCondition = provCondition.replace(/has building\s*=\s*/i, 'Has building: ');
-    provCondition = provCondition.replace(/culture\s*=\s*/i, 'Culture: ');
-    provCondition = provCondition.replace(/religion\s*=\s*/i, 'Religion: ');
+    // Resolve identifiers to their proper names. Underscores are already gone
+    // by this point, so match the spaced form and re-key for the lookup.
+    const spacedName = s => dn(s.trim().replace(/ /g, '_'));
+    provCondition = provCondition.replace(/has building\s*=\s*([\w ]+)/i, (m, b) => 'Has building: ' + spacedName(b));
+    provCondition = provCondition.replace(/culture\s*=\s*([\w ]+)/i, (m, c) => 'Culture: ' + spacedName(c));
+    provCondition = provCondition.replace(/religion\s*=\s*([\w ]+)/i, (m, r) => 'Religion: ' + spacedName(r));
     provCondition = provCondition.replace(/is core\s*=\s*/i, 'Core of: ');
     provCondition = provCondition.replace(/owned by\s*=\s*/i, 'Owned by: ');
     provCondition = provCondition.replace(/country or non sovereign subject holds\s*=\s*\S+/i, 'Owned by you or subject');
@@ -2979,7 +3214,7 @@ function triggerToText(key, val) {
   }
 
   if (key.endsWith('_area') || key.endsWith('_region') || key.endsWith('_superregion')) {
-    const cleanName = key.replace(/_area$|_region$|_superregion$/, '').replace(/_/g, ' ');
+    const cleanName = titleCase(key.replace(/_area$|_region$|_superregion$/, '').replace(/_/g, ' '));
     const scopeType = key.endsWith('_area') ? 'area' : key.endsWith('_region') ? 'region' : 'superregion';
     // Detect common patterns inside the scope value
     if (/add_permanent_claim/.test(val)) return { text: `Gain permanent claims on <span class="tag">${cleanName}</span> (${scopeType})`, type: 'condition' };
@@ -3007,30 +3242,40 @@ function triggerToText(key, val) {
     if (/exists\s*=\s*no/.test(val)) return { text: `<span class="tag">${esc(cName)}</span> does not exist`, type: 'condition' };
     if (/is_at_war\s*=\s*no/.test(val)) return { text: `<span class="tag">${esc(cName)}</span> is at peace`, type: 'condition' };
     if (/is_at_war\s*=\s*yes/.test(val)) return { text: `<span class="tag">${esc(cName)}</span> is at war`, type: 'condition' };
-    if (/is_subject_of_type\s*=\s*(\w+)/.test(val)) { const stm = val.match(/is_subject_of_type\s*=\s*(\w+)/); return { text: `<span class="tag">${esc(cName)}</span> is ${stm[1].replace(/_/g, ' ')}`, type: 'condition' }; }
-    if (/NOT\s*=.*is_subject_of_type\s*=\s*(\w+)/.test(val)) { const stm = val.match(/is_subject_of_type\s*=\s*(\w+)/); return { text: `<span class="tag">${esc(cName)}</span> is not ${stm[1].replace(/_/g, ' ')}`, type: 'condition' }; }
+    if (/is_subject_of_type\s*=\s*(\w+)/.test(val)) { const stm = val.match(/is_subject_of_type\s*=\s*(\w+)/); return { text: `<span class="tag">${esc(cName)}</span> is ${dn(stm[1])}`, type: 'condition' }; }
+    if (/NOT\s*=.*is_subject_of_type\s*=\s*(\w+)/.test(val)) { const stm = val.match(/is_subject_of_type\s*=\s*(\w+)/); return { text: `<span class="tag">${esc(cName)}</span> is not ${dn(stm[1])}`, type: 'condition' }; }
     if (/total_development\s*=\s*(\d+)/.test(val)) { const dm = val.match(/total_development\s*=\s*(\d+)/); return { text: `<span class="tag">${esc(cName)}</span> has at least <span class="val">${dm[1]}</span> total development`, type: 'condition' }; }
-    if (/religion\s*=\s*(\w+)/.test(val) && !/religion_group/.test(val)) { const rm = val.match(/religion\s*=\s*(\w+)/); return { text: `<span class="tag">${esc(cName)}</span> follows <span class="tag">${rm[1].replace(/_/g, ' ')}</span>`, type: 'condition' }; }
-    if (/government\s*=\s*(\w+)/.test(val)) { const gm = val.match(/government\s*=\s*(\w+)/); return { text: `<span class="tag">${esc(cName)}</span> has <span class="tag">${gm[1].replace(/_/g, ' ')}</span> government`, type: 'condition' }; }
-    if (/has_reform\s*=\s*(\w+)/.test(val)) { const rm = val.match(/has_reform\s*=\s*(\w+)/); return { text: `<span class="tag">${esc(cName)}</span> has reform: <span class="tag">${rm[1].replace(/_/g, ' ')}</span>`, type: 'condition' }; }
+    if (/religion\s*=\s*(\w+)/.test(val) && !/religion_group/.test(val)) { const rm = val.match(/religion\s*=\s*(\w+)/); return { text: `<span class="tag">${esc(cName)}</span> follows <span class="tag">${dn(rm[1])}</span>`, type: 'condition' }; }
+    if (/government\s*=\s*(\w+)/.test(val)) { const gm = val.match(/government\s*=\s*(\w+)/); return { text: `<span class="tag">${esc(cName)}</span> has <span class="tag">${dn(gm[1])}</span> government`, type: 'condition' }; }
+    if (/has_reform\s*=\s*(\w+)/.test(val)) { const rm = val.match(/has_reform\s*=\s*(\w+)/); return { text: `<span class="tag">${esc(cName)}</span> has reform: <span class="tag">${dn(rm[1])}</span>`, type: 'condition' }; }
     if (/num_of_cities\s*=\s*(\d+)/.test(val)) { const nm = val.match(/num_of_cities\s*=\s*(\d+)/); return { text: `<span class="tag">${esc(cName)}</span> owns at least <span class="val">${nm[1]}</span> provinces`, type: 'condition' }; }
     if (/is_enemy\s*=\s*ROOT/.test(val)) return { text: `<span class="tag">${esc(cName)}</span> is our rival`, type: 'condition' };
     // Multi-line scope opener (val is empty or just braces) — show as scope label
     if (!val || val.length < 3) return { text: `<span class="tag">${esc(cName)}</span>:`, type: 'scope' };
     // Generic: show country name + simplified inner conditions
     if (/\bROOT\b/.test(val)) return null;
-    return { text: `<span class="tag">${esc(cName)}</span>: ${val.replace(/_/g, ' ').substring(0, 80)}`, type: 'scope' };
+    return { text: `<span class="tag">${esc(cName)}</span>: ${dn(val).substring(0, 80)}`, type: 'scope' };
+  }
+
+  // Anbennar/EU4 scripted effects and triggers (e.g. increase_legitimacy_medium_effect,
+  // umbral_expansion_mission_trigger). These are named macros the mod defines in
+  // common/scripted_effects|scripted_triggers. Prefer the author's own tooltip text,
+  // then fall back to expanding the definition body and rendering it normally.
+  const scripted = SCRIPTED[key];
+  if (scripted) {
+    const resolved = renderScripted(key, scripted, val, depth);
+    if (resolved) return resolved;
   }
 
   if (key.startsWith('has_')) {
     if (isScopeVar(val)) return null;
-    const cleanKey = key.replace(/_/g, ' ').replace(/\bhas\b/, 'Has').replace(/\btrigger\b/, '');
+    const cleanKey = dn(key).replace(/\bhas\b/, 'Has').replace(/\btrigger\b/, '');
     const cleanVal = val === 'yes' ? '' : val === 'no' ? ' (no)' : `: <span class="tag">${resolveRef(val)}</span>`;
     return { text: `${cleanKey.trim()}${cleanVal}`, type: 'condition' };
   }
   if (key.startsWith('is_')) {
     if (isScopeVar(val)) return null;
-    const label = key.replace(/_/g, ' ').replace(/\bis\b/, 'Is');
+    const label = dn(key).replace(/\bis\b/, 'Is');
     const cleanVal = val === 'yes' ? '' : val === 'no' ? ' — not' : `: <span class="val">${resolveRef(val)}</span>`;
     return { text: `${label}${cleanVal}`, type: 'condition' };
   }
@@ -3044,7 +3289,7 @@ function triggerToText(key, val) {
 
   // Generic fallthrough - format as readable text
   if (val && !val.includes('{') && val.length < 60) {
-    const cleanKey = key.replace(/_/g, ' ');
+    const cleanKey = dn(key);
     const resolved = resolveRef(val);
     const cleanVal = /^\d+(\.\d+)?$/.test(val) ? `<span class="val">${val}</span>` : `<span class="tag">${resolved}</span>`;
     return { text: `${cleanKey}: ${cleanVal}`, type: 'raw' };

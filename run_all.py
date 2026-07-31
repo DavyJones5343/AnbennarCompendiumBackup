@@ -33,6 +33,8 @@ STEPS = [
     ("extract_province_details.py", "Extract province details"),
     ("extract_province_names.py",   "Extract province names (base EU4 + Anbennar)"),
     ("extract_triggers.py",         "Extract mission triggers and effects"),
+    ("extract_scripted.py",         "Resolve scripted effects/triggers (needs mission triggers)"),
+    ("extract_display_names.py",    "Build identifier -> display-name lookup"),
     ("extract_extras.py",           "Extract government reforms and region mapping"),
     ("parse_modifiers.py",          "Parse event modifiers"),
     ("parse_startup_lore.py",       "Parse startup lore"),
