@@ -146,12 +146,12 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left: 8px;
+  margin-right: 8px;
 }
 
 #unofficial_anbennar_compendium_title {
-  padding: 10px 0px 0px 0px;
+  padding: 10px 0px 5px 0px;
 }
 #unofficial_anbennar_compendium_title h3 {
   color: var(--gold);
@@ -165,7 +165,7 @@ body {
 }
 
 #search-box {
-  padding: 10px 0px 0px 0px;
+  padding: 5px 0px 5px 0px;
   /* border-bottom: 1px solid var(--border); */
 }
 #search-input {
@@ -186,19 +186,19 @@ body {
 #search-input::placeholder { color: var(--text-muted); }
 
 #filters {
-  padding: 10px 0px 0px 0px;
+  padding: 5px 0px 5px 0px;
   border-bottom: 1px solid var(--border);
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
 }
 .filter-btn {
-  padding: 10px 0px 0px 0px;
+  padding: 5px 5px 5px 5px;
   font-size: 16px;
   font-weight: 500;
   font-family: 'EB Garamond', serif;
   border: 1px solid var(--border);
-  /* border-radius: 999px; */
+  border-radius: 1px;
   background: rgba(255,255,255,0.02);
   color: var(--text-secondary);
   cursor: pointer;
@@ -219,7 +219,7 @@ body {
 }
 
 #region-filter {
-  padding: 0px 0px 12px 12px;
+  padding: 5px 0px 5px 0px;
   border-bottom: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -1280,6 +1280,9 @@ body {
 }
 
 .loading {
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  font-weight: 500;
   text-align: center;
   padding: 40px;
   color: var(--text-muted);
