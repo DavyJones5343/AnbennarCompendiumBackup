@@ -9,9 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Cinzel+Decorative:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0c0c10;
-  --card: #14141c;
-  --card-hover: #1c1c28;
+  --bg: #232b31;
+  --card: #232b31;
+  --card-hover: #1d242a;
   --border: #262633;
   --border-soft: #1e1e2a;
   --gold: #c9a84c;
@@ -25,7 +25,7 @@
   --blue: #5b9bd5;
   --purple: #9b72cf;
   --parchment: #1a1710;
-  --sidebar-w: 320px;
+  --sidebar-w: 350px;
   --header-h: 60px;
   --radius: 10px;
   --radius-sm: 6px;
@@ -49,7 +49,7 @@ body {
 }
 
 /* Global slim scrollbars, gold-tinted on hover */
-* { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+* { scrollbar-width: auto; scrollbar-color: var(--border) transparent; }
 *::-webkit-scrollbar { width: 8px; height: 8px; }
 *::-webkit-scrollbar-track { background: transparent; }
 *::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; border: 2px solid transparent; background-clip: content-box; }
@@ -141,7 +141,7 @@ body {
   width: var(--sidebar-w);
   min-width: var(--sidebar-w);
   background: var(--card);
-  border-right: 1px solid var(--border);
+  border-right: 3px solid var(--border);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -155,7 +155,7 @@ body {
   padding: 9px 14px;
   background: rgba(0,0,0,0.35);
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 5px;
   color: var(--text);
   font-family: 'Lora', serif;
   font-size: 13px;
@@ -265,7 +265,7 @@ body {
 .country-item {
   display: flex;
   align-items: center;
-  padding: 8px 10px;
+  <!-- padding: 8px 10px; -->
   margin: 2px 8px;
   cursor: pointer;
   border-radius: var(--radius-sm);
@@ -407,7 +407,7 @@ body {
   width: 100%;
   height: calc(100vh - 60px);
   overflow: hidden;
-  background: #0e1420;
+  background: #0c111c;
   border-radius: 0px;
   text-align: left;
 
@@ -688,20 +688,20 @@ body {
   letter-spacing: 1px;
 }
 .idea-card {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: #101010;
+  border: 2px solid #493a10;
   border-radius: 4px;
   padding: 10px 14px;
   margin-bottom: 6px;
 }
 .idea-card h4 {
   font-size: 13px;
-  color: var(--text);
+  color: #e3c035;
   margin-bottom: 4px;
 }
 .idea-card .idea-desc {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: white;
   margin-bottom: 6px;
   font-style: normal;
   font-weight: 400;
@@ -718,11 +718,23 @@ body {
   padding: 2px 8px;
   border-radius: 10px;
   font-size: 11px;
-  font-family: monospace;
+  <!-- font-family: monospace; -->
 }
-.mod-chip.positive { background: rgba(74,186,106,0.15); color: var(--green); border: 1px solid rgba(74,186,106,0.3); }
-.mod-chip.negative { background: rgba(224,82,82,0.15); color: var(--red); border: 1px solid rgba(224,82,82,0.3); }
-.mod-chip.neutral { background: rgba(158,158,176,0.1); color: var(--text-secondary); border: 1px solid var(--border); }
+.mod-chip.positive {
+  <!-- background: rgba(74,186,106,0.15); -->
+  color: var(--green);
+  border: 1px solid rgba(74,186,106,0.3);
+}
+.mod-chip.negative {
+  <!-- background: rgba(224,82,82,0.15); -->
+  color: var(--red);
+  border: 1px solid rgba(224,82,82,0.3);
+}
+.mod-chip.neutral {
+  <!-- background: rgba(158,158,176,0.1); -->
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
 
 /* MISSIONS */
 .mission-grid-container {
