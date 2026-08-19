@@ -92,7 +92,6 @@ body {
   color: var(--gold);
   font-size: 30px;
   font-weight: 800;
-  letter-spacing: 2px;
   <!-- text-shadow: 0 2px 12px rgba(201,168,76,0.4), 0 0 40px rgba(201,168,76,0.1); -->
 }
 #header .subtitle {
@@ -102,7 +101,6 @@ body {
   font-size: 16px;
   font-weight: 500;
   margin-top: 2px;
-  letter-spacing: 1px;
 }
 #header-content { flex: 1; }
 .kofi-btn {
@@ -148,10 +146,12 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 #unofficial_anbennar_compendium_title {
-  padding: 12px 12px 0px 12px;
+  padding: 10px 0px 0px 0px;
 }
 #unofficial_anbennar_compendium_title h3 {
   color: var(--gold);
@@ -165,8 +165,8 @@ body {
 }
 
 #search-box {
-  padding: 12px 12px 0px 12px;
-  border-bottom: 1px solid var(--border);
+  padding: 10px 0px 0px 0px;
+  /* border-bottom: 1px solid var(--border); */
 }
 #search-input {
   width: 100%;
@@ -186,14 +186,14 @@ body {
 #search-input::placeholder { color: var(--text-muted); }
 
 #filters {
-  padding: 8px 12px;
+  padding: 10px 0px 0px 0px;
   border-bottom: 1px solid var(--border);
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
 }
 .filter-btn {
-  padding: 4px 4px;
+  padding: 10px 0px 0px 0px;
   font-size: 16px;
   font-weight: 500;
   font-family: 'EB Garamond', serif;
@@ -219,7 +219,7 @@ body {
 }
 
 #region-filter {
-  padding: 0px 8px 12px 12px;
+  padding: 0px 0px 12px 12px;
   border-bottom: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -285,7 +285,7 @@ body {
 #country-list {
   flex: 1;
   overflow-y: auto;
-  scrollbar-width: thin;
+  scrollbar-width: auto;
   scrollbar-color: var(--text-muted) transparent;
 }
 #country-list::-webkit-scrollbar { width: 6px; }
@@ -294,15 +294,16 @@ body {
 .country-item {
   display: flex;
   align-items: center;
-  /* padding: 8px 10px; */
-  margin: 2px 8px;
+  padding: 2px 8px 2px 0px;
   cursor: pointer;
   border-radius: var(--radius-sm);
   border-left: 3px solid transparent;
   transition: background 0.15s var(--ease), border-color 0.15s var(--ease);
   gap: 8px;
 }
-.country-item:hover { background: var(--card-hover); }
+.country-item:hover {
+  background: var(--card-hover);
+}
 .country-item.selected {
   background: linear-gradient(90deg, rgba(201,168,76,0.12), rgba(201,168,76,0.03));
   border-left-color: var(--gold);
@@ -367,6 +368,7 @@ body {
   background: transparent;
   transition: all 0.15s;
   margin-right: 2px;
+  display: none; /* REMOVED DID I PLAY THIS NATION THING DAVYJONES */
 }
 .played-toggle:hover { border-color: var(--gold-dim); background: rgba(201,168,76,0.08); }
 .played-toggle.played {
@@ -423,7 +425,6 @@ body {
   font-family: 'EB Garamond', serif;
   font-size: 30px;
   margin-bottom: 12px;
-  letter-spacing: 3px;
   background: linear-gradient(180deg, var(--gold-bright), var(--gold-dim));
   -webkit-background-clip: text;
   background-clip: text;
@@ -471,10 +472,10 @@ body {
 }
 .back-to-map {
   background: none;
-  border: 1px solid var(--border);
+  border: 1px solid var(--card-border);
   color: var(--gold-dim);
   /* border-radius: 4px; */
-  padding: 4px 12px;
+  padding: 0px;
   font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
@@ -482,7 +483,10 @@ body {
   margin-bottom: 10px;
   margin-top: 10px;
 }
-.back-to-map:hover { border-color: var(--gold-dim); color: var(--text); }
+.back-to-map:hover {
+  /* border-color: var(--gold-dim); */
+  color: var(--text);
+}
 
 /* COUNTRY DETAIL */
 #detail { display: none; }
@@ -512,7 +516,6 @@ body {
   color: var(--gold);
   font-size: 26px;
   margin-bottom: 4px;
-  letter-spacing: 2px;
 }
 .detail-header .info .tag-adj {
   color: var(--text-secondary);
@@ -564,7 +567,6 @@ body {
   text-align: center;
   padding: 3px 6px;
   border-radius: 4px;
-  letter-spacing: 0.5px;
   text-transform: uppercase;
   align-self: end;
   white-space: nowrap;
@@ -688,7 +690,6 @@ body {
   margin-bottom: 10px;
   padding-bottom: 6px;
   border-bottom: 1px solid var(--border);
-  letter-spacing: 1px;
 }
 
 /* TABS */
@@ -710,7 +711,6 @@ body {
   cursor: pointer;
   margin-bottom: -2px;
   transition: color 0.2s var(--ease);
-  letter-spacing: 1px;
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
 .tab-btn::after {
@@ -965,7 +965,6 @@ body {
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 8px;
-  letter-spacing: 1px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1018,7 +1017,6 @@ body {
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 6px;
-  letter-spacing: 1px;
 }
 .requirements-box ul {
   list-style: none;
@@ -1060,7 +1058,6 @@ body {
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 6px;
-  letter-spacing: 1px;
 }
 .effects-box ul {
   list-style: none;
@@ -1218,7 +1215,7 @@ body {
     height: auto;
     gap: 4px;
   }
-  #header h1 { font-size: 16px; letter-spacing: 2px; }
+  #header h1 { font-size: 16px; }
   #header .subtitle { font-size: 16px; }
   .kofi-btn { padding: 4px 10px; font-size: 16px; margin-right: 6px; }
   #sidebar { display: none; }
@@ -1372,7 +1369,7 @@ body {
 .map-province-panel .prov-val { color: var(--text-primary); font-weight: 500; }
 .map-province-panel .prov-dev { color: #7dcea0; }
 .map-diplo-info {
-  background: rgba(20,20,35,0.6);
+  background: var(--card-hover);
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 8px 12px;
