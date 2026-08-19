@@ -25,7 +25,7 @@
   --blue: #5b9bd5;
   --purple: #9b72cf;
   --parchment: #1a1710;
-  --sidebar-w: 420px;
+  --sidebar-w: 320px;
   --header-h: 60px;
   --radius: 10px;
   --radius-sm: 6px;
@@ -557,8 +557,8 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 14px;
-  background: linear-gradient(135deg, #2a2518, #1e1a14);
+  padding: 5px 10px;
+  /* background: linear-gradient(135deg, #2a2518, #1e1a14); */
   border: 1px solid var(--gold-dim);
   border-radius: 4px;
   color: var(--gold);
@@ -569,7 +569,12 @@ body {
   margin-top: 10px;
   transition: all 0.2s;
 }
-.wiki-btn:hover { background: #2a2518; border-color: var(--gold); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.35); }
+.wiki-btn:hover {
+  background: #2a2518;
+  border-color: var(--gold);
+  /* transform: translateY(-1px); */ 
+  /* box-shadow: 0 4px 12px rgba(0,0,0,0.35); */
+}
 .played-btn {
   display: inline-flex;
   align-items: center;
@@ -714,7 +719,7 @@ body {
 .tab-content.active[data-tab="ideas"] {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
   align-items: flex-start;
 }
 
@@ -724,7 +729,7 @@ body {
 }
 
 .tab-content.active[data-tab="ideas"] > .idea-card {
-  flex: 1 1 280px;
+  flex: 1 1 200px;
   margin-bottom: 0;
 }
 
@@ -3762,7 +3767,7 @@ function selectCountry(tag) {
         ${reg.region_name ? `<span class="pill pill-region clickable" onclick="setRegionFilter('rg:${esc(reg.region_name)}')">${esc(reg.region_name)}</span>` : ''}
         ${reg.superregion_name ? `<span class="pill pill-region clickable" onclick="setRegionFilter('sr:${esc(reg.superregion_name)}')">${esc(reg.superregion_name)}</span>` : ''}
       </div>
-      ${w.found ? `<a href="${esc(wikiLink)}" target="_blank" rel="noopener" class="wiki-btn">&#128214; View on Wiki</a>` : ''}
+      ${w.found ? `<a href="${esc(wikiLink)}" target="_blank" rel="noopener" class="wiki-btn">&#128214; Wiki Page</a>` : ''}
       <span class="played-btn${PLAYED.has(tag) ? ' active' : ''}" onclick="togglePlayedDetail('${tag}', this)">${PLAYED.has(tag) ? '&#10003; Played' : 'Mark as Played'}</span>
     </div>
   </div>`;
@@ -3845,6 +3850,10 @@ function selectCountry(tag) {
       html += '<div class="idea-group"><div class="idea-label">Traditions</div>';
       html += '<div class="mod-chips">' + c.ideas.traditions.map(t => modChip(t.modifier, t.value)).join('') + '</div></div>';
     }
+        if (c.ideas.ambition && c.ideas.ambition.length > 0) {
+      html += '<div class="idea-group" style="margin-top:12px"><div class="idea-label">Ambition</div>';
+      html += '<div class="mod-chips">' + c.ideas.ambition.map(a => modChip(a.modifier, a.value)).join('') + '</div></div>';
+    }
     c.ideas.ideas.filter(idea => idea.name !== 'ai_will_do').forEach((idea, i) => {
       html += `<div class="idea-card">
         <h4>${i+1}. ${esc(idea.display_name || idea.name)}</h4>
@@ -3852,10 +3861,6 @@ function selectCountry(tag) {
         <div class="mod-chips">${(idea.effects || []).map(e => modChip(e.modifier, e.value)).join('')}</div>
       </div>`;
     });
-    if (c.ideas.ambition && c.ideas.ambition.length > 0) {
-      html += '<div class="idea-group" style="margin-top:12px"><div class="idea-label">Ambition</div>';
-      html += '<div class="mod-chips">' + c.ideas.ambition.map(a => modChip(a.modifier, a.value)).join('') + '</div></div>';
-    }
     html += '</div>';
   }
 
