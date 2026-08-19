@@ -441,6 +441,7 @@ body {
 }
 #world-map-status {
   margin-top: 0px;
+  font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
   color: var(--text-muted);
@@ -453,6 +454,7 @@ body {
   color: var(--gold-dim);
   /* border-radius: 4px; */
   padding: 4px 12px;
+  font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
@@ -707,6 +709,24 @@ body {
 
 .tab-content { display: none; }
 .tab-content.active { display: block; }
+
+/* NEW FROM AI DAVYJONES */
+.tab-content.active[data-tab="ideas"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.tab-content.active[data-tab="ideas"] > .idea-group {
+  flex: 0 0 100%;
+  margin-bottom: 0;
+}
+
+.tab-content.active[data-tab="ideas"] > .idea-card {
+  flex: 1 1 280px;
+  margin-bottom: 0;
+}
 
 /* IDEAS */
 .idea-group { margin-bottom: 16px; }
@@ -1146,6 +1166,12 @@ body {
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
+
+  /* AI MIGHT BE BAD DAVYJONES */
+  .tab-content.active[data-tab="ideas"] > .idea-card {
+    flex-basis: 100%;
+  }
+
   :root { --header-h: auto; }
   /* Body must scroll on mobile — desktop locks it with overflow:hidden, but on
      mobile the #layout height calc becomes invalid because --header-h is auto
