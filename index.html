@@ -330,8 +330,7 @@ body {
   background: var(--card-hover);
 }
 .country-item.selected {
-  background: linear-gradient(90deg, rgba(201,168,76,0.12), rgba(201,168,76,0.03));
-  border-left-color: var(--gold);
+  background: var(--border-soft);
 }
 .country-item img.flag {
   width: 32px; height: 32px;
@@ -358,7 +357,12 @@ body {
   font-family: 'EB Garamond', serif;
   flex-shrink: 0;
 }
-.status-badge.formable { background: rgba(155,114,207,0.2); color: var(--purple); border: 1px solid rgba(155,114,207,0.3); }
+.status-badge.formable {
+  background: rgba(155,114,207,0.2);
+  color: var(--purple);
+  border: 1px solid rgba(155,114,207,0.3);
+  display: none;
+}
 .country-item .badges {
   display: flex;
   gap: 3px;
@@ -415,7 +419,7 @@ body {
 #main {
   flex: 1;
   overflow-y: auto;
-  padding: 0px 0px;
+  padding: 0px 10px 0px 0px;
   scrollbar-width: normal;
   scrollbar-color: var(--text-muted) transparent;
 }
@@ -498,17 +502,16 @@ body {
 .back-to-map {
   display: block;
   margin-left: auto;
-  margin-right: 0;
+  margin-right: 0px;
   background: none;
-  border: 1px solid var(--card-border);
-  color: var(--gold-dim);
-  /* border-radius: 4px; */
+  color: var(--text-muted);
   padding: 0px;
   font-family: 'EB Garamond', serif;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: bold;
+  font-style: italic;
   cursor: pointer;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
   margin-top: 10px;
 }
 .back-to-map:hover {
@@ -561,9 +564,9 @@ body {
   align-items: center;
   gap: 4px;
   padding: 3px 10px;
-  background: var(--parchment);
+  background: var(--border-soft);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 5px;
   font-size: 16px;
   font-weight: 500;
   color: var(--text-secondary);
@@ -579,7 +582,7 @@ body {
 
 /* Pill color variants */
 .pill.pill-gov { border-color: rgba(91,155,213,0.5); color: var(--blue); }
-.pill.pill-religion { }
+.pill.pill-religion { border-color: rgba(201,168,76,0.5); color: var(--gold); }
 .pill.pill-culture { border-color: rgba(155,114,207,0.5); color: var(--purple); }
 .pill.pill-region { border-color: rgba(74,186,106,0.5); color: var(--green); }
 .pill.pill-region:hover { border-color: var(--green); background: rgba(74,186,106,0.1); }
@@ -612,7 +615,7 @@ body {
   /* background: linear-gradient(135deg, #2a2518, #1e1a14); */
   border: 1px solid var(--gold-dim);
   border-radius: 4px;
-  color: var(--gold);
+  color: var(--gold-dim);
   font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
@@ -621,7 +624,7 @@ body {
   transition: all 0.2s;
 }
 .wiki-btn:hover {
-  background: var(--parchment);
+  background: var(--border-soft);
   border-color: var(--gold);
   /* transform: translateY(-1px); */ 
   /* box-shadow: 0 4px 12px rgba(0,0,0,0.35); */
@@ -642,6 +645,7 @@ body {
   margin-top: 10px;
   margin-left: 8px;
   transition: all 0.2s;
+  display: none;
 }
 .played-btn:hover { border-color: var(--green); color: var(--green); }
 .played-btn.active {
@@ -652,17 +656,16 @@ body {
 
 /* LORE BOX */
 .lore-box {
-  background: linear-gradient(135deg, #1a1710, #161410);
+  background: var(--card-hover);
   border: 1px solid var(--gold-dim);
-  border-left: 3px solid var(--gold);
-  border-radius: 0 6px 6px 0;
+  border-radius: 5px;
   padding: 16px 20px;
   margin-bottom: 20px;
   font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.8;
-  color: var(--text-secondary);
+  color: var(--text);
 }
 .lore-box .first-line {
   font-style: italic;
@@ -696,17 +699,16 @@ body {
   white-space: nowrap;
 }
 .lore-text-full {
-  background: linear-gradient(135deg, #1a1710, #161410);
+  background: var(--card-hover);
   border: 1px solid var(--gold-dim);
-  border-left: 3px solid var(--gold);
-  border-radius: 0 6px 6px 0;
+  border-radius: 5px;
   padding: 16px 20px;
   margin-top: 16px;
   font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.3;
-  color: var(--text-secondary);
+  color: var(--text);
 }
 
 /* SECTION */
@@ -773,8 +775,11 @@ body {
 }
 
 .tab-content.active[data-tab="ideas"] > .idea-group {
-  flex: 0 0 calc(50% - 6px);
-  margin-bottom: 0;
+  flex: 0 0 auto;
+}
+
+.tab-content.active[data-tab="ideas"] > .idea-group:first-child {
+  margin-left: auto;
 }
 
 .tab-content.active[data-tab="ideas"] > .idea-card {
@@ -1301,7 +1306,7 @@ body {
 
 .color-dot {
   display: inline-block;
-  width: 12px; height: 12px;
+  width: 20px; height: 20px;
   border-radius: 50%;
   border: 1px solid var(--border);
   vertical-align: middle;
@@ -1462,7 +1467,7 @@ body {
       <select id="gov-select" class="filter-select"><option value="">Government...</option></select>
     </div>
     <div id="filters">
-      <button class="filter-btn" data-filter="PlayableIn1444">Playable in 1444</button>
+      <button class="filter-btn" data-filter="PlayableIn1444">Playable In 1444</button>
       <button class="filter-btn" data-filter="Formable">Formable</button>
       <button class="filter-btn" data-filter="EventSpawned" title="Nations not on the map at game start — spawned later via events (e.g. Crown of Bera nations like Jarvema, Cagodor)">Event Spawned</button>
       <button class="filter-btn" data-filter="HasMT">Has MT</button>
@@ -3790,18 +3795,18 @@ function selectCountry(tag) {
   // Status pills with proper classes
   let statusHtml = '';
   if (s.status === 'PlayableIn1444' || s.status === 'both') {
-    statusHtml += '<span class="pill pill-PlayableIn1444">Playable in 1444</span>';
+    statusHtml += '<span class="pill pill-PlayableIn1444">Playable In 1444</span>';
   }
   if (s.status === 'Formable' || s.status === 'both') {
-    statusHtml += '<span class="pill pill-Formable">Formable Nation</span>';
+    statusHtml += '<span class="pill pill-Formable">Formable</span>';
   }
   if (s.provinces_owned) {
     statusHtml += `<span class="pill">${s.provinces_owned} starting provinces</span>`;
   }
   if (c.mission_class === 'unique') {
-    statusHtml += '<span class="pill pill-UniqueMT" title="Has a mission tree written specifically for this nation (or shared only with its formable successor)">Unique Mission Tree</span>';
+    statusHtml += '<span class="pill pill-UniqueMT" title="Has a mission tree written specifically for this nation (or shared only with its formable successor)">Unique MT</span>';
   } else if (c.mission_class === 'regional') {
-    statusHtml += '<span class="pill pill-GenericMT" title="Missions come from shared regional or generic trees, not a bespoke tree">Regional Missions</span>';
+    statusHtml += '<span class="pill pill-GenericMT" title="Missions come from shared regional or generic trees, not a bespoke tree">Generic MT</span>';
   }
 
   // Header
@@ -3824,7 +3829,7 @@ function selectCountry(tag) {
         ${reg.region_name ? `<span class="pill pill-region clickable" onclick="setRegionFilter('rg:${esc(reg.region_name)}')">${esc(reg.region_name)}</span>` : ''}
         ${reg.superregion_name ? `<span class="pill pill-region clickable" onclick="setRegionFilter('sr:${esc(reg.superregion_name)}')">${esc(reg.superregion_name)}</span>` : ''}
       </div>
-      ${w.found ? `<a href="${esc(wikiLink)}" target="_blank" rel="noopener" class="wiki-btn">&#128214; Wiki Page</a>` : ''}
+      ${w.found ? `<a href="${esc(wikiLink)}" target="_blank" rel="noopener" class="wiki-btn">Wiki Page</a>` : ''}
       <span class="played-btn${PLAYED.has(tag) ? ' active' : ''}" onclick="togglePlayedDetail('${tag}', this)">${PLAYED.has(tag) ? '&#10003; Played' : 'Mark as Played'}</span>
     </div>
   </div>`;
