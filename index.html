@@ -745,7 +745,7 @@ body {
 }
 
 .tab-content.active[data-tab="ideas"] > .idea-group {
-  flex: 1 1 200px;
+  flex: 0 0 calc(50% - 6px);
   margin-bottom: 0;
 }
 
@@ -755,14 +755,15 @@ body {
 }
 
 /* IDEAS */
-.idea-group { margin-bottom: 16px; }
+.idea-group {
+  margin-bottom: 16px;
+}
 .idea-label {
   font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
-  color: var(--gold-dim);
+  color: var(--gold);
   margin-bottom: 8px;
-  letter-spacing: 1px;
 }
 .idea-card {
   background: #101010;
@@ -1195,6 +1196,9 @@ body {
 
   /* AI MIGHT BE BAD DAVYJONES */
   .tab-content.active[data-tab="ideas"] > .idea-card {
+    flex-basis: 100%;
+  }
+  .tab-content.active[data-tab="ideas"] > .idea-group {
     flex-basis: 100%;
   }
 
