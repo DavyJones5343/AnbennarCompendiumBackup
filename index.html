@@ -283,8 +283,8 @@ body {
 .country-item img.flag {
   width: 32px; height: 32px;
   image-rendering: pixelated;
-  border: 1px solid var(--border);
-  border-radius: 4px;
+  /* border: 1px solid var(--border); */
+  /* border-radius: 4px; */
   flex-shrink: 0;
   transition: border-color 0.15s var(--ease);
 }
@@ -300,7 +300,7 @@ body {
   font-size: 14px;
   padding: 1px 5px;
   border-radius: 8px;
-  font-family: monospace;
+  font-family: 'EB Garamond', serif;
   flex-shrink: 0;
 }
 .status-badge.formable { background: rgba(155,114,207,0.2); color: var(--purple); border: 1px solid rgba(155,114,207,0.3); }
@@ -319,7 +319,7 @@ body {
 .country-item .tag-label {
   font-size: 14px;
   color: var(--text-muted);
-  font-family: monospace;
+  font-family: 'EB Garamond', serif;
   flex-shrink: 0;
 }
 .played-toggle {
@@ -388,7 +388,7 @@ body {
 .welcome-rule::after { background: linear-gradient(90deg, var(--gold-dim), transparent); }
 #welcome h2 {
   font-family: 'EB Garamond', serif;
-  font-size: 38px;
+  font-size: 30px;
   margin-bottom: 12px;
   letter-spacing: 3px;
   background: linear-gradient(180deg, var(--gold-bright), var(--gold-dim));
@@ -437,11 +437,12 @@ body {
   background: none;
   border: 1px solid var(--border);
   color: var(--gold-dim);
-  border-radius: 4px;
+  /* border-radius: 4px; */
   padding: 4px 12px;
   font-size: 14px;
   cursor: pointer;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 .back-to-map:hover { border-color: var(--gold-dim); color: var(--text); }
 
@@ -461,9 +462,9 @@ body {
 }
 .detail-header img.flag {
   width: 80px; height: 80px;
-  image-rendering: pixelated;
-  border: 2px solid var(--gold-dim);
-  border-radius: var(--radius);
+  image-rendering: auto;
+  /* border: 2px solid var(--gold-dim); */
+  /* border-radius: var(--radius); */
   flex-shrink: 0;
   background: #111;
   box-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 0 24px rgba(201,168,76,0.08);
@@ -671,7 +672,7 @@ body {
 .tab-btn.active { color: var(--gold); }
 .tab-btn.active::after { left: 12px; right: 12px; }
 .tab-btn .count {
-  font-family: monospace;
+  font-family: 'EB Garamond', serif;
   font-size: 14px;
   color: var(--text-muted);
   margin-left: 4px;
@@ -707,7 +708,7 @@ body {
   margin-bottom: 6px;
   font-style: normal;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1;
 }
 
 /* MODIFIER CHIPS */
@@ -717,10 +718,10 @@ body {
   gap: 4px;
 }
 .mod-chip {
-  padding: 2px 8px;
+  padding: 0px 20px 0px 0px;
   border-radius: 10px;
   font-size: 14px;
-  /*  font-family: monospace; */
+  font-family: 'EB Garamond', serif;
 }
 .mod-chip.positive {
   color: var(--green);
@@ -1043,7 +1044,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 10px 12px;
-  font-family: 'Consolas', 'Courier New', monospace;
+  font-family: 'EB Garamond', serif;
   font-size: 14px;
   line-height: 1.5;
   overflow-x: auto;
@@ -4172,7 +4173,7 @@ function showMissionDetail(tag, missionId) {
 
   // If no requirements, no effects, and no required missions, show a helpful message
   if (!reqHtml && !effHtml && reqs.length === 0) {
-    html += '<div style="color:var(--text-muted);font-size:12px;margin:8px 0;">No special requirements \u2014 available from game start.</div>';
+    html += '<div style="color:var(--text-muted);font-size:14px;margin:8px 0;">No special requirements \u2014 available from game start.</div>';
   }
 
   // "Show raw script" toggle
@@ -4181,11 +4182,11 @@ function showMissionDetail(tag, missionId) {
     html += `<span class="toggle-raw" onclick="document.getElementById('${rawId}').style.display = document.getElementById('${rawId}').style.display === 'none' ? 'block' : 'none'">Show raw script</span>`;
     html += `<div id="${rawId}" style="display:none">`;
     if (trigger.trigger_raw) {
-      html += '<div style="font-size:11px;color:var(--text-muted);margin-top:8px">Trigger:</div>';
+      html += '<div style="font-size:14px;color:var(--text-muted);margin-top:8px">Trigger:</div>';
       html += `<div class="script-block">${esc(trigger.trigger_raw)}</div>`;
     }
     if (trigger.effect_raw) {
-      html += '<div style="font-size:11px;color:var(--text-muted);margin-top:8px">Effect:</div>';
+      html += '<div style="font-size:14px;color:var(--text-muted);margin-top:8px">Effect:</div>';
       html += `<div class="script-block">${esc(trigger.effect_raw)}</div>`;
     }
     html += '</div>';
@@ -4220,12 +4221,12 @@ function showReligion(relId) {
   html += `<div class="religion-group"><span class="color-dot" style="background:${color}"></span> ${esc(r.group || r.group_id || '')}</div>`;
 
   if (r.modifiers && r.modifiers.length > 0) {
-    html += '<div style="margin:10px 0"><strong style="font-size:12px;color:var(--text-secondary)">Modifiers:</strong>';
+    html += '<div style="margin:10px 0"><strong style="font-size:14px;color:var(--text-secondary)">Modifiers:</strong>';
     html += '<div class="mod-chips" style="margin-top:4px">' + r.modifiers.map(m => modChip(m.modifier, m.value)).join('') + '</div></div>';
   }
 
   if (r.allowed_conversions && r.allowed_conversions.length > 0) {
-    html += '<div style="margin:10px 0"><strong style="font-size:12px;color:var(--text-secondary)">Allowed Conversions:</strong> ';
+    html += '<div style="margin:10px 0"><strong style="font-size:14px;color:var(--text-secondary)">Allowed Conversions:</strong> ';
     html += r.allowed_conversions.map(c => {
       const cr = RELIGIONS[c];
       return esc(cr ? cr.name : c);
@@ -4235,7 +4236,7 @@ function showReligion(relId) {
 
   const relCountries = countries.filter(c => c.religion_id === relId);
   if (relCountries.length > 0) {
-    html += `<div style="margin:10px 0"><strong style="font-size:12px;color:var(--text-secondary)">Countries (${relCountries.length}):</strong>`;
+    html += `<div style="margin:10px 0"><strong style="font-size:14px;color:var(--text-secondary)">Countries (${relCountries.length}):</strong>`;
     html += '<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;max-height:200px;overflow-y:auto">';
     relCountries.forEach(c => {
       html += `<span class="pill clickable" onclick="closeReligionPanel();selectCountry('${c.tag}')" style="font-size:11px">${esc(c.name)}</span>`;
