@@ -49,7 +49,7 @@ body {
 }
 
 /* Global slim scrollbars, gold-tinted on hover */
-* { scrollbar-width: auto; scrollbar-color: var(--border) transparent; }
+* { scrollbar-width: auto; scrollbar-color: var(--text-muted) transparent; }
 *::-webkit-scrollbar { width: 8px; height: 8px; }
 *::-webkit-scrollbar-track { background: transparent; }
 *::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; border: 2px solid transparent; background-clip: content-box; }
@@ -59,10 +59,10 @@ body {
 
 /* HEADER */
 #header {
+  display: none;
   height: var(--header-h);
   background: var(--card);
   border-bottom: 1px solid var(--gold-dim);
-  display: flex;
   align-items: center;
   padding: 0 16px;
   position: relative;
@@ -135,7 +135,8 @@ body {
 /* LAYOUT */
 #layout {
   display: flex;
-  height: calc(100vh - var(--header-h));
+  /* height: calc(100vh - var(--header-h)); */
+  height: 100vh;
 }
 
 /* SIDEBAR */
@@ -148,6 +149,21 @@ body {
   flex-direction: column;
   overflow: hidden;
 }
+
+#unofficial_anbennar_compendium_title {
+  padding: 12px 12px 0px 12px;
+}
+#unofficial_anbennar_compendium_title h3 {
+  color: var(--gold);
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 #search-box {
   padding: 12px 12px 0px 12px;
   border-bottom: 1px solid var(--border);
@@ -177,28 +193,33 @@ body {
   gap: 4px;
 }
 .filter-btn {
-  padding: 4px 12px;
+  padding: 4px 4px;
   font-size: 16px;
   font-weight: 500;
   font-family: 'EB Garamond', serif;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  /* border-radius: 999px; */
   background: rgba(255,255,255,0.02);
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.18s var(--ease);
 }
-.filter-btn:hover { border-color: var(--gold-dim); color: var(--text); background: rgba(201,168,76,0.06); transform: translateY(-1px); }
+.filter-btn:hover {
+  border-color: var(--gold-dim);
+  color: var(--text);
+  background: rgba(201,168,76,0.06);
+  /* transform: translateY(-1px); */
+}
 .filter-btn.active {
   background: linear-gradient(180deg, var(--gold-bright), var(--gold));
   color: #1a1508;
   font-weight: 600;
   border-color: var(--gold);
-  box-shadow: 0 2px 8px rgba(201,168,76,0.25);
+  /* box-shadow: 0 2px 8px rgba(201,168,76,0.25); */
 }
 
 #region-filter {
-  padding: 8px 12px;
+  padding: 0px 8px 12px 12px;
   border-bottom: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -206,7 +227,7 @@ body {
 }
 .filter-select {
   width: 100%;
-  padding: 7px 30px 7px 10px;
+  padding: 5px 30px 5px 10px;
   background: rgba(0,0,0,0.35) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a7333' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -265,10 +286,10 @@ body {
   flex: 1;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
+  scrollbar-color: var(--text-muted) transparent;
 }
 #country-list::-webkit-scrollbar { width: 6px; }
-#country-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+#country-list::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
 
 .country-item {
   display: flex;
@@ -369,7 +390,7 @@ body {
   overflow-y: auto;
   padding: 0px 0px;
   scrollbar-width: normal;
-  scrollbar-color: var(--border) transparent;
+  scrollbar-color: var(--text-muted) transparent;
 }
 #main::-webkit-scrollbar { width: 6px; }
 #main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -420,7 +441,7 @@ body {
 #world-map-wrap {
   position: relative;
   width: 100%;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 0px);
   overflow: hidden;
   background: #0c111c;
   border-radius: 0px;
@@ -724,7 +745,7 @@ body {
 }
 
 .tab-content.active[data-tab="ideas"] > .idea-group {
-  flex: 0 0 100%;
+  flex: 1 1 200px;
   margin-bottom: 0;
 }
 
@@ -1187,6 +1208,7 @@ body {
   #main { overflow-y: visible; }
   #sidebar.mobile-open .country-list { -webkit-overflow-scrolling: touch; }
   #header {
+    display: flex;
     padding: 10px 16px;
     flex-wrap: wrap;
     height: auto;
@@ -1208,7 +1230,7 @@ body {
     color: var(--gold); padding: 6px 10px; cursor: pointer; font-size: 16px;
     z-index: 1; position: relative;
   }
-  #main { padding: 12px; }
+  #main { padding: 0px; }
   /* Detail header: stack vertically */
   .detail-header { flex-direction: column; gap: 10px; align-items: center; text-align: center; }
   .detail-header img.flag { width: 64px; height: 64px; }
@@ -1385,7 +1407,7 @@ body {
 
 <div id="header">
   <div id="header-content">
-    <h1>ANBENNAR COMPENDIUM</h1>
+    <h1>UNOFFICIAL ANBENNAR COMPENDIUM</h1>
     <!-- <div class="subtitle">An Interactive Guide to the World of Halcann &mdash; by Ijkee</div> -->
   </div>
   <!-- <a href="https://ko-fi.com/ijkee" target="_blank" rel="noopener" class="kofi-btn" title="Support Ijkee on Ko-fi">&#9749; Support</a> -->
@@ -1394,6 +1416,9 @@ body {
 
 <div id="layout">
   <div id="sidebar">
+    <div id="unofficial_anbennar_compendium_title">
+      <h3>UNOFFICIAL ANBENNAR COMPENDIUM</h3>
+    </div>
     <div id="search-box">
       <input type="text" id="search-input" placeholder="Search countries, tags, cultures...">
     </div>
