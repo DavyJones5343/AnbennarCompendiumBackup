@@ -11,21 +11,21 @@
 :root {
   --bg: #232b31;
   --card: #232b31;
-  --card-hover: #1d242a;
+  --card-hover: #1a2025;
   --border: #232b31;
-  --border-soft: #1e1e2a;
+  --border-soft: #1a2025;
   --gold: #c9a84c;
   --gold-dim: #8a7333;
   --gold-bright: #e8c84a;
-  --text: #dcdce6;
-  --text-secondary: #9e9eb0;
+  --text: #ffffff;
+  --text-secondary: #ffffff;
   --text-muted: #5e5e70;
   --green: #4aba6a;
   --red: #e05252;
   --blue: #5b9bd5;
   --purple: #9b72cf;
   --parchment: #1a1710;
-  --sidebar-w: 350px;
+  --sidebar-w: 400px;
   --header-h: 60px;
   --radius: 10px;
   --radius-sm: 6px;
@@ -99,7 +99,7 @@ body {
   font-family: 'EB Garamond', serif;
   font-style: italic;
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 16px;
   margin-top: 2px;
   letter-spacing: 1px;
 }
@@ -116,7 +116,7 @@ body {
   border-radius: 4px;
   color: var(--gold);
   font-family: 'EB Garamond', serif;
-  font-size: 14px;
+  font-size: 16px;
   text-decoration: none;
   cursor: pointer;
   transition: all 0.2s;
@@ -158,7 +158,7 @@ body {
   border-radius: 5px;
   color: var(--text);
   font-family: 'EB Garamond', serif;
-  font-size: 14px;
+  font-size: 16px;
   outline: none;
   transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s var(--ease);
 }
@@ -175,7 +175,7 @@ body {
 }
 .filter-btn {
   padding: 4px 12px;
-  font-size: 14px;
+  font-size: 16px;
   font-family: 'EB Garamond', serif;
   font-weight: bold;
   border: 1px solid var(--border);
@@ -209,7 +209,7 @@ body {
   border-radius: var(--radius-sm);
   color: var(--text);
   font-family: 'EB Garamond', serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
   outline: none;
   appearance: none;
@@ -233,7 +233,7 @@ body {
   align-items: center;
   gap: 4px;
   padding: 2px 8px;
-  font-size: 14px;
+  font-size: 16px;
   background: var(--gold-dim);
   color: #fff;
   border-radius: 10px;
@@ -241,13 +241,13 @@ body {
 }
 .active-chip .chip-x {
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1;
   opacity: 0.7;
 }
 .active-chip .chip-x:hover { opacity: 1; }
 .clear-all-btn {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--gold);
   cursor: pointer;
   padding: 2px 6px;
@@ -291,13 +291,13 @@ body {
 .country-item:hover img.flag, .country-item.selected img.flag { border-color: var(--gold-dim); }
 .country-item .name {
   flex: 1;
-  font-size: 14px;
+  font-size: 16px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .country-item .status-badge {
-  font-size: 14px;
+  font-size: 16px;
   padding: 1px 5px;
   border-radius: 8px;
   font-family: 'EB Garamond', serif;
@@ -317,7 +317,7 @@ body {
 .badge-dot.missions { background: var(--blue); }
 .badge-dot.ideas { background: var(--gold); }
 .country-item .tag-label {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-muted);
   font-family: 'EB Garamond', serif;
   flex-shrink: 0;
@@ -331,7 +331,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 16px;
   color: transparent;
   background: transparent;
   transition: all 0.15s;
@@ -346,7 +346,7 @@ body {
 .country-item.is-played .name { color: var(--text-secondary); }
 #country-count {
   padding: 6px 12px;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-muted);
   border-top: 1px solid var(--border);
   text-align: center;
@@ -377,7 +377,7 @@ body {
   gap: 16px;
   color: var(--gold-dim);
   margin-bottom: 28px;
-  font-size: 14px;
+  font-size: 16px;
 }
 .welcome-rule::before, .welcome-rule::after {
   content: '';
@@ -400,7 +400,7 @@ body {
 #welcome p {
   font-family: 'EB Garamond', serif;
   font-style: italic;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /* WORLD MAP (welcome screen) */
@@ -428,7 +428,7 @@ body {
 }
 #world-map-status {
   margin-top: 0px;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-muted);
   font-style: normal;
   display: none;
@@ -439,7 +439,7 @@ body {
   color: var(--gold-dim);
   /* border-radius: 4px; */
   padding: 4px 12px;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
   margin-bottom: 10px;
   margin-top: 10px;
@@ -478,7 +478,7 @@ body {
 }
 .detail-header .info .tag-adj {
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 16px;
   margin-bottom: 10px;
 }
 .pills {
@@ -494,7 +494,7 @@ body {
   background: #1e1e2a;
   border: 1px solid var(--border);
   border-radius: 14px;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-secondary);
   cursor: default;
   transition: all 0.2s;
@@ -519,7 +519,7 @@ body {
 
 /* Mission column badges: unique vs regional/shared trees */
 .slot-badge {
-  font-size: 14px;
+  font-size: 16px;
   text-align: center;
   padding: 3px 6px;
   border-radius: 4px;
@@ -543,7 +543,7 @@ body {
   border-radius: 4px;
   color: var(--gold);
   font-family: 'EB Garamond', serif;
-  font-size: 14px;
+  font-size: 16px;
   text-decoration: none;
   margin-top: 10px;
   transition: all 0.2s;
@@ -559,7 +559,7 @@ body {
   border-radius: 4px;
   color: var(--text-secondary);
   font-family: 'EB Garamond', serif;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
   margin-top: 10px;
   margin-left: 8px;
@@ -581,7 +581,7 @@ body {
   padding: 16px 20px;
   margin-bottom: 20px;
   font-family: 'EB Garamond', serif;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.8;
   color: var(--text-secondary);
 }
@@ -593,7 +593,7 @@ body {
   color: var(--gold);
   text-decoration: underline;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   margin-left: 4px;
 }
 .lore-read-more:hover { color: var(--gold-bright); }
@@ -605,7 +605,7 @@ body {
 .lore-table td {
   padding: 6px 12px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
-  font-size: 14px;
+  font-size: 16px;
   vertical-align: top;
 }
 .lore-table .lore-label {
@@ -622,7 +622,7 @@ body {
   padding: 16px 20px;
   margin-top: 16px;
   font-family: 'EB Garamond', serif;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.8;
   color: var(--text-secondary);
 }
@@ -631,7 +631,7 @@ body {
 .section-title {
   font-family: 'EB Garamond', serif;
   color: var(--gold);
-  font-size: 14px;
+  font-size: 16px;
   margin-bottom: 10px;
   padding-bottom: 6px;
   border-bottom: 1px solid var(--border);
@@ -651,7 +651,7 @@ body {
   background: transparent;
   border: none;
   font-family: 'EB Garamond', serif;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-muted);
   cursor: pointer;
   margin-bottom: -2px;
@@ -673,7 +673,7 @@ body {
 .tab-btn.active::after { left: 12px; right: 12px; }
 .tab-btn .count {
   font-family: 'EB Garamond', serif;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-muted);
   margin-left: 4px;
 }
@@ -685,7 +685,7 @@ body {
 .idea-group { margin-bottom: 16px; }
 .idea-label {
   font-family: 'EB Garamond', serif;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--gold-dim);
   margin-bottom: 8px;
   letter-spacing: 1px;
@@ -698,17 +698,17 @@ body {
   margin-bottom: 6px;
 }
 .idea-card h4 {
-  font-size: 14px;
+  font-size: 16px;
   color: #e3c035;
   margin-bottom: 4px;
 }
 .idea-card .idea-desc {
-  font-size: 14px;
+  font-size: 16px;
   color: white;
   margin-bottom: 6px;
   font-style: normal;
   font-weight: 400;
-  line-height: 1;
+  line-height: 1.3;
 }
 
 /* MODIFIER CHIPS */
@@ -720,7 +720,7 @@ body {
 .mod-chip {
   padding: 0px 20px 0px 0px;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 16px;
   font-family: 'EB Garamond', serif;
 }
 .mod-chip.positive {
@@ -769,12 +769,11 @@ body {
 }
 .mission-connectors .arrow-marker { fill: rgba(201,168,76,0.5); }
 .mission-node {
-  background: #0e0e12;
   border: none;
   padding: 4px 2px;
   cursor: pointer;
   text-align: center;
-  font-size: 14px;
+  font-size: 16px;
   transition: all 0.15s;
   min-width: 90px;
   max-width: 110px;
@@ -808,7 +807,8 @@ body {
 }
 .mission-node .mission-title {
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: bold;
   line-height: 1.15;
   max-width: 100px;
   word-wrap: break-word;
@@ -833,7 +833,7 @@ body {
   border-radius: 4px;
   color: var(--text-secondary);
   font-family: 'EB Garamond', serif;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -882,7 +882,7 @@ body {
 #mission-modal h3 {
   font-family: 'EB Garamond', serif;
   color: var(--gold);
-  font-size: 14px;
+  font-size: 16px;
   margin-bottom: 8px;
   letter-spacing: 1px;
   display: flex;
@@ -901,7 +901,7 @@ body {
 }
 #mission-modal .mission-desc {
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 16px;
   margin-bottom: 12px;
   line-height: 1.6;
   font-style: normal;
@@ -913,7 +913,7 @@ body {
   color: var(--blue);
   cursor: pointer;
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 16px;
 }
 .prereqs .prereq-link:hover { color: var(--gold); }
 
@@ -925,13 +925,13 @@ body {
   border-radius: 0 4px 4px 0;
   padding: 10px 14px;
   margin: 8px 0;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.7;
 }
 .requirements-box .req-label {
   font-family: 'EB Garamond', serif;
   color: var(--blue);
-  font-size: 14px;
+  font-size: 16px;
   margin-bottom: 6px;
   letter-spacing: 1px;
 }
@@ -965,13 +965,13 @@ body {
   border-radius: 0 4px 4px 0;
   padding: 10px 14px;
   margin: 8px 0;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.7;
 }
 .effects-box .eff-label {
   font-family: 'EB Garamond', serif;
   color: var(--green);
-  font-size: 14px;
+  font-size: 16px;
   margin-bottom: 6px;
   letter-spacing: 1px;
 }
@@ -1014,7 +1014,7 @@ body {
   min-width: 220px;
   max-width: 320px;
   z-index: 99999;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
   box-shadow: 0 4px 16px rgba(0,0,0,0.5);
   pointer-events: none;
@@ -1023,7 +1023,7 @@ body {
 .mod-tooltip .mod-tt-name {
   color: var(--gold);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 16px;
   margin-bottom: 4px;
   font-family: 'EB Garamond', serif;
 }
@@ -1045,7 +1045,7 @@ body {
   border-radius: 4px;
   padding: 10px 12px;
   font-family: 'EB Garamond', serif;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
   overflow-x: auto;
   white-space: pre-wrap;
@@ -1083,18 +1083,18 @@ body {
 #religion-panel h3 {
   font-family: 'EB Garamond', serif;
   color: var(--gold);
-  font-size: 14px;
+  font-size: 16px;
   margin-bottom: 12px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 #religion-panel h3 img { width: 32px; height: 32px; image-rendering: pixelated; }
-#religion-panel .religion-group { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; }
+#religion-panel .religion-group { color: var(--text-secondary); font-size: 16px; margin-bottom: 10px; }
 #religion-panel .close-btn {
   position: absolute; top: 12px; right: 12px;
   background: none; border: none; color: var(--text-muted);
-  font-size: 14px; cursor: pointer;
+  font-size: 16px; cursor: pointer;
 }
 #religion-panel .close-btn:hover { color: var(--text); }
 #religion-panel::-webkit-scrollbar { width: 6px; }
@@ -1117,9 +1117,9 @@ body {
     height: auto;
     gap: 4px;
   }
-  #header h1 { font-size: 14px; letter-spacing: 2px; }
-  #header .subtitle { font-size: 14px; }
-  .kofi-btn { padding: 4px 10px; font-size: 14px; margin-right: 6px; }
+  #header h1 { font-size: 16px; letter-spacing: 2px; }
+  #header .subtitle { font-size: 16px; }
+  .kofi-btn { padding: 4px 10px; font-size: 16px; margin-right: 6px; }
   #sidebar { display: none; }
   #sidebar.mobile-open {
     display: flex;
@@ -1130,24 +1130,24 @@ body {
   #mobile-toggle {
     display: block !important;
     background: none; border: 1px solid var(--gold-dim); border-radius: 4px;
-    color: var(--gold); padding: 6px 10px; cursor: pointer; font-size: 14px;
+    color: var(--gold); padding: 6px 10px; cursor: pointer; font-size: 16px;
     z-index: 1; position: relative;
   }
   #main { padding: 12px; }
   /* Detail header: stack vertically */
   .detail-header { flex-direction: column; gap: 10px; align-items: center; text-align: center; }
   .detail-header img.flag { width: 64px; height: 64px; }
-  .detail-header .info h2 { font-size: 14px; }
+  .detail-header .info h2 { font-size: 16px; }
   .detail-header .info { width: 100%; }
   .pills { justify-content: center; }
   /* Tabs: smaller text, wrap if needed */
   .tab-nav { flex-wrap: wrap; gap: 0; }
-  .tab-btn { font-size: 14px; padding: 8px 10px; }
+  .tab-btn { font-size: 16px; padding: 8px 10px; }
   /* Info table: let labels wrap */
   .lore-table .lore-label { white-space: normal; width: 120px; }
-  .lore-table td { padding: 5px 8px; font-size: 14px; }
+  .lore-table td { padding: 5px 8px; font-size: 16px; }
   /* Mission grid: let it scroll horizontally with smaller nodes */
-  .mission-node { min-width: 70px; max-width: 85px; font-size: 14px; }
+  .mission-node { min-width: 70px; max-width: 85px; font-size: 16px; }
   .mission-node .mission-icon { width: 40px; height: 40px; }
   .mission-node .mission-icon-fallback { width: 40px; height: 40px; }
   .mission-grid { gap: 24px 2px; }
@@ -1159,14 +1159,14 @@ body {
     padding: 16px;
     top: 50%;
   }
-  #mission-modal h3 { font-size: 14px; }
+  #mission-modal h3 { font-size: 16px; }
   #mission-modal h3 img { width: 36px; height: 36px; }
   /* Requirements/effects boxes: tighter */
-  .requirements-box, .effects-box { padding: 8px 10px; font-size: 14px; }
+  .requirements-box, .effects-box { padding: 8px 10px; font-size: 16px; }
   /* Lore text */
-  .lore-text-full { padding: 12px 14px; font-size: 14px; }
+  .lore-text-full { padding: 12px 14px; font-size: 16px; }
   /* Played button and other action buttons */
-  .played-btn { padding: 4px 10px; font-size: 14px; }
+  .played-btn { padding: 4px 10px; font-size: 16px; }
   /* Map container */
   .map-container { height: 300px !important; }
 }
@@ -1190,7 +1190,7 @@ body {
 
 /* Toggle for raw script view */
 .toggle-raw {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-muted);
   cursor: pointer;
   text-decoration: underline;
@@ -1230,7 +1230,7 @@ body {
   background: rgba(20,20,30,0.85);
   border: 1px solid var(--border);
   color: var(--gold);
-  font-size: 14px;
+  font-size: 16px;
   border-radius: 4px;
   cursor: pointer;
   display: flex;
@@ -1245,7 +1245,7 @@ body {
   color: var(--text-primary);
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 16px;
   pointer-events: none;
   display: none;
   z-index: 3;
@@ -1259,13 +1259,13 @@ body {
   border-radius: 6px;
   padding: 10px 14px;
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 16px;
   display: none;
   z-index: 3;
   min-width: 180px;
   max-width: 260px;
 }
-.map-province-panel .prov-name { font-size: 14px; font-weight: bold; color: var(--gold); margin-bottom: 6px; }
+.map-province-panel .prov-name { font-size: 16px; font-weight: bold; color: var(--gold); margin-bottom: 6px; }
 .map-province-panel .prov-row { display: flex; justify-content: space-between; margin: 2px 0; }
 .map-province-panel .prov-label { color: var(--text-secondary); }
 .map-province-panel .prov-val { color: var(--text-primary); font-weight: 500; }
@@ -1282,7 +1282,7 @@ body {
 .diplo-label { color: var(--text-secondary); }
 .diplo-val { color: var(--gold); cursor: pointer; }
 .diplo-val:hover { text-decoration: underline; }
-.diplo-type { color: var(--text-secondary); font-size: 14px; }
+.diplo-type { color: var(--text-secondary); font-size: 16px; }
 .diplo-sub { padding-left: 16px; }
 .map-legend {
   position: absolute;
@@ -1291,7 +1291,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 6px 10px;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-secondary);
   z-index: 2;
 }
@@ -1302,7 +1302,7 @@ body {
 .geo-ref:hover { text-decoration-color: var(--gold); color: var(--gold); }
 #geo-tooltip { position: fixed; z-index: 9999; pointer-events: none; display: none; background: rgba(10,10,20,0.97); border: 1px solid var(--gold); border-radius: 6px; padding: 0; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
 #geo-tooltip canvas { display: block; border-radius: 5px; }
-#geo-tooltip .geo-label { padding: 4px 8px; font-size: 14px; color: var(--text-secondary); text-align: center; border-top: 1px solid rgba(212,175,55,0.2); white-space: nowrap; }
+#geo-tooltip .geo-label { padding: 4px 8px; font-size: 16px; color: var(--text-secondary); text-align: center; border-top: 1px solid rgba(212,175,55,0.2); white-space: nowrap; }
 </style>
 </head>
 <body>
