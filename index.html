@@ -9,22 +9,29 @@
 <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&family=Cinzel+Decorative:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
+
   --bg: #232b31;
   --card: #232b31;
-  --card-hover: #1a2025;
   --border: #232b31;
+
+  --card-hover: #1a2025;
   --border-soft: #1a2025;
+
   --gold: #e3c035;
-  --gold-dim: #8a7333;
   --gold-bright: #e3c035;
+
+  --gold-dim: #8a7333;
+
   --text: #ffffff;
-  --text-secondary: #868691;
-  --text-muted: #868691;
+
+  --text-secondary: #9c9caa;
+  --text-muted: #9c9caa;
+
   --green: #4aba6a;
   --red: #e05252;
   --blue: #5b9bd5;
   --purple: #9b72cf;
-  --parchment: #1a1710;
+  --parchment: #101010;
   --sidebar-w: 320px;
   --header-h: 60px;
   --radius: 10px;
@@ -156,7 +163,7 @@ body {
 #unofficial_anbennar_compendium_title h3 {
   color: var(--gold);
   font-family: 'EB Garamond', serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: bold;
   letter-spacing: 1px;
   display: flex;
@@ -181,9 +188,17 @@ body {
   outline: none;
   transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s var(--ease);
 }
-#search-input:hover { border-color: var(--gold-dim); }
-#search-input:focus { border-color: var(--gold); box-shadow: var(--ring-gold); background: rgba(0,0,0,0.5); }
-#search-input::placeholder { color: var(--text-muted); }
+#search-input:hover {
+  border-color: var(--gold-dim);
+}
+#search-input:focus {
+  border-color: var(--gold);
+  /* box-shadow: var(--ring-gold); */
+  /* background: rgba(0,0,0,0.5); */
+}
+#search-input::placeholder {
+  color: var(--text-muted);
+}
 
 #filters {
   padding: 5px 0px 5px 0px;
@@ -193,13 +208,13 @@ body {
   gap: 4px;
 }
 .filter-btn {
-  padding: 5px 5px 5px 5px;
+  padding: 3px 5px 4px 5px;
   font-size: 16px;
   font-weight: 500;
   font-family: 'EB Garamond', serif;
   border: 1px solid var(--border);
-  border-radius: 1px;
-  background: rgba(255,255,255,0.02);
+  border-radius: 5px;
+  background: var(--border-soft);
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.18s var(--ease);
@@ -207,14 +222,15 @@ body {
 .filter-btn:hover {
   border-color: var(--gold-dim);
   color: var(--text);
-  background: rgba(201,168,76,0.06);
+  background: var(--border-soft);
+  border-radius: 5px;
   /* transform: translateY(-1px); */
 }
 .filter-btn.active {
-  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
-  color: #1a1508;
-  font-weight: 600;
+  background: var(--border-soft);
   border-color: var(--gold);
+  color: var(--text);
+  border-radius: 5px;
   /* box-shadow: 0 2px 8px rgba(201,168,76,0.25); */
 }
 
@@ -231,7 +247,7 @@ body {
   background: rgba(0,0,0,0.35) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a7333' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  color: var(--text);
+  color: var(--text-secondary);
   font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
@@ -241,17 +257,26 @@ body {
   cursor: pointer;
   transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
 }
-.filter-select:hover { border-color: var(--gold-dim); }
-.filter-select:focus { border-color: var(--gold); box-shadow: var(--ring-gold); }
-.filter-select option { background: var(--card); }
+.filter-select:hover {
+  border-color: var(--gold-dim);
+}
+.filter-select:focus {
+  border-color: var(--gold);
+  /* box-shadow: var(--ring-gold); */
+}
+.filter-select option {
+  background: var(--card);
+}
 #active-filters {
-  padding: 4px 12px;
+  padding: 5px 0px 5px 0px;
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
   align-items: center;
 }
-#active-filters:empty { display: none; }
+#active-filters:empty {
+  display: none;
+}
 .active-chip {
   display: inline-flex;
   align-items: center;
@@ -260,8 +285,8 @@ body {
   font-size: 16px;
   font-weight: 500;
   background: var(--gold-dim);
-  color: #fff;
-  border-radius: 10px;
+  color: var(--text);
+  border-radius: 5px;
   cursor: default;
 }
 .active-chip .chip-x {
@@ -403,7 +428,7 @@ body {
   color: var(--text-muted);
   margin: 0 auto;
   animation: detailIn 0.4s var(--ease);
-  <!-- max-width: 1000px; -->
+  /* max-width: 1000px; */
 }
 .welcome-rule {
   display: flex;
@@ -444,7 +469,7 @@ body {
   width: 100%;
   height: calc(100vh - 0px);
   overflow: hidden;
-  background: #0c111c;
+  background: var(--parchment);
   border-radius: 0px;
   text-align: left;
 
@@ -471,6 +496,9 @@ body {
   display: none;
 }
 .back-to-map {
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
   background: none;
   border: 1px solid var(--card-border);
   color: var(--gold-dim);
@@ -508,7 +536,7 @@ body {
   /* border: 2px solid var(--gold-dim); */
   /* border-radius: var(--radius); */
   flex-shrink: 0;
-  background: #111;
+  background: var(--parchment);
   box-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 0 24px rgba(201,168,76,0.08);
 }
 .detail-header .info h2 {
@@ -533,7 +561,7 @@ body {
   align-items: center;
   gap: 4px;
   padding: 3px 10px;
-  background: #1e1e2a;
+  background: var(--parchment);
   border: 1px solid var(--border);
   border-radius: 14px;
   font-size: 16px;
@@ -593,7 +621,7 @@ body {
   transition: all 0.2s;
 }
 .wiki-btn:hover {
-  background: #2a2518;
+  background: var(--parchment);
   border-color: var(--gold);
   /* transform: translateY(-1px); */ 
   /* box-shadow: 0 4px 12px rgba(0,0,0,0.35); */
@@ -766,7 +794,7 @@ body {
   margin-bottom: 8px;
 }
 .idea-card {
-  background: #101010;
+  background: var(--parchment);
   border: 2px solid #493a10;
   border-radius: 4px;
   padding: 10px 14px;
@@ -871,7 +899,7 @@ body {
   border-radius: 4px;
   border: 2px solid var(--border);
   transition: all 0.15s;
-  background: #111;
+  background: var(--parchment);
 }
 .mission-node .mission-icon-fallback, .mission-icon-fallback {
   width: 52px; height: 52px;
@@ -1001,7 +1029,7 @@ body {
 
 /* Requirements display */
 .requirements-box {
-  background: #0f0f14;
+  background: var(--parchment);
   border: 1px solid var(--border);
   border-left: 3px solid var(--blue);
   border-radius: 0 4px 4px 0;
@@ -1042,7 +1070,7 @@ body {
 
 /* Effects display */
 .effects-box {
-  background: #0f0f14;
+  background: var(--parchment);
   border: 1px solid var(--border);
   border-left: 3px solid var(--green);
   border-radius: 0 4px 4px 0;
@@ -1091,7 +1119,7 @@ body {
 .mod-tooltip {
   display: none;
   position: fixed;
-  background: #1a1a24;
+  background: var(--parchment);
   border: 1px solid var(--gold-dim);
   border-radius: 6px;
   padding: 8px 12px;
@@ -1126,7 +1154,7 @@ body {
 .mod-tooltip .mod-tt-val.negative { color: var(--red); }
 
 .script-block {
-  background: #0c0c10;
+  background: var(--parchment);
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 10px 12px;
@@ -1305,7 +1333,7 @@ body {
   width: 100%;
   aspect-ratio: 5632 / 2048;
   overflow: hidden;
-  background: #0e1420;
+  background: var(--parchment);
   border-radius: 8px;
   border: 1px solid var(--border);
   cursor: grab;
@@ -1424,25 +1452,25 @@ body {
       <h3>UNOFFICIAL ANBENNAR COMPENDIUM</h3>
     </div>
     <div id="search-box">
-      <input type="text" id="search-input" placeholder="Search countries, tags, cultures...">
-    </div>
-    <div id="filters">
-      <button class="filter-btn" data-filter="playable">Playable 1444</button>
-      <button class="filter-btn" data-filter="formable">Formable</button>
-      <button class="filter-btn" data-filter="missions">Has Missions</button>
-      <button class="filter-btn" data-filter="unique-missions" title="Countries with a bespoke mission tree written for them (or shared only with their formable successor)">Unique Missions</button>
-      <button class="filter-btn" data-filter="regional-missions" title="Countries whose missions all come from shared regional or generic trees">Regional Only</button>
-      <button class="filter-btn" data-filter="event-spawned" title="Nations not on the map at 1444 — spawned later via events (e.g. Crown of Bera nations like Jarvema, Cagodor)">Event-Spawned</button>
-      <button class="filter-btn" data-filter="needs-lore" title="Countries with missions or tag-specific ideas authored but no startup lore in startup_lore.json — these are upstream content gaps where lore writers could contribute">Needs Lore</button>
-      <button class="filter-btn" data-filter="played">Played</button>
-      <button class="filter-btn" data-filter="unplayed">Unplayed</button>
+      <input type="text" id="search-input" placeholder="Search countries, tags, etc...">
     </div>
     <div id="region-filter">
-      <select id="region-select" class="filter-select"><option value="">All Regions</option></select>
-      <select id="culture-select" class="filter-select"><option value="">All Culture Groups</option></select>
-      <select id="religion-select" class="filter-select"><option value="">All Religions</option></select>
-      <select id="tech-select" class="filter-select"><option value="">All Tech Groups</option></select>
-      <select id="gov-select" class="filter-select"><option value="">All Governments</option></select>
+      <select id="region-select" class="filter-select"><option value="">Region...</option></select>
+      <select id="culture-select" class="filter-select"><option value="">Culture Group...</option></select>
+      <select id="religion-select" class="filter-select"><option value="">Religion...</option></select>
+      <select id="tech-select" class="filter-select"><option value="">Tech Group...</option></select>
+      <select id="gov-select" class="filter-select"><option value="">Government...</option></select>
+    </div>
+    <div id="filters">
+      <button class="filter-btn" data-filter="1444">Playable in 1444</button>
+      <button class="filter-btn" data-filter="Formable">Formable</button>
+      <button class="filter-btn" data-filter="Event Spawned" title="Nations not on the map at 1444 — spawned later via events (e.g. Crown of Bera nations like Jarvema, Cagodor)">Event-Spawned</button>
+      <button class="filter-btn" data-filter="Has MT">Has MT</button>
+      <button class="filter-btn" data-filter="Unique MT" title="Countries with a bespoke mission tree written for them (or shared only with their formable successor)">Unique MT</button>
+      <button class="filter-btn" data-filter="Generic MT" title="Countries whose missions all come from shared regional or generic trees">Generic MT</button>
+      <!-- <button class="filter-btn" data-filter="needs-lore" title="Countries with missions or tag-specific ideas authored but no startup lore in startup_lore.json — these are upstream content gaps where lore writers could contribute">Needs Lore</button> -->
+      <!-- <button class="filter-btn" data-filter="played">Played</button> -->
+      <!-- <button class="filter-btn" data-filter="unplayed">Unplayed</button> -->
     </div>
     <div id="active-filters"></div>
     <div id="country-list"></div>
@@ -1760,7 +1788,7 @@ function updateFilterDropdowns() {
   const rSel = document.getElementById('region-select');
   rSel.innerHTML = '';
   const rDef = document.createElement('option');
-  rDef.value = ''; rDef.textContent = 'All Regions';
+  rDef.value = ''; rDef.textContent = 'Region...';
   rSel.appendChild(rDef);
   const srMap = new Map();
   validRegions.forEach(v => {
@@ -3933,7 +3961,7 @@ function selectCountry(tag) {
     html += '</div>';
   }
 
-  detail.innerHTML = '<button class="back-to-map" onclick="showWorldMap()">&#8592; World Map</button>' + html;
+  detail.innerHTML = '<button class="back-to-map" onclick="showWorldMap()">Back To Map &#8594;</button>' + html;
 
   // Track whether connectors have been drawn for missions tab
   let _connectorsDrawn = false;
