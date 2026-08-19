@@ -1464,7 +1464,7 @@ body {
     <div id="filters">
       <button class="filter-btn" data-filter="1444">Playable in 1444</button>
       <button class="filter-btn" data-filter="Formable">Formable</button>
-      <button class="filter-btn" data-filter="Event Spawned" title="Nations not on the map at 1444 — spawned later via events (e.g. Crown of Bera nations like Jarvema, Cagodor)">Event-Spawned</button>
+      <button class="filter-btn" data-filter="Event-Spawned" title="Nations not on the map at 1444 — spawned later via events (e.g. Crown of Bera nations like Jarvema, Cagodor)">Event-Spawned</button>
       <button class="filter-btn" data-filter="Has MT">Has MT</button>
       <button class="filter-btn" data-filter="Unique MT" title="Countries with a bespoke mission tree written for them (or shared only with their formable successor)">Unique MT</button>
       <button class="filter-btn" data-filter="Generic MT" title="Countries whose missions all come from shared regional or generic trees">Generic MT</button>
@@ -1827,13 +1827,13 @@ function passesFilter(c) {
   if (activeFilters.size === 0) return true;
   const s = STATUS[c.tag] || {};
   // Direct-lookup intent: when a search query is active, ignore the "what kind
-  // of nation" filters (playable/formable/event-spawned) so users can always
+  // of nation" filters so users can always
   // find a specific tag by name. Independent qualifiers (missions/played) stay.
   const hasSearch = document.getElementById('search-input').value.trim() !== '';
   if (!hasSearch) {
     if (activeFilters.has('playable') && !(s.status === 'playable' || s.status === 'both')) return false;
     if (activeFilters.has('formable') && !(s.status === 'formable' || s.status === 'both')) return false;
-    if (activeFilters.has('event-spawned') && !(s.status === 'other' && (s.provinces_owned || 0) === 0 && (c.event_count || 0) > 0)) return false;
+    if (activeFilters.has('Event-Spawned') && !(s.status === 'other' && (s.provinces_owned || 0) === 0 && (c.event_count || 0) > 0)) return false;
   }
   if (activeFilters.has('missions') && !(c.missions && c.missions.length > 0)) return false;
   if (activeFilters.has('unique-missions') && c.mission_class !== 'unique') return false;
@@ -1862,11 +1862,11 @@ function applyFilters() {
 
   let scored = [];
   const hasSearch = query.length > 0;
-  const eventSpawnedActive = activeFilters.has('event-spawned');
+  const eventSpawnedActive = activeFilters.has('Event-Spawned');
   countries.forEach(c => {
     // By default hide countries with no wiki, no missions, no ideas — but allow
     // them through when the user is searching directly or asking specifically
-    // for event-spawned nations (which often have none of those by design).
+    // for event spawned nations (which often have none of those by design).
     const w = WIKI[c.tag];
     const hasWiki = w && w.found && (w.page_size || w.page_length || 0) > 500;
     const hasMissions = c.missions && c.missions.length > 0;
