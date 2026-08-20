@@ -4969,7 +4969,6 @@ function showProvincePanel(pid) {
   html += `<div class="prov-row"><span class="prov-label">Trade Good</span><span class="prov-val">${esc(titleCase(tg))}</span></div>`;
   html += `<div class="prov-row"><span class="prov-label">Culture</span><span class="prov-val">${esc(titleCase(culture))}</span></div>`;
   html += `<div class="prov-row"><span class="prov-label">Religion</span><span class="prov-val">${esc(titleCase(religion))}</span></div>`;
-  if (d.n) html += `<div class="prov-row"><span class="prov-label">Capital</span><span class="prov-val">${esc(d.n)}</span></div>`;
 
   panel.innerHTML = html;
   panel.style.display = 'block';
