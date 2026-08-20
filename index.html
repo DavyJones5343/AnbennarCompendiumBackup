@@ -55,11 +55,27 @@ body {
 }
 
 /* Global slim scrollbars, gold-tinted on hover */
-* { scrollbar-width: auto; scrollbar-color: var(--text-darker) transparent; }
-*::-webkit-scrollbar { width: 8px; height: 8px; }
-*::-webkit-scrollbar-track { background: transparent; }
-*::-webkit-scrollbar-thumb { background: var(--bluegray-lighter); border-radius: 4px; border: 2px solid transparent; background-clip: content-box; }
-*::-webkit-scrollbar-thumb:hover { background: var(--gold-darker); background-clip: content-box; }
+* {
+  scrollbar-width: auto;
+  scrollbar-color: var(--text-darker) transparent;
+}
+*::-webkit-scrollbar {
+  width: 38px;
+  height: 38px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+  }
+*::-webkit-scrollbar-thumb {
+  background: var(--bluegray-lighter);
+  /* border-radius: 4px; */
+  /* border: 2px solid transparent; */
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--text-darker);
+  background-clip: content-box;
+}
 
 ::selection { background: rgba(201,168,76,0.3); }
 
@@ -769,11 +785,14 @@ body {
   width: 160px;
   white-space: nowrap;
 }
+
+
 .lore-text-full {
   background: var(--parchment);
   border: 2px solid var(--gold-darker);
-  border-radius: 5px;
+  border-radius: 4px;
   padding: 10px 14px;
+
   margin-top: 10px;
   font-family: 'EB Garamond', serif;
   font-size: 16px;
@@ -886,30 +905,34 @@ body {
   font-size: 16px;
   font-weight: 500;
   color: var(--gold-lighter);
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
+
+
+
 .idea-card {
   background: var(--parchment);
   border: 2px solid var(--gold-darker);
   border-radius: 4px;
   padding: 10px 14px;
-  margin-bottom: 6px;
 }
 .idea-card h4 {
+  font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
   color: var(--gold-lighter);
   margin-bottom: 4px;
 }
 .idea-card .idea-desc {
+  font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
-  color: var(--text-lighter);
-  margin-bottom: 6px;
-  font-style: normal;
-  font-weight: 500;
   line-height: 1.25;
+  color: var(--text-lighter);
+  margin-bottom: 4px;
 }
+
+
 
 /* MODIFIER CHIPS */
 .mod-chips {
@@ -4024,7 +4047,7 @@ function selectCountry(tag) {
     if (startupLore.lore) {
       html += `<div class="lore-text-full">`;
       if (startupLore.title) {
-        html += `<h4 style="color:var(--gold-lighter);margin:0px 0px 4px;font-size:16px">${esc(startupLore.title)}</h4>`;
+        html += `<h4 style="color:var(--gold-lighter);margin-bottom:4px;font-weight:500;font-size:16px">${esc(startupLore.title)}</h4>`;
       }
       html += `${esc(startupLore.lore).replace(/\n/g, '<br>')}</div>`;
     }
@@ -4043,7 +4066,7 @@ function selectCountry(tag) {
       html += '<div class="mod-chips">' + c.ideas.traditions.map(t => modChip(t.modifier, t.value)).join('') + '</div></div>';
     }
         if (c.ideas.ambition && c.ideas.ambition.length > 0) {
-      html += '<div class="idea-group" style="margin-top:12px"><div class="idea-label">Ambition</div>';
+      html += '<div class="idea-group" style="margin-top:0px"><div class="idea-label">Ambition</div>';
       html += '<div class="mod-chips">' + c.ideas.ambition.map(a => modChip(a.modifier, a.value)).join('') + '</div></div>';
     }
     c.ideas.ideas.filter(idea => idea.name !== 'ai_will_do').forEach((idea, i) => {
