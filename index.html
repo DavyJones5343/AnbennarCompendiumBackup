@@ -87,7 +87,6 @@ body {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 1px;
-  <!-- background: linear-gradient(90deg, transparent, var(--gold-lighter), transparent); -->
 }
 #header-content {
   position: relative;
@@ -98,7 +97,6 @@ body {
   color: var(--gold-lighter);
   font-size: 30px;
   font-weight: 800;
-  <!-- text-shadow: 0 2px 12px rgba(201,168,76,0.4), 0 0 40px rgba(201,168,76,0.1); -->
 }
 #header .subtitle {
   font-family: 'EB Garamond', serif;
@@ -168,7 +166,16 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
+#unofficial_anbennar_compendium_title h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+#unofficial_anbennar_compendium_title h3 a:hover {
+  color: inherit;
+}
+
 
 #search-box {
   padding: 5px 35px 5px 0px;
@@ -531,6 +538,7 @@ body {
   cursor: pointer;
   margin-bottom: 0px;
   margin-top: 10px;
+  display: none;
 }
 .back-to-map:hover {
   /* border-color: var(--gold-darker); */
@@ -550,6 +558,7 @@ body {
   align-items: flex-start;
   gap: 20px;
   margin-bottom: 20px;
+  margin-top: 14px;
 }
 .detail-header img.flag {
   width: 80px; height: 80px;
@@ -637,7 +646,7 @@ body {
 }
 
 .wiki-btn {
-  display: inline-flex;
+  /* display: inline-flex; */
   align-items: center;
   gap: 6px;
   padding: 5px 10px;
@@ -651,6 +660,7 @@ body {
   text-decoration: none;
   margin-top: 10px;
   transition: all 0.2s;
+  display: none;
 }
 .wiki-btn:hover {
   background: var(--bluegray-darker);
@@ -731,8 +741,8 @@ body {
   background: var(--parchment);
   border: 2px solid var(--gold-darker);
   border-radius: 5px;
-  padding: 16px 20px;
-  margin-top: 16px;
+  padding: 10px 14px;
+  margin-top: 10px;
   font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
@@ -1204,15 +1214,18 @@ body {
   margin-top: 6px;
 }
 
+
+
 .detail-header .info h2 a {
   color: inherit;
   text-decoration: none;
 }
-
 .detail-header .info h2 a:hover {
   color: var(--gold-lighter);
-  text-decoration: underline;
+  text-decoration: none;
 }
+
+
 
 /* RELIGION PANEL */
 #religion-panel {
@@ -1495,7 +1508,9 @@ body {
 <div id="layout">
   <div id="sidebar">
     <div id="unofficial_anbennar_compendium_title">
-      <h3>UNOFFICIAL ANBENNAR COMPENDIUM</h3>
+      <h3>
+        <a href="#" onclick="showWorldMap(); return false;">UNOFFICIAL ANBENNAR COMPENDIUM</a>
+      </h3>
     </div>
     <div id="search-box">
       <input type="text" id="search-input" placeholder="Search countries, tags, etc...">
@@ -3865,7 +3880,7 @@ function selectCountry(tag) {
 
       <h2>
        <a href="${esc(wikiLink)}" target="_blank" rel="noopener">
-          ${esc(c.name)}
+          ${esc(c.name)} &#8599;
         </a>
       </h2>
 
