@@ -60,8 +60,8 @@ body {
   scrollbar-color: var(--text-darker) transparent;
 }
 *::-webkit-scrollbar {
-  width: 14px;
-  height: 14px;
+  width: 11px;
+  height: 11px;
 }
 *::-webkit-scrollbar-track {
   background: transparent;
@@ -112,7 +112,7 @@ body {
   font-family: 'EB Garamond', serif;
   color: var(--gold-lighter);
   font-size: 30px;
-  font-weight: 800;
+  font-weight: bold;
 }
 #header .subtitle {
   font-family: 'EB Garamond', serif;
@@ -781,7 +781,7 @@ body {
 }
 .lore-table .lore-label {
   color: var(--gold-lighter);
-  font-weight: 600;
+  font-weight: 500;
   width: 160px;
   white-space: nowrap;
 }
@@ -1253,7 +1253,7 @@ body {
 /* tooltip positioning handled by JS mouseover */
 .mod-tooltip .mod-tt-name {
   color: var(--gold-lighter);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 4px;
@@ -1266,7 +1266,7 @@ body {
 }
 .mod-tooltip .mod-tt-val {
   white-space: nowrap;
-  font-weight: 600;
+  font-weight: 500;
 }
 .mod-tooltip .mod-tt-val.positive { color: var(--green); }
 .mod-tooltip .mod-tt-val.negative { color: var(--red); }
@@ -1479,7 +1479,8 @@ body {
 }
 .map-controls {
   position: absolute;
-  top: 8px; right: 8px;
+  top: 8px;
+  left: 8px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -1487,7 +1488,7 @@ body {
 }
 .map-ctrl-btn {
   width: 40px; height: 40px;
-  background: var(--bluegray-darker);
+  background: var(--bluegray-lighter);
   border: 1px solid var(--gold-darker);
   color: var(--gold-darker);
   font-size: 26px;
