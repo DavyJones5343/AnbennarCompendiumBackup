@@ -1038,7 +1038,7 @@ body {
 .mission-connectors path {
   fill: none;
   stroke: var(--gold-darker);
-  stroke-width: 1;
+  stroke-width: 5;
   stroke-linecap: butt;
   stroke-linejoin: round;
 }
@@ -4467,7 +4467,7 @@ function drawMissionConnectors(container) {
       }
 
       path.setAttribute('d', d);
-      path.setAttribute('marker-end', 'url(#' + markerId + ')');
+      path.setAttribute('marker-end', 'url(#triangle)');
       svg.appendChild(path);
     });
   });
