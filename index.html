@@ -578,8 +578,7 @@ body {
 .detail-header .info h2 {
   font-family: 'EB Garamond', serif;
   color: var(--gold-lighter);
-  font-size: 26px;
-  margin-bottom: 4px;
+  font-size: 45px;
 }
 .detail-header .info .tag-adj {
   color: var(--text-darker);
@@ -732,7 +731,7 @@ body {
   margin-bottom: 16px;
 }
 .lore-table td {
-  padding: 6px 12px;
+  padding: 4px 0px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
   font-size: 16px;
   font-weight: 500;
@@ -768,55 +767,59 @@ body {
   border-bottom: 1px solid var(--bluegray-lighter);
 }
 
-/* TABS */
+/* ------------------------------------------TABS------------------------------------------ */
 .tabs {
   display: flex;
-  gap: 0;
-  border-bottom: 2px solid var(--bluegray-lighter);
+  gap: 4px;
   margin-bottom: 16px;
 }
 .tab-btn {
   position: relative;
   padding: 10px 20px;
   background: var(--bluegray-darker);
-  border: none;
+  cursor: pointer;
+  transition: color 0.2s var(--ease);
+  
   font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
   color: var(--text-darker);
-  cursor: pointer;
-  margin-bottom: -2px;
-  transition: color 0.2s var(--ease);
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-}
-.tab-btn::after {
-  content: '';
-  position: absolute;
-  left: 50%; right: 50%; bottom: 0;
-  height: 3px;
-  border-radius: 4px 4px 0 0;
-  background: var(--gold-lighter);
-  transition: left 0.22s var(--ease), right 0.22s var(--ease);
+  border: none;
+  border-radius: 4px 4px 0px 0px;
 }
 .tab-btn:hover {
   color: var(--text-lighter);
-  background: var(--bluegray-darker);
   border: 1px 1px 0px 1px solid var(--gold-darker);
 }
 .tab-btn.active {
   color: var(--text-lighter);
   border: 1px 1px 0px 1px solid var(--gold-lighter);
 }
-.tab-btn.active::after {
-  left: 12px; right: 12px;
-}
 .tab-btn .count {
   font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
   color: var(--text-darker);
-  margin-left: 4px;
+  margin-left: 5px;
 }
+
+
+/*
+.tab-btn.active::after {
+  left: 12px;
+  right: 12px;
+}
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  left: 50%; right: 50%; bottom: 0;
+  height: 3px;
+  transition: left 0.22s var(--ease), right 0.22s var(--ease);
+}
+*/
+
+
+
 
 .tab-content {
   display: none;
