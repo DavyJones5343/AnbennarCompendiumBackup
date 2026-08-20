@@ -982,6 +982,7 @@ body {
   overflow-x: auto;
   padding-bottom: 12px;
   position: relative;
+  max-width: 50%;
 }
 .mission-grid {
   display: grid;
@@ -990,6 +991,13 @@ body {
   position: relative;
   z-index: 1;
 }
+
+@media (max-width: 768px) {
+  .mission-grid-container {
+    max-width: 100%;
+  }
+}
+
 .mission-node {
   border: none;
   padding: 0px;
@@ -1011,6 +1019,10 @@ body {
 .mission-node:hover {
   background-image: url('mission_icons_frame_complete.png');
 }
+.mission-node:selected {
+  background-image: url('mission_icons_frame_complete.png');
+}
+
 
 /* --------------------MISSION CONNECTORS-------------------- */
 .mission-connectors {
@@ -1041,13 +1053,8 @@ body {
   image-rendering: auto;
   border: none;
   transition: all 0.2s;
-  margin-top: 22px;
-  border-radius: 30px;
+  margin-top: 20px;
   z-index: -5;
-}
-.mission-node:hover .mission-icon {
-}
-.mission-node.selected .mission-icon {
 }
 .mission-node .mission-icon-fallback, .mission-icon-fallback {
   width: 59px;
@@ -1070,7 +1077,7 @@ body {
   font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
-  line-height: 1.05;
+  line-height: 1.1;
   color: var(--text-lighter);
   max-width: 120px;
   word-wrap: break-word;
