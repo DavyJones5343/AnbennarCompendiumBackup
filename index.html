@@ -383,9 +383,16 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+#country-count {
+  padding: 6px 12px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-darker);
+  text-align: center;
+}
 
 
-/*
+
 .country-item .status-badge {
   font-size: 16px;
   font-weight: 500;
@@ -393,6 +400,7 @@ body {
   border-radius: 8px;
   font-family: 'EB Garamond', serif;
   flex-shrink: 0;
+  display: none;
 }
 .status-badge.formable {
   background: rgba(155,114,207,0.2);
@@ -410,6 +418,7 @@ body {
   width: 6px; height: 6px;
   border-radius: 50%;
   display: inline-block;
+  display: none;
 }
 .badge-dot.missions { background: var(--blue); }
 .badge-dot.ideas { background: var(--gold-lighter); }
@@ -419,6 +428,7 @@ body {
   color: var(--text-darker);
   font-family: 'EB Garamond', serif;
   flex-shrink: 0;
+  display: none;
 }
 .played-toggle {
   width: 18px; height: 18px;
@@ -437,22 +447,22 @@ body {
   margin-right: 2px;
   display: none;
 }
-.played-toggle:hover { border-color: var(--gold-darker); background: rgba(201,168,76,0.08); }
+.played-toggle:hover {
+  border-color: var(--gold-darker);
+  background: rgba(201,168,76,0.08);
+  display: none;
+}
 .played-toggle.played {
   color: var(--green);
   border-color: rgba(74,186,106,0.4);
   background: rgba(74,186,106,0.1);
+  display: none;
 }
-.country-item.is-played .name { color: var(--text-darker); }
-#country-count {
-  padding: 6px 12px;
-  font-size: 16px;
-  font-weight: 500;
+.country-item.is-played .name {
   color: var(--text-darker);
-  border-top: 1px solid var(--bluegray-lighter);
-  text-align: center;
+  display: none;
 }
-*/
+
 
 
 
@@ -586,7 +596,7 @@ body {
   height: 100px;
   image-rendering: auto;
   flex-shrink: 0;
-  padding-right: 20px;
+  margin-right: 15px;
   box-shadow: 0 0px 10px var(--parchment);
 }
 .detail-header img.flag:hover {
@@ -791,6 +801,7 @@ body {
 /* ------------------------------------------TABS------------------------------------------ */
 .tabs {
   display: flex;
+  gap: 4px;
   margin-bottom: 16px;
 }
 .tab-btn {
@@ -3978,10 +3989,15 @@ function selectCountry(tag) {
 
   if (hasLore) { html += `<button class="tab-btn active" data-tab="lore">Overview</button>`; firstTab = firstTab || 'lore'; }
 
-  if (hasIdeas) { html += `<button class="tab-btn${!hasLore ? ' active' : ''}" data-tab="ideas">Ideas<span class="count">${ideaCount}</span></button>`; firstTab = firstTab || 'ideas'; }
+  if (hasIdeas) {
+    html += `<button class="tab-btn${!hasLore ? ' active' : ''}" data-tab="ideas">Ideas</button>`;
+    firstTab = firstTab || 'ideas';
+  }
 
-  if (hasMissions) { html += `<button class="tab-btn${!hasLore && !hasIdeas ? ' active' : ''}" data-tab="missions">Missions<span class="count">${c.missions.length}</span></button>`; firstTab = firstTab || 'missions'; }
-  const hasMap = PROVINCE_OWNERS && PROVINCE_OWNERS[tag] && PROVINCE_OWNERS[tag].length > 0;
+  if (hasMissions) {
+    html += `<button class="tab-btn${!hasLore && !hasIdeas ? ' active' : ''}" data-tab="missions">Missions<span class="count">(${c.missions.length})</span></button>`;
+    firstTab = firstTab || 'missions';
+  }
 
   if (hasMap) { html += `<button class="tab-btn" data-tab="map">Location</button>`; }
 
