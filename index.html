@@ -383,12 +383,12 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-#country-count {
-  padding: 6px 12px;
+.country-item .tag-label {
+  font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
   color: var(--text-darker);
-  text-align: center;
+  flex-shrink: 0;
 }
 
 
@@ -422,14 +422,6 @@ body {
 }
 .badge-dot.missions { background: var(--blue); }
 .badge-dot.ideas { background: var(--gold-lighter); }
-.country-item .tag-label {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--text-darker);
-  font-family: 'EB Garamond', serif;
-  flex-shrink: 0;
-  display: none;
-}
 .played-toggle {
   width: 18px; height: 18px;
   flex-shrink: 0;
@@ -462,7 +454,13 @@ body {
   color: var(--text-darker);
   display: none;
 }
-
+#country-count {
+  padding: 6px 12px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-darker);
+  text-align: center;
+}
 
 
 
@@ -527,11 +525,6 @@ body {
   background: var(--map-color);
   border-radius: 0px;
   text-align: left;
-
-  <!-- clamp(320px, calc(100vh - 320px), 640px); -->
-  <!-- border: 1px solid var(--bluegray-lighter); -->
-  <!-- cursor: grab; -->
-
 }
 /* #world-map-wrap:active { cursor: grabbing; } */
 #world-map-wrap, .map-container { touch-action: pan-y; }
@@ -548,7 +541,6 @@ body {
   font-weight: 500;
   color: var(--text-darker);
   font-style: normal;
-  display: none;
 }
 .back-to-map {
   display: block;
@@ -3989,15 +3981,10 @@ function selectCountry(tag) {
 
   if (hasLore) { html += `<button class="tab-btn active" data-tab="lore">Overview</button>`; firstTab = firstTab || 'lore'; }
 
-  if (hasIdeas) {
-    html += `<button class="tab-btn${!hasLore ? ' active' : ''}" data-tab="ideas">Ideas</button>`;
-    firstTab = firstTab || 'ideas';
-  }
+  if (hasIdeas) { html += `<button class="tab-btn${!hasLore ? ' active' : ''}" data-tab="ideas">Ideas<span class="count">${ideaCount}</span></button>`; firstTab = firstTab || 'ideas'; }
 
-  if (hasMissions) {
-    html += `<button class="tab-btn${!hasLore && !hasIdeas ? ' active' : ''}" data-tab="missions">Missions<span class="count">(${c.missions.length})</span></button>`;
-    firstTab = firstTab || 'missions';
-  }
+  if (hasMissions) { html += `<button class="tab-btn${!hasLore && !hasIdeas ? ' active' : ''}" data-tab="missions">Missions<span class="count">${c.missions.length}</span></button>`; firstTab = firstTab || 'missions'; }
+  const hasMap = PROVINCE_OWNERS && PROVINCE_OWNERS[tag] && PROVINCE_OWNERS[tag].length > 0;
 
   if (hasMap) { html += `<button class="tab-btn" data-tab="map">Location</button>`; }
 
