@@ -992,22 +992,24 @@ body {
 }
 .mission-node {
   border: none;
-  padding: 4px 2px;
+  padding: 0px;
   cursor: pointer;
   text-align: center;
   font-size: 16px;
   font-weight: 500;
   transition: all 0.2s;
-  min-width: 90px;
-  max-width: 110px;
+  min-width: 103px;
+  max-width: 103px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 0px;
+  height: 123px;
   position: relative;
   background-image: url('mission_icons_frame-uncomplete.png');
 }
 .mission-node:hover {
+  background-image: url('mission_icons_frame-complete.png');
 }
 
 /* --------------------MISSION CONNECTORS-------------------- */
@@ -1034,20 +1036,22 @@ body {
 
 /* --------------------MISSION ICONS-------------------- */
 .mission-node .mission-icon {
-  width: 59px; height: 63px;
+  width: 59px;
+  height: 63px;
   image-rendering: auto;
-  border-radius: 15px;
-  border: 5px solid var(--gold-darker);
+  border: none;
   transition: all 0.2s;
+  margin-top: 22px;
+  border-radius: 30px;
+  z-index: -5;
 }
 .mission-node:hover .mission-icon {
-  border: 5px solid var(--gold-lighter);
 }
 .mission-node.selected .mission-icon {
-  border: 5px solid var(--gold-lighter);
 }
 .mission-node .mission-icon-fallback, .mission-icon-fallback {
-  width: 59px; height: 63px;
+  width: 59px;
+  height: 63px;
   image-rendering: auto;
   border-radius: 15px;
   border: 5px solid var(--gold-darker);
@@ -1066,15 +1070,13 @@ body {
   font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.05;
   color: var(--text-lighter);
   max-width: 120px;
   word-wrap: break-word;
   position: relative;
   z-index: 3;
-  padding: 5px 5px;
-  border-radius: 0px 0px 15px 15px;
-  background: #1e3c58;
+  padding: 0px;
 }
 .mission-node:hover .mission-title {
 }
