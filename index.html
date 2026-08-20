@@ -4016,7 +4016,7 @@ function selectCountry(tag) {
 
   if (hasLore) { html += `<button class="tab-btn active" data-tab="lore">Overview</button>`; firstTab = firstTab || 'lore'; }
 
-  if (hasIdeas) { html += `<button class="tab-btn${!hasLore ? ' active' : ''}" data-tab="ideas">Ideas<span class="count">${ideaCount}</span></button>`; firstTab = firstTab || 'ideas'; }
+  if (hasIdeas) { html += `<button class="tab-btn${!hasLore ? ' active' : ''}" data-tab="ideas">Ideas</button>`; firstTab = firstTab || 'ideas'; }
 
   if (hasMissions) { html += `<button class="tab-btn${!hasLore && !hasIdeas ? ' active' : ''}" data-tab="missions">Missions<span class="count">${c.missions.length}</span></button>`; firstTab = firstTab || 'missions'; }
   const hasMap = PROVINCE_OWNERS && PROVINCE_OWNERS[tag] && PROVINCE_OWNERS[tag].length > 0;
@@ -4031,8 +4031,8 @@ function selectCountry(tag) {
     // Country info table
     html += '<div class="lore-info-table">';
     const infoRows = [];
-    if (s.status === 'playable' || s.status === 'both') infoRows.push(['Playable in 1444?', '<span class="pill pill-playable">Yes</span>']);
-    if (s.status === 'formable' || s.status === 'both') infoRows.push(['Formable Nation?', '<span class="pill pill-formable">Yes</span>']);
+    if (s.status === 'playable' || s.status === 'both') infoRows.push(['Playable In 1444?', '<span class="pill pill-playable">Yes</span>']);
+    if (s.status === 'formable' || s.status === 'both') infoRows.push(['Formable?', '<span class="pill pill-formable">Yes</span>']);
     if (c.primary_culture) infoRows.push(['Primary Culture', esc(c.primary_culture)]);
     if (c.culture_group) infoRows.push(['Culture Group', esc(c.culture_group)]);
     if (c.accepted_cultures && c.accepted_cultures.length) infoRows.push(['Accepted Cultures', c.accepted_cultures.map(ac => esc(ac)).join(', ')]);
