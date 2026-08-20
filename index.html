@@ -19,8 +19,10 @@
   --text-lighter: #ffffff;
   --text-darker: #9c9caa;
 
+  --mapcolor-lighter: #0c111c;
+  --mapcolor-darker: #05070c;
+
   --parchment: #101010;
-  --map-color: #0c111c;
 
   --green: #4aba6a;
   --red: #e05252;
@@ -540,7 +542,7 @@ body {
   width: 100%;
   height: calc(100vh - 0px);
   overflow: hidden;
-  background: var(--map-color);
+  background: var(--mapcolor-lighter);
   border-radius: 0px;
   text-align: left;
 }
@@ -1469,22 +1471,23 @@ body {
 }
 
 
-/* Map XXXXX */
+/* Map */
 .map-container {
   position: relative;
   width: 100%;
   height: 50dvh;
 
   overflow: hidden;
-  background: var(--map-color);
+  background: var(--mapcolor-darker);
   border-radius: 10px 10px 0px 0px;
   border: none;
   user-select: none;
 }
 
 
-
-/* .map-container:active { cursor: grabbing; } */
+.map-container:active {
+  cursor: default;
+}
 .map-container canvas {
   position: absolute;
   top: 0; left: 0;
@@ -1531,23 +1534,42 @@ body {
 }
 .map-province-panel {
   position: absolute;
-  bottom: 8px; left: 8px;
-  background: rgba(15,15,25,0.95);
+  bottom: 8px;
+  left: 8px;
+  background: var(--bluegray-darker);
   border: 1px solid var(--gold-lighter);
   border-radius: 6px;
   padding: 10px 14px;
-  color: var(--text-lighter);
+  font-family: 'EB Garamond', serif;
   font-size: 16px;
+  font-weight: 500;
+  color: var(--text-lighter);
   display: none;
   z-index: 3;
-  min-width: 180px;
-  max-width: 260px;
+  min-width: 240px;
+  max-width: 240px;
 }
-.map-province-panel .prov-name { font-size: 16px; font-weight: 500; color: var(--gold-lighter); margin-bottom: 6px; }
-.map-province-panel .prov-row { display: flex; justify-content: space-between; margin: 2px 0; }
-.map-province-panel .prov-label { color: var(--text-darker); }
+.map-province-panel .prov-name {
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gold-lighter);
+  margin-bottom: 6px; }
+.map-province-panel .prov-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 2px 0;
+  }
+.map-province-panel .prov-label {
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-darker);
+}
 .map-province-panel .prov-val { color: var(--text-lighter); font-weight: 500; }
-.map-province-panel .prov-dev { color: #7dcea0; }
+.map-province-panel .prov-dev {
+  color: var(--green);
+}
 
 .map-diplo-info {
   /*
@@ -1573,24 +1595,43 @@ body {
   cursor: pointer;
   }
 .diplo-val:hover {
-  text-decoration: underline;
+  text-decoration: none;
   color: var(--text-lighter);
 }
-.diplo-type { color: var(--text-darker); font-size: 16px; }
-.diplo-sub { padding-left: 16px; }
+.diplo-type {
+  color: var(--text-darker);
+  font-size: 16px;
+}
+.diplo-sub {
+  padding-left: 16px;
+}
 .map-legend {
   position: absolute;
-  bottom: 8px; right: 8px;
-  background: rgba(15,15,25,0.9);
-  border: 1px solid var(--bluegray-lighter);
+  bottom: 8px;
+  right: 8px;
+  background: var(--bluegray-darker);
+  border: 1px solid var(--gold-lighter);
   border-radius: 4px;
   padding: 6px 10px;
+  font-family: 'EB Garamond', serif;
   font-size: 16px;
-  color: var(--text-darker);
+  font-weight: 500;
+  color: var(--text-lighter);
   z-index: 2;
 }
-.map-legend-item { display: flex; align-items: center; gap: 6px; margin: 2px 0; }
-.map-legend-swatch { width: 12px; height: 12px; border-radius: 2px; border: 1px solid rgba(255,255,255,0.2); }
+.map-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0;
+  }
+.map-legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  border: none;
+}
+
 /* Mini-map tooltip for province/area/region references */
 .geo-ref { text-decoration: underline dotted rgba(212,175,55,0.5); text-underline-offset: 2px; cursor: pointer; }
 .geo-ref:hover { text-decoration-color: var(--gold-lighter); color: var(--gold-lighter); }
