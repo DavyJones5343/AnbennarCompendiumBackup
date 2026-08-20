@@ -332,22 +332,28 @@ body {
   color: var(--gold-lighter);
 }
 
+
+
+/* ------------------------------------------COUNTRY LIST------------------------------------------ */
 #country-list {
   flex: 1;
   overflow-y: auto;
   scrollbar-width: auto;
   scrollbar-color: var(--text-darker) transparent;
 }
-#country-list::-webkit-scrollbar { width: 6px; }
-#country-list::-webkit-scrollbar-thumb { background: var(--text-darker); border-radius: 3px; }
-
+#country-list::-webkit-scrollbar {
+  width: 6px;
+}
+#country-list::-webkit-scrollbar-thumb {
+  background: var(--text-darker); border-radius: 3px;
+}
 .country-item {
   display: flex;
   align-items: center;
   padding: 2px 8px 2px 0px;
   cursor: pointer;
-  border-radius: var(--radius-sm);
-  border-left: 3px solid transparent;
+  border: 1px solid var(--bluegray-lighter);
+  border-radius: 0px 5px 5px 0px;
   transition: background 0.15s var(--ease), border-color 0.15s var(--ease);
   gap: 8px;
 }
@@ -360,24 +366,26 @@ body {
   border-color: var(--gold-lighter);
 }
 .country-item img.flag {
-  width: 32px; height: 32px;
+  width: 32px;
+  height: 32px;
   image-rendering: auto;
-  /* border: 1px solid var(--bluegray-lighter); */
-  /* border-radius: 4px; */
   flex-shrink: 0;
-  transition: border-color 0.15s var(--ease);
 }
 .country-item:hover img.flag, .country-item.selected img.flag {
   border-color: var(--gold-darker);
 }
 .country-item .name {
   flex: 1;
+  font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+
+/*
 .country-item .status-badge {
   font-size: 16px;
   font-weight: 500;
@@ -427,7 +435,7 @@ body {
   background: transparent;
   transition: all 0.15s;
   margin-right: 2px;
-  display: none; /* REMOVED DID I PLAY THIS NATION THING DAVYJONES */
+  display: none;
 }
 .played-toggle:hover { border-color: var(--gold-darker); background: rgba(201,168,76,0.08); }
 .played-toggle.played {
@@ -444,12 +452,15 @@ body {
   border-top: 1px solid var(--bluegray-lighter);
   text-align: center;
 }
+*/
+
+
+
 
 /* MAIN CONTENT */
 #main {
   flex: 1;
   overflow-y: auto;
-  padding: 0px 10px 10px 10px;
   scrollbar-width: normal;
   scrollbar-color: var(--text-darker) transparent;
 }
@@ -552,16 +563,21 @@ body {
 
 /* COUNTRY DETAIL */
 #detail { display: none; }
-#detail.visible { display: block; animation: detailIn 0.3s var(--ease); }
+#detail.visible {
+  display: block;
+  animation: detailIn 0.3s var(--ease);
+  padding: 0px 10px 10px 10px;
+}
 @keyframes detailIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
 }
 
+/* ------------------------------------------DETAIL HEADER------------------------------------------ */
 .detail-header {
   display: flex;
   align-items: flex-start;
-  gap: 20px;
+  gap: 0px;
   margin-bottom: 20px;
   margin-top: 14px;
 }
@@ -569,11 +585,12 @@ body {
   width: 100px;
   height: 100px;
   image-rendering: auto;
-  /* border: 2px solid var(--gold-darker); */
-  /* border-radius: var(--radius); */
   flex-shrink: 0;
-  background: var(--parchment);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 0 24px rgba(201,168,76,0.08);
+  padding-right: 20px;
+  box-shadow: 0 0px 10px var(--parchment);
+}
+.detail-header img.flag:hover {
+  cursor: pointer;
 }
 .detail-header .info h2 {
   font-family: 'EB Garamond', serif;
@@ -586,6 +603,10 @@ body {
   font-weight: 500;
   margin-bottom: 10px;
 }
+
+
+
+
 .pills {
   display: flex;
   flex-wrap: wrap;
@@ -770,7 +791,6 @@ body {
 /* ------------------------------------------TABS------------------------------------------ */
 .tabs {
   display: flex;
-  gap: 4px;
   margin-bottom: 16px;
 }
 .tab-btn {
@@ -784,16 +804,18 @@ body {
   font-size: 16px;
   font-weight: 500;
   color: var(--text-darker);
-  border: none;
-  border-radius: 4px 4px 0px 0px;
+  border: 1px solid var(--bluegray-darker);
+  border-radius: 15px 15px 0px 0px;
 }
 .tab-btn:hover {
   color: var(--text-lighter);
-  border: 1px 1px 0px 1px solid var(--gold-darker);
+  border: 1px solid var(--gold-darker);
+  border-bottom: 0px;
 }
 .tab-btn.active {
   color: var(--text-lighter);
-  border: 1px 1px 0px 1px solid var(--gold-lighter);
+  border: 1px solid var(--gold-lighter);
+  border-bottom: 0px;
 }
 .tab-btn .count {
   font-family: 'EB Garamond', serif;
@@ -837,11 +859,11 @@ body {
 }
 
 .tab-content.active[data-tab="ideas"] > .idea-group {
-  flex: 0 0 auto;
+  flex: 0 0 100%;
 }
 
 .tab-content.active[data-tab="ideas"] > .idea-group:first-child {
-  margin-left: auto;
+  margin-left: 0;
 }
 
 .tab-content.active[data-tab="ideas"] > .idea-card {
@@ -3895,8 +3917,10 @@ function selectCountry(tag) {
 
   // Header
   let html = `<div class="detail-header">
+  <a href="${esc(wikiLink)}" target="_blank" rel="noopener">
     <img class="flag" src="flags/${tag}.png" onerror="this.style.display='none'">
-    <div class="info">
+  </a>
+  <div class="info">
 
 
       <!-- <h2>${esc(c.name)}</h2> -->
