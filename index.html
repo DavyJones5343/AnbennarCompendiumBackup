@@ -314,7 +314,7 @@ body {
   background: var(--gold-darker);
   color: var(--text-lighter);
   border-radius: 5px;
-  cursor: default;
+  cursor: default !important;
   display: none;
 }
 .active-chip .chip-x {
@@ -546,7 +546,9 @@ body {
   border-radius: 0px;
   text-align: left;
 }
-/* #world-map-wrap:active { cursor: grabbing; } */
+#world-map-wrap:active {
+  cursor: default !important;
+}
 #world-map-wrap, .map-container { touch-action: pan-y; }
 #world-map-wrap canvas {
   position: absolute;
@@ -653,7 +655,7 @@ body {
   font-size: 16px;
   font-weight: 500;
   color: var(--text-darker);
-  cursor: default;
+  cursor: default !important;
   transition: all 0.2s;
   */
 }
@@ -1486,7 +1488,7 @@ body {
 
 
 .map-container:active {
-  cursor: default;
+  cursor: default !important;
 }
 .map-container canvas {
   position: absolute;
