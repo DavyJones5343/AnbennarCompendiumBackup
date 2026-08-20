@@ -14,7 +14,7 @@
   --bluegray-darker: #161b20;
 
   --gold-lighter: #e3c035;
-  --gold-darker: #8a7333;
+  --gold-darker: #7a652e;
 
   --text-lighter: #ffffff;
   --text-darker: #9c9caa;
@@ -281,6 +281,7 @@ body {
   align-items: center;
   justify-content: flex-end;
   position: relative;
+      user-select: none;
 }
 #active-filters:empty {
   display: none; /* REMOVES ACTIVE FILTERS */
@@ -370,6 +371,7 @@ body {
   height: 32px;
   image-rendering: auto;
   flex-shrink: 0;
+  margin-left: 2px;
 }
 .country-item:hover img.flag, .country-item.selected img.flag {
   border-color: var(--gold-darker);
@@ -813,12 +815,12 @@ body {
 .tab-btn:hover {
   color: var(--text-lighter);
   border: 1px solid var(--gold-darker);
-  border-bottom: 0px;
+  border-bottom: 1px solid var(--bluegray-darker);
 }
 .tab-btn.active {
   color: var(--text-lighter);
   border: 1px solid var(--gold-lighter);
-  border-bottom: 0px;
+  border-bottom: 1px solid var(--bluegray-darker);
 }
 .tab-btn .count {
   font-family: 'EB Garamond', serif;
@@ -887,7 +889,7 @@ body {
 }
 .idea-card {
   background: var(--parchment);
-  border: 2px solid #493a10;
+  border: 2px solid var(--gold-darker);
   border-radius: 4px;
   padding: 10px 14px;
   margin-bottom: 6px;
@@ -1460,11 +1462,11 @@ body {
   z-index: 2;
 }
 .map-ctrl-btn {
-  width: 48px; height: 48px;
+  width: 40px; height: 40px;
   background: var(--bluegray-darker);
-  border: 1px solid var(--bluegray-darker);
+  border: 1px solid var(--gold-darker);
   color: var(--gold-darker);
-  font-size: 30px;
+  font-size: 26px;
   border-radius: 4px;
   cursor: pointer;
   display: flex;
@@ -1472,13 +1474,15 @@ body {
   justify-content: center;
 }
 .map-ctrl-btn:hover {
-  border: 1px solid var(--gold-darker);
+  color: var(--gold-darker);
+  border: 1px solid var(--gold-lighter);
+  font-weight: bold;
 }
 .map-tooltip {
   position: absolute;
-  background: rgba(15,15,25,0.95);
+  background: var(--bluegray-darker);
   border: 1px solid var(--gold-lighter);
-  color: var(--text-primary);
+  color: var(--text-lighter);
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 16px;
@@ -1494,7 +1498,7 @@ body {
   border: 1px solid var(--gold-lighter);
   border-radius: 6px;
   padding: 10px 14px;
-  color: var(--text-primary);
+  color: var(--text-lighter);
   font-size: 16px;
   display: none;
   z-index: 3;
@@ -1504,7 +1508,7 @@ body {
 .map-province-panel .prov-name { font-size: 16px; font-weight: 500; color: var(--gold-lighter); margin-bottom: 6px; }
 .map-province-panel .prov-row { display: flex; justify-content: space-between; margin: 2px 0; }
 .map-province-panel .prov-label { color: var(--text-darker); }
-.map-province-panel .prov-val { color: var(--text-primary); font-weight: 500; }
+.map-province-panel .prov-val { color: var(--text-lighter); font-weight: 500; }
 .map-province-panel .prov-dev { color: #7dcea0; }
 .map-diplo-info {
   background: var(--bluegray-darker);
@@ -1584,8 +1588,8 @@ body {
     <div id="active-filters">
       <button class="clear-all-btn" type="button" onclick="clearAllFilters()" aria-label="Clear all filters">&#8634;</button>
     </div>
-    <div id="country-list"></div>
     <div id="country-count"></div>
+    <div id="country-list"></div>
   </div>
 
   <div id="main">
@@ -4017,7 +4021,7 @@ function selectCountry(tag) {
     // Lore text (startup lore from game, then wiki lore)
     if (startupLore.lore) {
       if (startupLore.title) {
-        html += `<h3 style="color:var(--gold-lighter);margin:16px 0 8px;font-size:1.1em">${esc(startupLore.title)}</h3>`;
+        html += `<h4 style="color:var(--gold-lighter);margin:16px 0 8px;font-size:16px">${esc(startupLore.title)}</h4>`;
       }
       html += `<div class="lore-text-full">${esc(startupLore.lore).replace(/\n/g, '<br>')}</div>`;
     }
