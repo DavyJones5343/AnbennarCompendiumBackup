@@ -1464,19 +1464,26 @@ body {
   margin-top: 4px;
   display: inline-block;
 }
-.toggle-raw:hover { color: var(--text-darker); }
-/* Map */
+.toggle-raw:hover {
+  color: var(--text-darker);
+}
+
+
+/* Map XXXXX */
 .map-container {
   position: relative;
   width: 100%;
-  aspect-ratio: 5632 / 2048;
+  height: 50dvh;
+
   overflow: hidden;
-  background: var(--parchment);
-  border-radius: 8px;
-  border: 1px solid var(--bluegray-lighter);
-  cursor: grab;
+  background: var(--map-color);
+  border-radius: 10px 10px 0px 0px;
+  border: none;
   user-select: none;
 }
+
+
+
 /* .map-container:active { cursor: grabbing; } */
 .map-container canvas {
   position: absolute;
@@ -1541,18 +1548,34 @@ body {
 .map-province-panel .prov-label { color: var(--text-darker); }
 .map-province-panel .prov-val { color: var(--text-lighter); font-weight: 500; }
 .map-province-panel .prov-dev { color: #7dcea0; }
+
 .map-diplo-info {
+  /*
   background: var(--bluegray-darker);
   border: 1px solid var(--bluegray-lighter);
   border-radius: 6px;
   padding: 8px 12px;
+  */
   margin-bottom: 8px;
-  font-size: 114px3px;
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  font-weight: 500;
 }
-.diplo-row { margin: 3px 0; }
-.diplo-label { color: var(--text-darker); }
-.diplo-val { color: var(--gold-lighter); cursor: pointer; }
-.diplo-val:hover { text-decoration: underline; }
+
+.diplo-row {
+  margin: 3px 0;
+}
+.diplo-label {
+  color: var(--text-darker);
+  }
+.diplo-val {
+  color: var(--gold-lighter);
+  cursor: pointer;
+  }
+.diplo-val:hover {
+  text-decoration: underline;
+  color: var(--text-lighter);
+}
 .diplo-type { color: var(--text-darker); font-size: 16px; }
 .diplo-sub { padding-left: 16px; }
 .map-legend {
