@@ -274,14 +274,14 @@ body {
   background: var(--bluegray-darker);
 }
 #active-filters {
-  padding: 5px 0px 5px 0px;
+  padding: 0px;
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 0px;
   align-items: center;
   justify-content: flex-end;
   position: relative;
-      user-select: none;
+  user-select: none;
 }
 #active-filters:empty {
   display: none; /* REMOVES ACTIVE FILTERS */
@@ -543,6 +543,7 @@ body {
   font-weight: 500;
   color: var(--text-darker);
   font-style: normal;
+  display: none;
 }
 .back-to-map {
   display: block;
@@ -1474,9 +1475,8 @@ body {
   justify-content: center;
 }
 .map-ctrl-btn:hover {
-  color: var(--gold-darker);
+  color: var(--gold-lighter);
   border: 1px solid var(--gold-lighter);
-  font-weight: bold;
 }
 .map-tooltip {
   position: absolute;
@@ -1485,7 +1485,7 @@ body {
   color: var(--text-lighter);
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 20px;
   pointer-events: none;
   display: none;
   z-index: 3;
@@ -4018,16 +4018,20 @@ function selectCountry(tag) {
     html += '<table class="lore-table">';
     infoRows.forEach(([label, val]) => { html += `<tr><td class="lore-label">${label}</td><td>${val}</td></tr>`; });
     html += '</table></div>';
+
     // Lore text (startup lore from game, then wiki lore)
+    html += `<div class="lore-text-totally-full">`;
     if (startupLore.lore) {
+      html += `<div class="lore-text-full">`;
       if (startupLore.title) {
         html += `<h4 style="color:var(--gold-lighter);margin:16px 0 8px;font-size:16px">${esc(startupLore.title)}</h4>`;
       }
-      html += `<div class="lore-text-full">${esc(startupLore.lore).replace(/\n/g, '<br>')}</div>`;
+      html += `${esc(startupLore.lore).replace(/\n/g, '<br>')}</div>`;
     }
     if (loreText.trim()) {
       html += `<div class="lore-text-full" style="margin-top:12px">${esc(loreText.trim()).replace(/\\n/g, '<br>')}</div>`;
     }
+    html += '</div>';
     html += '</div>';
   }
 
