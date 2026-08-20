@@ -635,6 +635,12 @@ body {
   display: none;
 }
 .pill {
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-lighter);
+
+  /*
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -647,6 +653,7 @@ body {
   color: var(--text-darker);
   cursor: default;
   transition: all 0.2s;
+  */
 }
 .pill img {
   width: 16px; height: 16px;
@@ -4024,8 +4031,8 @@ function selectCountry(tag) {
     // Country info table
     html += '<div class="lore-info-table">';
     const infoRows = [];
-    if (s.status === 'playable' || s.status === 'both') infoRows.push(['Status', '<span class="pill pill-playable">Playable in 1444</span>']);
-    if (s.status === 'formable' || s.status === 'both') infoRows.push(['Status', '<span class="pill pill-formable">Formable Nation</span>']);
+    if (s.status === 'playable' || s.status === 'both') infoRows.push(['Playable in 1444?', '<span class="pill pill-playable">Yes</span>']);
+    if (s.status === 'formable' || s.status === 'both') infoRows.push(['Formable Nation?', '<span class="pill pill-formable">Yes</span>']);
     if (c.primary_culture) infoRows.push(['Primary Culture', esc(c.primary_culture)]);
     if (c.culture_group) infoRows.push(['Culture Group', esc(c.culture_group)]);
     if (c.accepted_cultures && c.accepted_cultures.length) infoRows.push(['Accepted Cultures', c.accepted_cultures.map(ac => esc(ac)).join(', ')]);
