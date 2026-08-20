@@ -366,9 +366,6 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  
-  color: inherit;
-  text-decoration: none;
 }
 .country-item .status-badge {
   font-size: 16px;
@@ -1207,6 +1204,16 @@ body {
   margin-top: 6px;
 }
 
+.detail-header .info h2 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.detail-header .info h2 a:hover {
+  color: var(--gold-lighter);
+  text-decoration: underline;
+}
+
 /* RELIGION PANEL */
 #religion-panel {
   display: none;
@@ -2025,13 +2032,7 @@ function renderCountryList() {
     return `<div class="country-item${selectedTag === c.tag ? ' selected' : ''}${isPlayed ? ' is-played' : ''}" data-tag="${c.tag}">
       <span class="played-toggle${isPlayed ? ' played' : ''}" onclick="togglePlayed('${c.tag}', event)" title="${isPlayed ? 'Mark as unplayed' : 'Mark as played'}">&#10003;</span>
       <img class="flag" src="flags/${c.tag}.png" onerror="this.style.display='none'" loading="lazy">
-
-
-      <!-- <span class="name">${esc(c.name)}</span> -->
-
-      <a class="name" href="${esc(wikiUrl(c.name))}" target="_blank" rel="noopener"onclick="event.stopPropagation()">${esc(c.name)}</a>
-
-
+      <span class="name">${esc(c.name)}</span>
       ${statusBadge}
       <span class="badges">${badges}</span>
       <span class="tag-label">${c.tag}</span>
@@ -3858,7 +3859,16 @@ function selectCountry(tag) {
   let html = `<div class="detail-header">
     <img class="flag" src="flags/${tag}.png" onerror="this.style.display='none'">
     <div class="info">
-      <h2>${esc(c.name)}</h2>
+
+
+      <!-- <h2>${esc(c.name)}</h2> -->
+
+      <h2>
+       <a href="${esc(wikiLink)}" target="_blank" rel="noopener">
+          ${esc(c.name)}
+        </a>
+      </h2>
+
       <div class="tag-adj"><span class="color-dot" style="background:${color}"></span> ${tag}${c.adjective && c.adjective.trim() && c.adjective !== c.name ? ' &middot; ' + esc(c.adjective) : ''}</div>
       <div class="pills">
         ${statusHtml}
