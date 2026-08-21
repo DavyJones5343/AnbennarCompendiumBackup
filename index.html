@@ -1543,7 +1543,6 @@ body {
   font-size: 16px;
   color: var(--text-darker);
   cursor: pointer;
-  text-decoration: underline;
   margin-top: 4px;
   display: inline-block;
 }
@@ -4622,14 +4621,14 @@ function showMissionDetail(tag, missionId) {
   // "Show raw script" toggle
   if (trigger.trigger_raw || trigger.effect_raw) {
     const rawId = 'raw_' + missionId.replace(/[^a-zA-Z0-9]/g, '_');
-    html += `<span class="toggle-raw" onclick="document.getElementById('${rawId}').style.display = document.getElementById('${rawId}').style.display === 'none' ? 'block' : 'none'">Show raw script</span>`;
+    html += `<span class="toggle-raw" onclick="document.getElementById('${rawId}').style.display = document.getElementById('${rawId}').style.display === 'none' ? 'block' : 'none'">Reveal Raw Code</span>`;
     html += `<div id="${rawId}" style="display:none">`;
     if (trigger.trigger_raw) {
-      html += '<div style="font-size:14px;color:var(--text-darker);margin-top:8px">Trigger:</div>';
+      html += '<div style="font-size:16px;font-weight:500;color:var(--text-darker);margin-top:8px">Trigger:</div>';
       html += `<div class="script-block">${esc(trigger.trigger_raw)}</div>`;
     }
     if (trigger.effect_raw) {
-      html += '<div style="font-size:14px;color:var(--text-darker);margin-top:8px">Effect:</div>';
+      html += '<div style="font-size:16px;font-weight:500;color:var(--text-darker);margin-top:8px">Effect:</div>';
       html += `<div class="script-block">${esc(trigger.effect_raw)}</div>`;
     }
     html += '</div>';
