@@ -1779,7 +1779,7 @@ body {
   <div id="sidebar">
     <div id="unofficial_anbennar_compendium_title">
       <h3>
-        <a href="#" onclick="showWorldMap(); return false;">UNOFFICIAL ANBENNAR COMPENDIUM</a>
+        <a href="#" onclick="showWorldAndFlip(); return false;">UNOFFICIAL ANBENNAR COMPENDIUM</a>
       </h3>
     </div>
 
@@ -5692,6 +5692,16 @@ function showWorldMap() {
   selectedTag = null;
   document.querySelectorAll('.country-item').forEach(el => el.classList.remove('selected'));
   if (!wmRendered || wmDirty) renderWorldMap();
+}
+
+function showWorldAndFlip() {
+  document.getElementById('detail').className = '';
+  document.getElementById('welcome').style.display = '';
+  selectedTag = null;
+  document.querySelectorAll('.country-item').forEach(el => el.classList.remove('selected'));
+  if (!wmRendered || wmDirty) renderWorldMap();
+
+  document.getElementById('sidebar').classList.toggle('mobile-open');
 }
 
 // Init
