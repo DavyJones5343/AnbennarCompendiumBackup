@@ -1378,7 +1378,6 @@ body {
   overflow-x: auto;
   white-space: pre-wrap;
   color: var(--text-darker);
-  max-height: 250px;
   overflow-y: auto;
   margin-top: 6px;
 }
@@ -1548,10 +1547,9 @@ body {
   cursor: pointer;
   margin-top: 20px;
   display: inline-block;
-  font-style: italics;
 }
 .toggle-raw:hover {
-  color: var(--text-darker);
+  color: var(--text-lighter);
 }
 
 
@@ -3901,7 +3899,7 @@ function renderRequirements(trigger) {
   if (mechanical.length > 0) {
     // If we have tooltips, label these as additional
     if (hasTooltips && mechanical.length > 0) {
-      html += '<li style="color:var(--text-darker);font-size:14px;list-style:none;padding-left:0;margin-top:4px;">Additional conditions:</li>';
+      html += '<li style="color:var(--text-darker);font-size:16px;font-style:500;font-style:italic;list-style:none;padding-left:0;margin-top:4px;">Additional conditions:</li>';
     }
     // Normalize depths: find minimum depth to use as baseline
     const minDepth = Math.min(...mechanical.map(p => p.depth || 0));
@@ -4619,7 +4617,7 @@ function showMissionDetail(tag, missionId) {
 
   // If no requirements, no effects, and no required missions, show a helpful message
   if (!reqHtml && !effHtml && reqs.length === 0) {
-    html += '<div style="color:var(--text-darker);font-size:14px;margin:8px 0;">No special requirements \u2014 available from game start.</div>';
+    html += '<div style="color:var(--text-darker);font-size:16px;font-weight:500;margin:8px 0;">No special requirements \u2014 available from game start.</div>';
   }
 
   // "Show raw script" toggle
@@ -4667,12 +4665,12 @@ function showReligion(relId) {
   html += `<div class="religion-group"><span class="color-dot" style="background:${color}"></span> ${esc(r.group || r.group_id || '')}</div>`;
 
   if (r.modifiers && r.modifiers.length > 0) {
-    html += '<div style="margin:10px 0"><strong style="font-size:14px;color:var(--text-darker)">Modifiers:</strong>';
+    html += '<div style="margin:10px 0"><strong style="font-size:16px;font-weight:500;color:var(--text-darker)">Modifiers:</strong>';
     html += '<div class="mod-chips" style="margin-top:4px">' + r.modifiers.map(m => modChip(m.modifier, m.value)).join('') + '</div></div>';
   }
 
   if (r.allowed_conversions && r.allowed_conversions.length > 0) {
-    html += '<div style="margin:10px 0"><strong style="font-size:14px;color:var(--text-darker)">Allowed Conversions:</strong> ';
+    html += '<div style="margin:10px 0"><strong style="font-size:16px;font-weight:500;color:var(--text-darker)">Allowed Conversions:</strong> ';
     html += r.allowed_conversions.map(c => {
       const cr = RELIGIONS[c];
       return esc(cr ? cr.name : c);
@@ -4682,10 +4680,10 @@ function showReligion(relId) {
 
   const relCountries = countries.filter(c => c.religion_id === relId);
   if (relCountries.length > 0) {
-    html += `<div style="margin:10px 0"><strong style="font-size:14px;color:var(--text-darker)">Countries (${relCountries.length}):</strong>`;
+    html += `<div style="margin:10px 0"><strong style="font-size:16px;font-weight:500;color:var(--text-darker)">Countries (${relCountries.length}):</strong>`;
     html += '<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;max-height:200px;overflow-y:auto">';
     relCountries.forEach(c => {
-      html += `<span class="pill clickable" onclick="closeReligionPanel();selectCountry('${c.tag}')" style="font-size:11px">${esc(c.name)}</span>`;
+      html += `<span class="pill clickable" onclick="closeReligionPanel();selectCountry('${c.tag}')" style="font-size:16px">${esc(c.name)}</span>`;
     });
     html += '</div></div>';
   }
