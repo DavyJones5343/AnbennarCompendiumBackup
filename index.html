@@ -1603,6 +1603,9 @@ body {
 .map-ctrl-btn:hover {
   color: var(--gold-lighter);
   border: 1px solid var(--gold-lighter);
+  .map-tooltip {
+    display: none !important;
+  }
 }
 .map-tooltip {
   position: absolute;
@@ -5074,11 +5077,6 @@ function setupMapInteraction(container, canvas) {
     container.style.cursor = 'grabbing';
   });
   container.addEventListener('mousemove', (e) => {
-    document.addEventListener('mouseover', (e) => {
-      console.log('hover target:', e.target);
-    });
-
-
     if (dragging) {
       const dx = e.clientX - lastX, dy = e.clientY - lastY;
       if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag = true;
