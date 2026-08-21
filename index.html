@@ -5074,6 +5074,11 @@ function setupMapInteraction(container, canvas) {
     container.style.cursor = 'grabbing';
   });
   container.addEventListener('mousemove', (e) => {
+    document.addEventListener('mouseover', (e) => {
+      console.log('hover target:', e.target);
+    });
+
+
     if (dragging) {
       const dx = e.clientX - lastX, dy = e.clientY - lastY;
       if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag = true;
@@ -5123,13 +5128,7 @@ function setupMapInteraction(container, canvas) {
       }
     }
   });
-
-document.addEventListener('mouseover', (e) => {
-  if (e.target.closest('.map-ctrl-btn')) {
-    document.getElementById('world-map-tooltip').style.display = 'none';
-  }
-});
-
+  
   addPinchZoom(container, {
     min: 0.5, max: 10,
     getScale: () => mapScale,
