@@ -698,7 +698,7 @@ body {
   color: var(--text-darker);
   border: 1px solid rgba(150,150,160,0.25);
   background: rgba(150,150,160,0.05);
-  cursor: help;
+  cursor: default;
   display: none;
 }
 
@@ -1197,6 +1197,7 @@ body {
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 12px;
+  margin-top: 40px;
   line-height: 1.25;
 }
 .prereqs .prereq-link {
@@ -1237,7 +1238,7 @@ body {
   padding: 0;
 }
 .requirements-box li {
-  color: var(--gold-lighter);
+  color: var(--text-darker);
   padding: 2px 0;
   padding-left: 14px;
   position: relative;
@@ -1249,11 +1250,25 @@ body {
   left: 0;
   display: none;
 }
-.requirements-box li.logic-label::before { content: none; }
-.requirements-box li.logic-label { color: var(--purple); font-style: italic; margin-top: 4px; padding-left: 0; }
-.requirements-box li .kw { color: var(--purple); }
-.requirements-box li .val { color: var(--gold-lighter); }
-.requirements-box li .tag { color: var(--blue); }
+.requirements-box li.logic-label::before {
+  content: none;
+}
+.requirements-box li.logic-label {
+  color: var(--text-darker);
+  font-style: italic;
+  margin-top: 4px;
+  font-weight: 500;
+  padding-left: 0;
+}
+.requirements-box li .kw {
+  color: var(--purple);
+}
+.requirements-box li .val {
+  color: var(--gold-lighter);
+}
+.requirements-box li .tag {
+  color: var(--gold-lighter);
+}
 
 /* Effects display */
 .effects-box {
@@ -1287,17 +1302,30 @@ body {
   left: 0;
   display: none;
 }
-.effects-box li.logic-label::before { content: none; }
-.effects-box li.logic-label { color: var(--purple); font-style: italic; margin-top: 4px; padding-left: 0; }
-.effects-box li .val { color: var(--gold-lighter); }
-.effects-box li .tag { color: var(--blue); }
-.requirements-box li .tag { color: var(--blue); }
+.effects-box li.logic-label::before {
+  content: none;
+  }
+.effects-box li.logic-label {
+  color: var(--gold-lighter);
+  font-style: italic;
+  margin-top: 4px;
+  padding-left: 0;
+}
+.effects-box li .val {
+  color: var(--gold-lighter);
+}
+.effects-box li .tag {
+  color: var(--gold-lighter);
+}
+.requirements-box li .tag {
+  color: var(--gold-lighter);
+}
 
 /* Modifier tooltips */
 .mod-ref {
-  color: var(--blue);
-  cursor: help;
-  border-bottom: 1px dotted var(--blue);
+  color: var(--gold-lighter);
+  cursor: default;
+  border-bottom: 1px dotted var(--gold-lighter);
   position: relative;
 }
 .mod-tooltip {
@@ -1687,7 +1715,7 @@ body {
 }
 
 /* Mini-map tooltip for province/area/region references */
-.geo-ref { text-decoration: underline dotted rgba(212,175,55,0.5); text-underline-offset: 2px; cursor: pointer; }
+.geo-ref { text-decoration: underline dotted rgba(212,175,55,0.5); text-underline-offset: 2px; cursor: default; }
 .geo-ref:hover { text-decoration-color: var(--gold-lighter); color: var(--gold-lighter); }
 #geo-tooltip { position: fixed; z-index: 9999; pointer-events: none; display: none; background: rgba(10,10,20,0.97); border: 1px solid var(--gold-lighter); border-radius: 6px; padding: 0; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
 #geo-tooltip canvas { display: block; border-radius: 5px; }
@@ -3972,7 +4000,7 @@ function renderEffects(trigger) {
 
   if (effectTooltips.length === 0 && filtered.length === 0) return '';
 
-  let html = '<div class="effects-box"><div class="eff-label">On Completion</div>';
+  let html = '<div class="effects-box"><div class="eff-label">Mission Rewards</div>';
   html += '<ul>';
 
   // Tooltip-based effects first (readable game text)
