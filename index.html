@@ -1822,7 +1822,7 @@ body {
         <button id="mobile-toggle">&#9776;</button>
         <button class="map-ctrl-btn" onclick="wmZoom(1)">+</button>
         <button class="map-ctrl-btn" onclick="wmZoom(-1)">&minus;</button>
-        <button class="map-ctrl-btn" onclick="wmResetView()">&#8634;</button>
+        <button class="map-ctrl-btn" onclick="wmResetView()">&#8853;</button>
       </div>
       <div id="world-map-status"></div>
     </div>
@@ -5687,6 +5687,8 @@ function showWorldMap() {
   selectedTag = null;
   document.querySelectorAll('.country-item').forEach(el => el.classList.remove('selected'));
   if (!wmRendered || wmDirty) renderWorldMap();
+
+  document.getElementById('sidebar').classList.toggle('mobile-open');
 }
 
 // Init
