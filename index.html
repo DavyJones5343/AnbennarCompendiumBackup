@@ -5627,6 +5627,7 @@ function wmSetupInteraction(wrap) {
     const pid = wmProvAt(e.clientX - rect.left, e.clientY - rect.top);
     const ci = pid > 0 ? wmOwnerByPid[pid] : -1;
     if (ci >= 0 && DATA[wmTags[ci]]) selectCountry(wmTags[ci]);
+    document.getElementById('sidebar').classList.toggle('mobile-open');
   });
 
   wrap.addEventListener('wheel', (e) => {
