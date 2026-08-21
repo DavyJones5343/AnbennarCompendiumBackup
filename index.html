@@ -1483,6 +1483,9 @@ body {
   .map-controls {
     right: 8px;
   }
+  #mobile-toggle {
+    display: flex !important;
+  }
   #main { padding: 0px; }
   /* Detail header: stack vertically */
   .detail-header { flex-direction: column; gap: 10px; align-items: center; text-align: center; }
@@ -1610,10 +1613,10 @@ body {
   font-size: 26px;
   border-radius: 4px;
   cursor: pointer;
-  display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 0px 10px var(--parchment);
+  display: none;
 
   /*
   display: block !important;
