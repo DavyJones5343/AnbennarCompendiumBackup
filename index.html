@@ -1604,9 +1604,6 @@ body {
   color: var(--gold-lighter);
   border: 1px solid var(--gold-lighter);
 }
-.map-ctrl-btn:hover .map-tooltip {
-  display: none !important;
-}
 .map-tooltip {
   position: absolute;
   background: var(--bluegray-darker);
@@ -1620,6 +1617,21 @@ body {
   z-index: 3;
   white-space: nowrap;
 }
+
+
+.map-ctrl-btn:hover .map-tooltip {
+  display: none !important;
+}
+.map-controls:hover .map-tooltip {
+  display: none !important;
+}
+.map-tooltip .map-ctrl-btn:hover {
+  display: none !important;
+}
+.map-tooltip .map-controls:hover {
+  display: none !important;
+}
+
 .map-province-panel {
   position: absolute;
   bottom: 8px;
