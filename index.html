@@ -5074,12 +5074,6 @@ function setupMapInteraction(container, canvas) {
     container.style.cursor = 'grabbing';
   });
   container.addEventListener('mousemove', (e) => {
-    document.querySelectorAll('.map-ctrl-btn').forEach(btn => {
-  btn.addEventListener('mouseenter', () => {
-    document.getElementById('map-tooltip').style.display = 'none';
-  });
-});
-
     if (dragging) {
       const dx = e.clientX - lastX, dy = e.clientY - lastY;
       if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag = true;
@@ -5090,7 +5084,7 @@ function setupMapInteraction(container, canvas) {
       const rect = container.getBoundingClientRect();
       const mx = e.clientX - rect.left, my = e.clientY - rect.top;
       const pid = getMapProvAtCoord(mx, my);
-      const tt = document.getElementById('map-tooltip');
+      const tt = document.getElementById('world-map-tooltip');
       if (pid > 0 && PROVINCES[String(pid)]) {
         const d = PROV_DETAILS[String(pid)];
         const dev = d ? `${(d.t||0)+(d.p||0)+(d.m||0)} dev` : '';
@@ -5130,6 +5124,12 @@ function setupMapInteraction(container, canvas) {
     }
   });
 
+document.addEventListener('mouseover', (e) => {
+  if (e.target.closest('.map-ctrl-btn')) {
+    document.getElementById('world-map-tooltip').style.display = 'none';
+  }
+});
+
   addPinchZoom(container, {
     min: 0.5, max: 10,
     getScale: () => mapScale,
@@ -5150,7 +5150,7 @@ function setupMapInteraction(container, canvas) {
   }, { passive: false });
 
   container.addEventListener('mouseleave', () => {
-    document.getElementById('map-tooltip').style.display = 'none';
+    document.getElementById('world-map-tooltip').style.display = 'none';
   });
 }
 
