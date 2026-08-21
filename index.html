@@ -1094,11 +1094,7 @@ body {
 .mission-node.selected .mission-title {
 }
 
-
-
-
-
-
+/* --------------------MISSION CAMPAIGNS / PATHS-------------------- */
 .campaign-selector {
   display: flex;
   flex-wrap: wrap;
@@ -1106,11 +1102,12 @@ body {
   margin-bottom: 12px;
 }
 .campaign-btn {
-  padding: 5px 12px;
+  padding: 3px 7px 4px;
   background: transparent;
-  border: 1px solid var(--bluegray-lighter);
+  border: 1px solid var(--bluegray-darker);
   border-radius: 4px;
   color: var(--text-darker);
+  background: var(--bluegray-darker);
   font-family: 'EB Garamond', serif;
   font-size: 16px;
   font-weight: 500;
@@ -1118,12 +1115,12 @@ body {
   transition: all 0.2s;
 }
 .campaign-btn:hover {
-  border-color: var(--blue); color: var(--blue);
+  border: 1px solid var(--gold-darker);
+  color: var(--text-lighter);
 }
 .campaign-btn.active {
-  border-color: var(--gold-lighter);
-  color: var(--gold-lighter);
-  background: rgba(201,168,76,0.08);
+  border: 1px solid var(--gold-lighter);
+  color: var(--text-lighter);
 }
 
 
