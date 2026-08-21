@@ -193,11 +193,11 @@ body {
 
 
 #search-box {
-  padding: 5px 35px 5px 0px;
+  padding: 5px 0px 5px 0px;
   /* border-bottom: 1px solid var(--bluegray-lighter); */
 }
 #search-input {
-  width: 100%;
+  width: 275px;
   padding: 10px 10px;
   background: var(--bluegray-darker);
   border: 1px solid var(--bluegray-lighter);
@@ -339,15 +339,17 @@ body {
   line-height: 1;
   cursor: pointer;
 
-  position: absolute;
-  top: -300px;
   right: 2px;
   z-index: 2;
 }
 .clear-all-btn:hover {
   color: var(--gold-lighter);
 }
-
+.sidebyside {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
 
 /* ------------------------------------------COUNTRY LIST------------------------------------------ */
@@ -1742,9 +1744,16 @@ body {
         <a href="#" onclick="showWorldMap(); return false;">UNOFFICIAL ANBENNAR COMPENDIUM</a>
       </h3>
     </div>
-    <div id="search-box">
-      <input type="text" id="search-input" placeholder="Search countries, tags, etc...">
+
+    <div class="sidebyside">
+      <div id="search-box">
+        <input type="text" id="search-input" placeholder="Search countries, tags, etc...">
+      </div>
+      <div id="active-filters">
+        <button class="clear-all-btn" type="button" onclick="clearAllFilters()" aria-label="Clear all filters">&#8634;</button>
+      </div>
     </div>
+
     <div id="region-filter">
       <select id="region-select" class="filter-select"><option value="">Region...</option></select>
       <select id="culture-select" class="filter-select"><option value="">Culture Group...</option></select>
@@ -1762,9 +1771,6 @@ body {
       <!-- <button class="filter-btn" data-filter="needs-lore" title="Countries with missions or tag-specific ideas authored but no startup lore in startup_lore.json — these are upstream content gaps where lore writers could contribute">Needs Lore</button> -->
       <!-- <button class="filter-btn" data-filter="played">Played</button> -->
       <!-- <button class="filter-btn" data-filter="unplayed">Unplayed</button> -->
-    </div>
-    <div id="active-filters">
-      <button class="clear-all-btn" type="button" onclick="clearAllFilters()" aria-label="Clear all filters">&#8634;</button>
     </div>
     <div id="country-count"></div>
     <div id="country-list"></div>
@@ -5068,6 +5074,11 @@ function setupMapInteraction(container, canvas) {
     container.style.cursor = 'grabbing';
   });
   container.addEventListener('mousemove', (e) => {
+    if (e.target.closest('.map-ctrl-btn')) {
+  document.getElementById('map-tooltip').style.display = 'none';
+  return;
+}
+
     if (dragging) {
       const dx = e.clientX - lastX, dy = e.clientY - lastY;
       if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag = true;
