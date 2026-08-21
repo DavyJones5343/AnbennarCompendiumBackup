@@ -1123,15 +1123,7 @@ body {
   color: var(--text-lighter);
 }
 
-
-
-
-
-
-
-
-
-/* MISSION DETAIL MODAL */
+/* --------------------MISSION TEXT OVERVIEWS-------------------- */
 #mission-modal-overlay {
   display: none;
   position: fixed;
@@ -1139,24 +1131,27 @@ body {
   background: rgba(0,0,0,0.6);
   z-index: 999;
 }
-#mission-modal-overlay.visible { display: block; }
+#mission-modal-overlay.visible {
+  display: block;
+}
 #mission-modal {
   display: none;
   position: fixed;
-  top: 50%; left: 50%;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
-  background: linear-gradient(180deg, #181820, var(--bluegray-lighter));
-  border: 1px solid var(--gold-darker);
-  border-radius: 14px;
-  padding: 24px;
+  background: var(--bluegray-darker);
+  border: 2px solid var(--gold-darker);
+  border-radius: 4px;
+  padding: 10px;
   z-index: 1000;
   max-width: 600px;
-  width: 90%;
+  width: 100%;
   max-height: 80vh;
   overflow-y: auto;
-  box-shadow: var(--shadow-pop), 0 0 60px rgba(201,168,76,0.06);
   animation: modalIn 0.22s var(--ease);
 }
+
 @keyframes modalIn {
   from { opacity: 0; transform: translate(-50%, -48%) scale(0.97); }
   to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -1191,32 +1186,40 @@ body {
   flex-shrink: 0;
 }
 #mission-modal .mission-desc {
-  color: var(--text-darker);
+  color: var(--text-lighter);
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 12px;
   line-height: 1.25;
-  font-style: normal;
 }
 #mission-modal .prereqs {
+  color: var(--text-lighter);
+  font-size: 16px;
+  font-weight: 500;
   margin-bottom: 12px;
+  line-height: 1.25;
 }
 .prereqs .prereq-link {
   color: var(--blue);
   cursor: pointer;
-  text-decoration: underline;
+  color: var(--text-lighter);
   font-size: 16px;
   font-weight: 500;
+  margin-bottom: 12px;
+  line-height: 1.25;
 }
-.prereqs .prereq-link:hover { color: var(--gold-lighter); }
+.prereqs .prereq-link:hover {
+  color: var(--gold-lighter);
+}
 
-/* Requirements display */
+
+
+
+
+/* --------------------MISSION TEXT REQUIREMENTS-------------------- */
 .requirements-box {
-  background: var(--parchment);
-  border: 1px solid var(--bluegray-lighter);
-  border-left: 3px solid var(--blue);
+  background: var(--bluegray-darker);
   border-radius: 0 4px 4px 0;
-  padding: 10px 14px;
   margin: 8px 0;
   font-size: 16px;
   font-weight: 500;
@@ -1224,7 +1227,7 @@ body {
 }
 .requirements-box .req-label {
   font-family: 'EB Garamond', serif;
-  color: var(--blue);
+  color: var(--gold-lighter);
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 6px;
@@ -1234,7 +1237,7 @@ body {
   padding: 0;
 }
 .requirements-box li {
-  color: var(--text-darker);
+  color: var(--gold-lighter);
   padding: 2px 0;
   padding-left: 14px;
   position: relative;
@@ -1244,6 +1247,7 @@ body {
   color: var(--gold-darker);
   position: absolute;
   left: 0;
+  display: none;
 }
 .requirements-box li.logic-label::before { content: none; }
 .requirements-box li.logic-label { color: var(--purple); font-style: italic; margin-top: 4px; padding-left: 0; }
@@ -1253,11 +1257,7 @@ body {
 
 /* Effects display */
 .effects-box {
-  background: var(--parchment);
-  border: 1px solid var(--bluegray-lighter);
-  border-left: 3px solid var(--green);
   border-radius: 0 4px 4px 0;
-  padding: 10px 14px;
   margin: 8px 0;
   font-size: 16px;
   font-weight: 500;
@@ -1265,7 +1265,7 @@ body {
 }
 .effects-box .eff-label {
   font-family: 'EB Garamond', serif;
-  color: var(--green);
+  color: var(--gold-lighter);
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 6px;
@@ -1282,9 +1282,10 @@ body {
 }
 .effects-box li::before {
   content: '\2022';
-  color: var(--green);
+  color: var(--gold-lighter);
   position: absolute;
   left: 0;
+  display: none;
 }
 .effects-box li.logic-label::before { content: none; }
 .effects-box li.logic-label { color: var(--purple); font-style: italic; margin-top: 4px; padding-left: 0; }
@@ -4562,12 +4563,11 @@ function showMissionDetail(tag, missionId) {
     const _otherNames = _groupUsers.filter(t => t !== tag).slice(0, 10).map(t => DATA[t] ? DATA[t].name : t).join(', ');
     provenance = `<span title="Also in the mission tree of: ${esc(_otherNames)}${_groupUsers.length > 11 ? '…' : ''}" style="cursor:help">Shared by ${_groupUsers.length} nations</span>`;
   }
-  html += `<div style="font-size:14px;color:var(--text-darker);margin-bottom:8px;">Slot ${mission.slot}, Position ${mission.position} &middot; ${provenance}</div>`;
 
   // Required missions
   const reqs = mission.required_missions || trigger.required_missions || [];
   if (reqs.length > 0) {
-    html += '<div class="prereqs"><strong style="font-size:14px;color:var(--text-darker);">Required Missions:</strong> ';
+    html += '<div class="prereqs"><strong style="font-size:16px;font-weight:500;color:var(--text-darker);">Required Missions:</strong> ';
     html += reqs.map(r => {
       const rm = c.missions.find(m => m.id === r);
       return `<span class="prereq-link" onclick="closeMissionModal();setTimeout(()=>showMissionDetail('${tag}','${esc(r)}'),100)">${esc(rm ? rm.title : r)}</span>`;
