@@ -5692,8 +5692,6 @@ function showWorldMap() {
   selectedTag = null;
   document.querySelectorAll('.country-item').forEach(el => el.classList.remove('selected'));
   if (!wmRendered || wmDirty) renderWorldMap();
-
-  document.getElementById('sidebar').classList.toggle('mobile-open');
 }
 
 // Init
