@@ -80,7 +80,7 @@ body {
 
 /* HEADER */
 #header {
-  display: none;
+  display: none !important;
   height: var(--header-h);
   background: var(--bluegray-lighter);
   border-bottom: 1px solid var(--gold-darker);
@@ -603,7 +603,7 @@ body {
 .detail-header {
   display: flex;
   align-items: flex-start;
-  gap: 0px;
+  gap: 16px;
   margin-bottom: 20px;
   margin-top: 14px;
 }
@@ -621,14 +621,12 @@ body {
   font-family: 'EB Garamond', serif;
   color: var(--gold-lighter);
   font-size: 45px;
-  padding-left: 15px;
 }
 .detail-header .info .tag-adj {
   color: var(--text-darker);
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 10px;
-  padding-left: 15px;
 }
 
 
@@ -1482,11 +1480,8 @@ body {
     width: 85vw; max-width: 340px;
     box-shadow: 4px 0 20px rgba(0,0,0,0.5);
   }
-  #mobile-toggle {
-    display: block !important;
-    background: none; border: 1px solid var(--gold-darker); border-radius: 4px;
-    color: var(--gold-lighter); padding: 6px 10px; cursor: pointer; font-size: 16px;
-    z-index: 1; position: relative;
+  .map-controls {
+    right: 8px;
   }
   #main { padding: 0px; }
   /* Detail header: stack vertically */
@@ -1521,8 +1516,6 @@ body {
   /* Map container */
   .map-container { height: 300px !important; }
 }
-
-#mobile-toggle { display: none; }
 
 .color-dot {
   display: inline-block;
@@ -1586,7 +1579,7 @@ body {
   top: 8px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   z-index: 2;
   padding: 0px 0px 0px 8px;
 }
@@ -1607,6 +1600,40 @@ body {
   color: var(--text-lighter);
   border: 1px solid var(--gold-darker);
 }
+
+
+#mobile-toggle {
+  width: 40px; height: 40px;
+  background: var(--bluegray-darker);
+  border: none;
+  color: var(--text-darker);
+  font-size: 26px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0px 10px var(--parchment);
+
+  /*
+  display: block !important;
+  background: none;
+  border: 1px solid var(--gold-darker);
+  border-radius: 4px;
+  color: var(--gold-lighter);
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 16px;
+  z-index: 1;
+  position: relative;
+  */
+}
+#mobile-toggle:hover {
+  color: var(--text-lighter);
+  border: 1px solid var(--gold-darker);
+}
+
+
 .map-tooltip {
   position: absolute;
   background: var(--bluegray-darker);
@@ -1738,7 +1765,6 @@ body {
     <!-- <div class="subtitle">An Interactive Guide to the World of Halcann &mdash; by Ijkee</div> -->
   </div>
   <!-- <a href="https://ko-fi.com/ijkee" target="_blank" rel="noopener" class="kofi-btn" title="Support Ijkee on Ko-fi">&#9749; Support</a> -->
-  <button id="mobile-toggle">&#9776;</button>
 </div>
 
 <div id="layout">
@@ -1790,6 +1816,7 @@ body {
         <div class="map-tooltip" id="world-map-tooltip"></div>
       </div>
       <div class="map-controls">
+        <button id="mobile-toggle">&#9776;</button>
         <button class="map-ctrl-btn" onclick="wmZoom(1)">+</button>
         <button class="map-ctrl-btn" onclick="wmZoom(-1)">&minus;</button>
         <button class="map-ctrl-btn" onclick="wmResetView()">&#8634;</button>
