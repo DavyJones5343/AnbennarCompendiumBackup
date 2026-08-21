@@ -1582,7 +1582,6 @@ body {
 .map-controls {
   position: absolute;
   top: 8px;
-  left: 8px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -1616,20 +1615,6 @@ body {
   display: none;
   z-index: 3;
   white-space: nowrap;
-}
-
-
-.map-ctrl-btn:hover .map-tooltip {
-  display: none !important;
-}
-.map-controls:hover .map-tooltip {
-  display: none !important;
-}
-.map-tooltip .map-ctrl-btn:hover {
-  display: none !important;
-}
-.map-tooltip .map-controls:hover {
-  display: none !important;
 }
 
 .map-province-panel {
@@ -1798,12 +1783,12 @@ body {
       <!-- <p>Click a country on the map &mdash; or search and filter, and the map will show who matches.</p> -->
       <div id="world-map-wrap">
         <canvas id="world-map-canvas"></canvas>
-        <div class="map-controls">
-          <button class="map-ctrl-btn" onclick="wmZoom(1)">+</button>
-          <button class="map-ctrl-btn" onclick="wmZoom(-1)">&minus;</button>
-          <button class="map-ctrl-btn" onclick="wmResetView()">&#8634;</button>
-        </div>
         <div class="map-tooltip" id="world-map-tooltip"></div>
+      </div>
+      <div class="map-controls">
+        <button class="map-ctrl-btn" onclick="wmZoom(1)">+</button>
+        <button class="map-ctrl-btn" onclick="wmZoom(-1)">&minus;</button>
+        <button class="map-ctrl-btn" onclick="wmResetView()">&#8634;</button>
       </div>
       <div id="world-map-status"></div>
     </div>
