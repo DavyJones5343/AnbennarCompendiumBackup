@@ -1197,7 +1197,6 @@ body {
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 12px;
-  margin-top: 40px;
   line-height: 1.25;
 }
 .prereqs .prereq-link {
@@ -1232,6 +1231,7 @@ body {
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 6px;
+  margin-top: 40px;
 }
 .requirements-box ul {
   list-style: none;
@@ -4592,6 +4592,10 @@ function showMissionDetail(tag, missionId) {
     provenance = `<span title="Also in the mission tree of: ${esc(_otherNames)}${_groupUsers.length > 11 ? '…' : ''}" style="cursor:help">Shared by ${_groupUsers.length} nations</span>`;
   }
 
+  // Requirements
+  const reqHtml = renderRequirements(trigger);
+  html += reqHtml;
+
   // Required missions
   const reqs = mission.required_missions || trigger.required_missions || [];
   if (reqs.length > 0) {
@@ -4602,10 +4606,6 @@ function showMissionDetail(tag, missionId) {
     }).join(', ');
     html += '</div>';
   }
-
-  // Requirements
-  const reqHtml = renderRequirements(trigger);
-  html += reqHtml;
 
   // Effects
   let effHtml = '';
