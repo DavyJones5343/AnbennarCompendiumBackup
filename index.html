@@ -580,6 +580,7 @@ body {
   cursor: pointer;
   margin-bottom: 0px;
   margin-top: 10px;
+  display: none;
 }
 .back-to-map:hover {
   /* border-color: var(--gold-darker); */
@@ -4207,12 +4208,12 @@ function selectCountry(tag) {
 
   if (hasLore) { html += `<button class="tab-btn active" data-tab="lore">Overview</button>`; firstTab = firstTab || 'lore'; }
 
-  if (hasMap) { html += `<button class="tab-btn" data-tab="map">Location</button>`; }
-
   if (hasIdeas) { html += `<button class="tab-btn${!hasLore ? ' active' : ''}" data-tab="ideas">Ideas</button>`; firstTab = firstTab || 'ideas'; }
 
   if (hasMissions) { html += `<button class="tab-btn${!hasLore && !hasIdeas ? ' active' : ''}" data-tab="missions">Missions<span class="count">${c.missions.length}</span></button>`; firstTab = firstTab || 'missions'; }
   const hasMap = PROVINCE_OWNERS && PROVINCE_OWNERS[tag] && PROVINCE_OWNERS[tag].length > 0;
+
+  if (hasMap) { html += `<button class="tab-btn" data-tab="map">Location</button>`; }
 
   html += '</div>';
 
