@@ -4106,6 +4106,8 @@ function selectCountry(tag) {
   detail.className = 'visible';
   detail.dataset.tag = tag;
 
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+
   const w = WIKI[tag] || {};
   const reg = REGIONS[tag] || {};
   const s = STATUS[tag] || {};
