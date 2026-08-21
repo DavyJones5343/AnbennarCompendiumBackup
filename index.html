@@ -578,9 +578,9 @@ body {
   margin-bottom: 0px;
   margin-top: 10px;
   letter-spacing: 1px;
-  display: block;
   margin-left: auto;
   margin-right: auto;
+  display: none;
 }
 .back-to-map:hover {
   color: var(--text-lighter);
@@ -1442,7 +1442,7 @@ body {
 #religion-panel::-webkit-scrollbar { width: 6px; }
 #religion-panel::-webkit-scrollbar-thumb { background: var(--bluegray-lighter); border-radius: 3px; }
 
-/* RESPONSIVE */
+/* RESPONSIVE MOBILE MOBILE-------------------------------------------------------------------------------------------------------------------*/
 @media (max-width: 768px) {
 
   /* AI MIGHT BE BAD DAVYJONES */
@@ -1484,6 +1484,9 @@ body {
   }
   #mobile-toggle {
     display: flex !important;
+  }
+  .back-to-map {
+    display: block !important;
   }
   .filter-btn {
     padding: 3px 6px 4px 6px !important;
